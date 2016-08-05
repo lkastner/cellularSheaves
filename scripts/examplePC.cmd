@@ -17,5 +17,11 @@ print $pc->BLOCKS->{$pst};
 print $pc->CHOSEN_BASES->{$s};
 print $pc->CHOSEN_BASES->{$t};
 
+$pc->CHAIN_COMPLEX;
+
+#############################################
+
+$pc = new PolyhedralComplex(check_fan_objects(new Cone(cube(4))));
+$pc->CHAIN_COMPLEX;
 
 
