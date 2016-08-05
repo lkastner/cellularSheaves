@@ -1,0 +1,94 @@
+
+
+object PolyhedralComplex {
+
+   property CHAIN_COMPLEX : Array<Matrix>;
+
+   property BLOCKS : Map<Pair<Set<Int>, Set<Int> >, Array<Matrix> >;
+
+   
+   rule BLOCKS : VERTICES, HASSE_DIAGRAM, FAN_DIM {
+      # my $result = Map<Pair<Set<Int>, Set<Int> >, Array<Matrix> >();
+      my $d = $this->FAN_DIM;
+      my $vertices = $this->VERTICES;
+      my $hd = $this->HASSE_DIAGRAM;
+      print $d,"\n";
+      for(my $i=0; $i<$d; $i++){
+         my $sigmas = $hd->nodes_of_dim($d-$i);
+         my $taus = $hd->nodes_of_dim($d-$i-1);
+         foreach my $sigma (@$sigmas) {
+            my $honestSigma = $hd->FACES->[$sigma];
+            foreach my $tau (@$taus) {
+               my $honestTau = $hd->FACES->[$tau];
+               print $honestSigma," - ",$honestTau," - ",compute_sign($honestSigma, $honestTau),"\n";
+               my $block = build_matrix($vertices, $honestSigma, $honestTau);
+            }
+         }
+      }
+   }
+
+   rule CHAIN_COMPLEX : VERTICES, HASSE_DIAGRAM, FAN_DIM {
+
+   }
+
+}
+
+
+sub compute_sign{
+   my($sigma, $tau) = @_;
+   my $test = $sigma*$tau;
+   $test->size == $tau->size or return 0;
+   my $result = 1;
+   for(my $i = 0; $i<$sigma->size; $i++){
+      if($sigma->[$i] != $tau->[$i]){
+         $result *= ($i%2 == 0) ? 1:-1;
+         last;
+      }
+   }
+   return $result;
+}
+
+sub build_matrix{
+   my($vertices, $sigmaInd, $tauInd) = @_;
+   my $commonInd = $tauInd->[0];
+   my $sigma = build_cone($vertices, $sigmaInd, $commonInd);
+   my $tau = build_cone($vertices, $tauInd, $commonInd);
+   my $sigmaBasis = null_space($sigma->LINEAR_SPAN);
+   my $tauBasis = null_space($tau->LINEAR_SPAN);
+   my $test = $sigmaInd*$tauInd;
+   my $map;
+   if ($test->size == $tauInd->size){
+      my @images = map{
+         my $v = $_;
+         my $C = $sigmaBasis/(-$v);
+         my $image = null_space(transpose($C));
+         $image->rows() == 1 or die("Something went wrong.");
+         my $Cv = $image->[0];
+         my $length = $Cv->dim - 1;
+         my $last = $Cv->[$length];
+         $Cv = $Cv->slice(0, $length);
+         (1/$last) * $Cv
+      }@$tauBasis;
+      $map = new Matrix(@images);
+   } else {
+      $map = new Matrix($tauBasis->rows(), $sigmaBasis->rows());
+   }
+   print "Map is:\n",$map,"\n-----\n";
+   print "Sigma basis is:\n",$sigmaBasis,"\n-----\n";
+   print "Tau basis is:\n",$tauBasis,"\n-----\n";
+
+
+}
+
+sub build_cone{
+   my($vertices, $indexSet, $common) = @_;
+   print "Building cone: ",$indexSet,"\n";
+   my $rays = new Matrix($vertices->minor($indexSet, All));
+   print $rays,"----\n";
+   my $v = $vertices->[$common];
+   print $v,"\n----\n";
+   $rays = new Matrix(map{$_-$v}@$rays);
+   $rays = $rays->minor(All, ~[0]);
+   print $rays;
+   return new Cone(INPUT_RAYS=>$rays);
+}
