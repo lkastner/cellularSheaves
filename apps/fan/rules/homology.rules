@@ -4,13 +4,43 @@ object PolyhedralComplex {
 
    property CHAIN_COMPLEX : Array<Matrix>;
 
-   property BLOCKS : Map<Pair<Set<Int>, Set<Int> >, Array<Matrix> >;
+   property BLOCKS : Map<Pair<Set<Int>, Set<Int> >, Matrix >;
+
+   property CHOSEN_BASES : Map<Set<Int>, Matrix>;
+
+
+   rule CHOSEN_BASES : VERTICES, HASSE_DIAGRAM, FAN_DIM {
+      my $result = new Map<Set<Int>, Matrix>();
+      my $d = $this->FAN_DIM - 1;
+      my $vertices = $this->VERTICES;
+      my $hd = $this->HASSE_DIAGRAM;
+      for(my $i=0; $i<=$d; $i++){
+         my $sigmaDim = $d - $i;
+         print "Looking at dim ",$sigmaDim,"\n";
+         my $sigmas = $hd->nodes_of_dim($sigmaDim);
+         foreach my $sigma (@$sigmas) {
+            my $honestSigma = $hd->FACES->[$sigma];
+            my @a = @$honestSigma;
+            my $chosenVertices = new Set<Int>(@a[1..$sigmaDim]);
+            my $vIndex = $honestSigma->[0];
+            my $v = $vertices->[$vIndex];
+            my $basis = $vertices->minor($chosenVertices, All);
+            $basis = new Matrix(map($_-$v, @$basis));
+            if($chosenVertices->size == 0) {
+               $result->{$honestSigma} = new Matrix(0, $d);
+            } else {
+               $result->{$honestSigma} = $basis->minor(All, ~[0]);
+            }
+         }
+      }
+      $this->CHOSEN_BASES = $result;
+   }
 
    
-   rule BLOCKS : VERTICES, HASSE_DIAGRAM, FAN_DIM {
-      # my $result = Map<Pair<Set<Int>, Set<Int> >, Array<Matrix> >();
-      my $d = $this->FAN_DIM;
-      my $vertices = $this->VERTICES;
+   rule BLOCKS : HASSE_DIAGRAM, FAN_DIM, CHOSEN_BASES {
+      my $result = new Map<Pair<Set<Int>, Set<Int> >, Matrix>();
+      my $d = $this->FAN_DIM - 1;
+      my $chosenBases = $this->CHOSEN_BASES;
       my $hd = $this->HASSE_DIAGRAM;
       print $d,"\n";
       for(my $i=0; $i<$d; $i++){
@@ -20,11 +50,22 @@ object PolyhedralComplex {
             my $honestSigma = $hd->FACES->[$sigma];
             foreach my $tau (@$taus) {
                my $honestTau = $hd->FACES->[$tau];
+               my $keyPair = new Pair<Set<Int>, Set<Int> >($honestSigma, $honestTau);
                print $honestSigma," - ",$honestTau," - ",compute_sign($honestSigma, $honestTau),"\n";
-               my $block = build_matrix($vertices, $honestSigma, $honestTau);
+               my $sigmaBasis = $chosenBases->{$honestSigma};
+               my $tauBasis = $chosenBases->{$honestTau};
+               my $map;
+               my $test = $honestSigma*$honestTau;
+               if($test->size == $honestTau->size){
+                  $map = build_matrix($sigmaBasis, $tauBasis);
+               } else {
+                  $map = new Matrix($tauBasis->rows, $sigmaBasis->rows);
+               }
+               $result->{$keyPair} = $map;
             }
          }
       }
+      $this->BLOCKS = $result;
    }
 
    rule CHAIN_COMPLEX : VERTICES, HASSE_DIAGRAM, FAN_DIM {
@@ -49,35 +90,19 @@ sub compute_sign{
 }
 
 sub build_matrix{
-   my($vertices, $sigmaInd, $tauInd) = @_;
-   my $commonInd = $tauInd->[0];
-   my $sigma = build_cone($vertices, $sigmaInd, $commonInd);
-   my $tau = build_cone($vertices, $tauInd, $commonInd);
-   my $sigmaBasis = null_space($sigma->LINEAR_SPAN);
-   my $tauBasis = null_space($tau->LINEAR_SPAN);
-   my $test = $sigmaInd*$tauInd;
-   my $map;
-   if ($test->size == $tauInd->size){
-      my @images = map{
-         my $v = $_;
-         my $C = $sigmaBasis/(-$v);
-         my $image = null_space(transpose($C));
-         $image->rows() == 1 or die("Something went wrong.");
-         my $Cv = $image->[0];
-         my $length = $Cv->dim - 1;
-         my $last = $Cv->[$length];
-         $Cv = $Cv->slice(0, $length);
-         (1/$last) * $Cv
-      }@$tauBasis;
-      $map = new Matrix(@images);
-   } else {
-      $map = new Matrix($tauBasis->rows(), $sigmaBasis->rows());
-   }
-   print "Map is:\n",$map,"\n-----\n";
-   print "Sigma basis is:\n",$sigmaBasis,"\n-----\n";
-   print "Tau basis is:\n",$tauBasis,"\n-----\n";
-
-
+   my($bigger, $smaller) = @_;
+   my @images = map{
+      my $v = $_;
+      my $C = $bigger/(-$v);
+      my $image = null_space(transpose($C));
+      $image->rows() == 1 or die("Something went wrong.");
+      my $Cv = $image->[0];
+      my $length = $Cv->dim - 1;
+      my $last = $Cv->[$length];
+      $Cv = $Cv->slice(0, $length);
+      (1/$last) * $Cv
+   }@$smaller;
+   return new Matrix(@images);
 }
 
 sub build_cone{
