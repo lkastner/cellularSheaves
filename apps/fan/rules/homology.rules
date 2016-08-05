@@ -24,7 +24,7 @@ object PolyhedralComplex {
             my $v = $vertices->[$vIndex];
             my $generators = $vertices->minor($honestSigma, All);
             $generators = new Matrix(map($_-$v, @$generators));
-            if($chosenVertices->size == 0) {
+            if($honestSigma->size == 1) {
                $result->{$honestSigma} = new Matrix(0, $d);
             } else {
                $result->{$honestSigma} = choose_basis($generators);
@@ -82,11 +82,11 @@ object PolyhedralComplex {
                my $honestTau = $hd->FACES->[$tau];
                my $keyPair = new Pair<Set<Int>, Set<Int> >($honestSigma, $honestTau);
                my $sign = 1; # TODO
-               $columns = $columns / ($sign * $blocks->{$keyPair});
+               $columns = new Matrix($columns / ($sign * $blocks->{$keyPair}));
             }
-            $chainmap = $chainmap | $columns;
+            $chainmap = new Matrix($chainmap | $columns);
          }
-         $result->[$d-$i] = $chainmap;
+         $result->[$d-$i] = new Matrix($chainmap);
       }
       $this->CHAIN_COMPLEX = $result;
    }
@@ -110,7 +110,6 @@ sub compute_sign{
 
 sub build_matrix{
    my($bigger, $smaller) = @_;
-   print "Bigger:\n",$bigger,"Smaller:\n",$smaller;
    my @images = map{
       my $v = $_;
       my $C = $bigger/(-$v);

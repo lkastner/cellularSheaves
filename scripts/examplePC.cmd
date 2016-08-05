@@ -20,7 +20,7 @@ print $pc->CHOSEN_BASES->{$t};
 $pc->CHAIN_COMPLEX;
 
 #############################################
-
+application "fan";
 $pc = new PolyhedralComplex(check_fan_objects(new Cone(cube(4))));
 $pc->CHAIN_COMPLEX;
 
