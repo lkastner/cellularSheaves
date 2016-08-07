@@ -169,3 +169,10 @@ sub compute_homology_dimension{
    my $homology = compute_homology($imof,$kerof);
    return $homology->rows()-rank($homology);
 }
+
+sub to_lattice_basis{
+   my($A) = @_;
+   my $Aint = new Matrix<Integer>(primitive($A));
+   my ($D, $L, $R) = @{smith_normal_form($Aint)};
+   return $R->minor([0..$A->rows()-1],All);
+}
