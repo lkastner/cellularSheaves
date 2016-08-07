@@ -24,4 +24,7 @@ application "fan";
 $pc = new PolyhedralComplex(check_fan_objects(new Cone(cube(4))));
 $pc->CHAIN_COMPLEX;
 
-
+$A = new Matrix([[1,0,0]]);
+$B = new Matrix([0],[0],[1]);
+print compute_homology($B,$A);
+print compute_homology_dimension($B,$A);

@@ -157,3 +157,15 @@ sub choose_basis{
    return $test;
 }
 
+sub compute_homology{
+   my($imof,$kerof) = @_;
+   my $ker = null_space($kerof);
+   my $relations = build_matrix($ker,transpose($imof));
+   return transpose($relations);
+}
+
+sub compute_homology_dimension{
+   my($imof, $kerof) = @_;
+   my $homology = compute_homology($imof,$kerof);
+   return $homology->rows()-rank($homology);
+}
