@@ -66,10 +66,50 @@ object PolyhedralComplex {
       $this->BLOCKS = $result;
    }
    
-   
- 	 rule ORIENTATIONS : HASSE_DIAGRAM, FAN_DIM, BLOCKS, VERTICES {
- 	  $this->ORIENTATIONS = 0;
+    	
+ 	rule ORIENTATIONS : HASSE_DIAGRAM, FAN_DIM, BLOCKS, VERTICES, CHOSEN_BASES {
+      # returns either 0, +1, -1 depending on the compatibility of thechosen ordered bases
+      my $d = $this->FAN_DIM - 1;
+      my $result = new Map<Pair<Set<Int>, Set<Int> >, Int>();
+      my $blocks = $this->BLOCKS;
+      my $vertices = $this->VERTICES;
+      my $hd = $this->HASSE_DIAGRAM;
+      my $chosenBases = $this->CHOSEN_BASES;
+      print $d,"\n";
+      for(my $i=0; $i<$d; $i++){
+         my $sigmas = $hd->nodes_of_dim($d-$i);
+         my $taus = $hd->nodes_of_dim($d-$i-1);
+         foreach my $sigma (@$sigmas) {
+            my $honestSigma = $hd->FACES->[$sigma];
+            foreach my $tau (@$taus) {
+               my $honestTau = $hd->FACES->[$tau];
+               my $keyPair = new Pair<Set<Int>, Set<Int> >($honestSigma, $honestTau);
+               my $test = $honestSigma*$honestTau;
+               if($test->size == $honestTau->size){
+                  my $honestNotInTau = $honestSigma - $honestTau;
+                  my $indexNotInTau = $honestNotInTau->[0];
+                  my $vectorNotInTau = $vertices->[$indexNotInTau];
+                  my $genVector = $vectorNotInTau; # - $vertices->[$honestTau[0]]; #This creates a vector in span of Sigma not in Tauand pointing same as Sigma
+                  my $genVector = new Matrix($genVector);
+                  my $sigmaBasis = $chosenBases->{$honestSigma};
+                  #my $relativeCol = new Matrix(build_matrix($sigmaBasis,  $genVector));
+                  #my $dxdMinus1 = $blocks->{$keyPair}; 
+                  my $baseChangeMatrix =  = new Matrix($d, $d); # new Matrix($relativeCol | $dxdMinus1);   
+                  if (det($baseChangeMatrix) >= 0){
+                     $sign = 1;
+                  } else {
+                     $sign = -1;
+                  }
+               } else { 
+                  $sign = 0;
+               }
+               $result->{$keyPair} = $sign;
+            }
+         } 
+      }
+      $this->ORIENTATIONS = $result;
    }
+
  	
 
    rule CHAIN_COMPLEX : HASSE_DIAGRAM, FAN_DIM, BLOCKS {
