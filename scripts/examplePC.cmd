@@ -23,9 +23,11 @@ $pc->CHAIN_COMPLEX;
 application "fan";
 $pc = new PolyhedralComplex(check_fan_objects(new Cone(cube(4))));
 $pc->CHAIN_COMPLEX;
+print $pc->CHAIN_COMPLEX->[2]*$pc->CHAIN_COMPLEX->[3];
+print $pc->CHAIN_COMPLEX->[3]*$pc->CHAIN_COMPLEX->[4];
 
-$A = new Matrix([[1,0,0]]);
-$B = new Matrix([0],[0],[1]);
+$A = $pc->CHAIN_COMPLEX->[2];
+$B = $pc->CHAIN_COMPLEX->[3];
 print compute_homology($B,$A);
 print compute_homology_dimension($B,$A);
 

@@ -1,0 +1,57 @@
+declare object Complex {
+
+   property INPUT_DIFFERENTIALS : Array<Matrix>;
+   
+   property DIFFERENTIALS : Array<Matrix>;
+
+   property HOMOLOGIES : Array<Matrix>;
+
+   property BETTI_NUMBERS : Vector<Int>;
+
+   rule DIFFERENTIALS : INPUT_DIFFERENTIALS {
+      my @input = @{$this->INPUT_DIFFERENTIALS};
+      my $n = @input;
+      my $first = new Matrix(0,$input[0]->rows);
+      my $last = new Matrix($input[$n-1]->cols,0);
+      unshift @input, $first;
+      push @input, $last;
+      $this->DIFFERENTIALS = new Array<Matrix>(@input);
+   }
+
+   rule HOMOLOGIES : DIFFERENTIALS {
+      my $differentials = $this->DIFFERENTIALS;
+      my $homologies = new Array<Matrix>($differentials->size - 1);
+      print "Hello.\n";
+      for(my $i = 0; $i<$differentials->size-1; $i++){
+         $homologies->[$i] = compute_homology($differentials->[$i+1], $differentials->[$i]);
+      }
+      $this->HOMOLOGIES = $homologies;
+   }
+
+   rule BETTI_NUMBERS : HOMOLOGIES {
+      my $homologies = $this->HOMOLOGIES;
+      my $betti_num = new Vector<Int>($homologies->size);
+      for(my $i = 0; $i<$homologies->size; $i++){
+         my $homology = $homologies->[$i];
+         $betti_num->[$i] = $homology->rows()-rank($homology);
+      }
+      $this->BETTI_NUMBERS = $betti_num;
+   }
+
+}
+
+
+
+sub compute_homology{
+   my($imof,$kerof) = @_;
+   my $ker = null_space($kerof);
+   my $relations = build_matrix($ker,transpose($imof));
+   return transpose($relations);
+}
+
+sub compute_homology_dimension{
+   my($imof, $kerof) = @_;
+   my $homology = compute_homology($imof,$kerof);
+   return $homology->rows()-rank($homology);
+}
+
