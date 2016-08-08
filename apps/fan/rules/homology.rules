@@ -65,6 +65,12 @@ object PolyhedralComplex {
       }
       $this->BLOCKS = $result;
    }
+   
+   
+ 	 rule ORIENTATIONS : HASSE_DIAGRAM, FAN_DIM, BLOCKS, VERTICES {
+ 	  $this->ORIENTATIONS = 0;
+   }
+ 	
 
    rule CHAIN_COMPLEX : HASSE_DIAGRAM, FAN_DIM, BLOCKS {
       my $d = $this->FAN_DIM - 1;
