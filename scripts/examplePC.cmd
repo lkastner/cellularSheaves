@@ -34,3 +34,8 @@ print compute_homology_dimension($B,$A);
 
 $A = new Matrix([[2, 1/2, 0],[1,0,0]]);
 print dense(to_lattice_basis($A));
+
+
+application "fan";
+$A = new Matrix([[1,2,3,4],[3,4,5,6],[7,8,9,0]]);
+print wedge_matrix($A, 2);
