@@ -2,12 +2,13 @@
 
 object PolyhedralComplex {
 
-   property CHAIN_COMPLEX : Array<Matrix>;
+   property CHAIN_COMPLEX : Complex;
 
    property BLOCKS : Map<Pair<Set<Int>, Set<Int> >, Matrix >;
 
    property CHOSEN_BASES : Map<Set<Int>, Matrix>;
 
+   property ORIENTATIONS : Map<Pair<Set<Int>, Set<Int> >, Int >;
 
    rule CHOSEN_BASES : VERTICES, HASSE_DIAGRAM, FAN_DIM {
       my $result = new Map<Set<Int>, Matrix>();
@@ -76,6 +77,7 @@ object PolyhedralComplex {
       my $hd = $this->HASSE_DIAGRAM;
       my $chosenBases = $this->CHOSEN_BASES;
       print $d,"\n";
+      my $sign;
       for(my $i=0; $i<$d; $i++){
          my $sigmas = $hd->nodes_of_dim($d-$i);
          my $taus = $hd->nodes_of_dim($d-$i-1);
@@ -89,12 +91,13 @@ object PolyhedralComplex {
                   my $honestNotInTau = $honestSigma - $honestTau;
                   my $indexNotInTau = $honestNotInTau->[0];
                   my $vectorNotInTau = $vertices->[$indexNotInTau];
-                  my $genVector = $vectorNotInTau; # - $vertices->[$honestTau[0]]; #This creates a vector in span of Sigma not in Tauand pointing same as Sigma
-                  my $genVector = new Matrix($genVector);
+                  my $genVector = $vectorNotInTau - $vertices->[$honestTau->[0]]; #This creates a vector in span of Sigma not in Tauand pointing same as Sigma
+                  $genVector = new Matrix($genVector);
                   my $sigmaBasis = $chosenBases->{$honestSigma};
-                  #my $relativeCol = new Matrix(build_matrix($sigmaBasis,  $genVector));
-                  #my $dxdMinus1 = $blocks->{$keyPair}; 
-                  my $baseChangeMatrix =  = new Matrix($d, $d); # new Matrix($relativeCol | $dxdMinus1);   
+                  print "SigmaBasis:\n", $sigmaBasis,"\n",$genVector,"\n";
+                  my $relativeRow = new Matrix(build_matrix($sigmaBasis,  $genVector));
+                  my $dxdMinus1 = $blocks->{$keyPair}; 
+                  my $baseChangeMatrix = new Matrix($relativeRow / $dxdMinus1);   
                   if (det($baseChangeMatrix) >= 0){
                      $sign = 1;
                   } else {
@@ -112,11 +115,12 @@ object PolyhedralComplex {
 
  	
 
-   rule CHAIN_COMPLEX : HASSE_DIAGRAM, FAN_DIM, BLOCKS {
+   rule CHAIN_COMPLEX : HASSE_DIAGRAM, FAN_DIM, BLOCKS, ORIENTATIONS {
       my $d = $this->FAN_DIM - 1;
       my $result = new Array<Matrix>($d+1);
       my $hd = $this->HASSE_DIAGRAM;
       my $blocks = $this->BLOCKS;
+      my $orientations = $this->ORIENTATIONS;
       for(my $i=0; $i<$d; $i++){
          my $sigmas = $hd->nodes_of_dim($d-$i);
          my $taus = $hd->nodes_of_dim($d-$i-1);
@@ -127,14 +131,14 @@ object PolyhedralComplex {
             foreach my $tau (@$taus) {
                my $honestTau = $hd->FACES->[$tau];
                my $keyPair = new Pair<Set<Int>, Set<Int> >($honestSigma, $honestTau);
-               my $sign = 1; # TODO
+               my $sign = $orientations->{$keyPair};
                $columns = new Matrix($columns / ($sign * $blocks->{$keyPair}));
             }
             $chainmap = new Matrix($chainmap | $columns);
          }
          $result->[$d-$i] = new Matrix($chainmap);
       }
-      $this->CHAIN_COMPLEX = $result;
+      $this->CHAIN_COMPLEX = new Complex(INPUT_DIFFERENTIALS=>$result);
    }
 
 }
@@ -203,18 +207,6 @@ sub choose_basis{
    return $test;
 }
 
-sub compute_homology{
-   my($imof,$kerof) = @_;
-   my $ker = null_space($kerof);
-   my $relations = build_matrix($ker,transpose($imof));
-   return transpose($relations);
-}
-
-sub compute_homology_dimension{
-   my($imof, $kerof) = @_;
-   my $homology = compute_homology($imof,$kerof);
-   return $homology->rows()-rank($homology);
-}
 
 sub to_lattice_basis{
    my($A) = @_;

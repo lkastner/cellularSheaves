@@ -1,3 +1,5 @@
 INCLUDE
+   complex.rules
    homology.rules
+
 
