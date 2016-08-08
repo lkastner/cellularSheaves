@@ -38,8 +38,28 @@ declare object Complex {
       $this->BETTI_NUMBERS = $betti_num;
    }
 
+   user_method wedge( $ ){
+      my($this, $p) = @_;
+      #TODO
+      return 0;
+   }
+
 }
 
+sub wedge_matrix{
+   my($A, $p) = @_;
+   my @rowBases = all_subsets_of_k($p, (0..$A->rows -1));
+   my @colBases = all_subsets_of_k($p, (0..$A->cols -1));
+   my @result = ();
+   for(my $i=0; $i<@rowBases; $i++){
+      my @tmp = ();
+      for(my $j=0; $j<@colBases; $j++){
+         push @tmp, det($A->minor($rowBases[$i], $colBases[$j]));
+      }
+      push @result, new Vector(@tmp);
+   }
+   return new Matrix(@result);
+}
 
 
 sub compute_homology{
