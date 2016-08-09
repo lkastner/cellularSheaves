@@ -128,13 +128,14 @@ object PolyhedralComplex {
          my $chainmap = new Matrix($taus->size * ($d-$i-1), 0);
          foreach my $sigma (@$sigmas) {
             my $honestSigma = $hd->FACES->[$sigma];
-            my $columns = new Matrix(0, $d-$i);
+            my $columns = zero_matrix(0, $d-$i);
             foreach my $tau (@$taus) {
                my $honestTau = $hd->FACES->[$tau];
                my $keyPair = new Pair<Set<Int>, Set<Int> >($honestSigma, $honestTau);
                my $sign = $orientations->{$keyPair};
                $columns = new Matrix($columns / ($sign * $blocks->{$keyPair}));
             }
+            print $columns,"\n";
             $chainmap = new Matrix($chainmap | $columns);
          }
          print "Rows: ",$chainmap->rows," Cols: ",$chainmap->cols,"\n";
