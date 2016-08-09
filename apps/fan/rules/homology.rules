@@ -124,20 +124,32 @@ object PolyhedralComplex {
       for(my $i=0; $i<$d-1; $i++){
          my $sigmas = $hd->nodes_of_dim($d-$i);
          my $taus = $hd->nodes_of_dim($d-$i-1);
-         print "i: ", $i," Sigmas: ",$sigmas->size," Taus: ",$taus->size,"\n";
-         my $chainmap = new Matrix($taus->size * ($d-$i-1), 0);
+         # print "i: ", $i," Sigmas: ",$sigmas->size," Taus: ",$taus->size,"\n";
+         my $chainmap = 0;
+         my $outerinit = 0;
          foreach my $sigma (@$sigmas) {
             my $honestSigma = $hd->FACES->[$sigma];
-            my $columns = zero_matrix(0, $d-$i);
+            my $columns = 0;
+            my $init = 0;
             foreach my $tau (@$taus) {
                my $honestTau = $hd->FACES->[$tau];
                my $keyPair = new Pair<Set<Int>, Set<Int> >($honestSigma, $honestTau);
                my $sign = $orientations->{$keyPair};
-               $columns = new Matrix($columns / ($sign * $blocks->{$keyPair}));
+               if($init == 0){
+                  $columns = $sign * $blocks->{$keyPair};
+                  $init = 1;
+               } else {
+                  $columns = new Matrix($columns / ($sign * $blocks->{$keyPair}));
+               }
             }
-            $chainmap = new Matrix($chainmap | $columns);
+            if($outerinit == 0){
+               $chainmap = $columns;
+               $outerinit =1;
+            } else {
+               $chainmap = new Matrix($chainmap | $columns);
+            }
          }
-         print "Rows: ",$chainmap->rows," Cols: ",$chainmap->cols,"\n";
+         # print "Rows: ",$chainmap->rows," Cols: ",$chainmap->cols,"\n";
          $result->[$d-$i] = new Matrix($chainmap);
       }
       $result->[1] = zero_matrix(0,$result->[2]->rows);
