@@ -95,7 +95,7 @@ sub wedge_matrix{
    }
    my $k = $n>=$p ? binomial($n,$p) : 0;
    my $l = $m>=$p ? binomial($m,$p) : 0;
-   return new Matrix($k,$l);
+   return zero_matrix($k,$l);
 }
 
 
