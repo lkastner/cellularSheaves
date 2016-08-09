@@ -121,7 +121,7 @@ object PolyhedralComplex {
       my $hd = $this->HASSE_DIAGRAM;
       my $blocks = $this->BLOCKS;
       my $orientations = $this->ORIENTATIONS;
-      for(my $i=0; $i<$d; $i++){
+      for(my $i=0; $i<$d-1; $i++){
          my $sigmas = $hd->nodes_of_dim($d-$i);
          my $taus = $hd->nodes_of_dim($d-$i-1);
          print "i: ", $i," Sigmas: ",$sigmas->size," Taus: ",$taus->size,"\n";
@@ -135,12 +135,12 @@ object PolyhedralComplex {
                my $sign = $orientations->{$keyPair};
                $columns = new Matrix($columns / ($sign * $blocks->{$keyPair}));
             }
-            print $columns,"\n";
             $chainmap = new Matrix($chainmap | $columns);
          }
          print "Rows: ",$chainmap->rows," Cols: ",$chainmap->cols,"\n";
          $result->[$d-$i] = new Matrix($chainmap);
       }
+      $result->[1] = zero_matrix(0,$result->[2]->rows);
       $this->CHAIN_COMPLEX = new Complex(INPUT_DIFFERENTIALS=>$result);
    }
 
