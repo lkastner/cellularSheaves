@@ -137,6 +137,7 @@ object PolyhedralComplex {
             }
             $chainmap = new Matrix($chainmap | $columns);
          }
+         print "Rows: ",$chainmap->rows," Cols: ",$chainmap->cols,"\n";
          $result->[$d-$i] = new Matrix($chainmap);
       }
       $this->CHAIN_COMPLEX = new Complex(INPUT_DIFFERENTIALS=>$result);
