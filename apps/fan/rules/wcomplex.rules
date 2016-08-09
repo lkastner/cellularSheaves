@@ -1,0 +1,14 @@
+object PolyhedralComplex {
+
+   user_method wcomplex( $ ){
+      my($oldpc, $p) = @_;
+      my $oldblocks = $oldpc->BLOCKS;
+      my $newblocks = new Map<Pair<Set<Int>, Set<Int> >, Matrix >();
+      foreach my $key (keys %$oldblocks){
+         $newblocks->{$key} = wedge_matrix($oldblocks->{$key}, $p);
+      }
+      return new PolyhedralComplex(VERTICES=>$oldpc->VERTICES, MAXIMAL_POLYTOPES=>$oldpc->MAXIMAL_POLYTOPES, BLOCKS=>$newblocks, ORIENTATIONS=>$oldpc->ORIENTATIONS, HASSE_DIAGRAM=>$oldpc->HASSE_DIAGRAM);
+   }
+
+}
+
