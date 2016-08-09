@@ -23,7 +23,7 @@ declare object Complex {
    rule HOMOLOGIES : DIFFERENTIALS {
       my $differentials = $this->DIFFERENTIALS;
       my $homologies = new Array<Matrix>($differentials->size - 1);
-      print "Hello.\n";
+      # print "Hello.\n";
       for(my $i = 0; $i<$differentials->size-1; $i++){
          $homologies->[$i] = compute_homology($differentials->[$i+1], $differentials->[$i]);
          print "Rows: ",$homologies->[$i]->rows," cols: ",$homologies->[$i]->cols,"\n";
@@ -75,13 +75,13 @@ declare object Complex {
 
 sub wedge_matrix{
    my($A, $p) = @_;
-   print "Hello\n";
+   # print "Hello\n";
    my $n = $A->rows;
    my $m = $A->cols;
    if ($p <= $n && $p <= $m){
       my @rowBases = all_subsets_of_k($p, (0..$n -1));
       my @colBases = all_subsets_of_k($p, (0..$m -1));
-      print scalar @rowBases;
+      # print scalar @rowBases;
       print "\n";
       my @result = ();
       for(my $i=0; $i<@rowBases; $i++){

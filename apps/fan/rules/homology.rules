@@ -176,14 +176,14 @@ sub build_matrix{
 
 sub build_cone{
    my($vertices, $indexSet, $common) = @_;
-   print "Building cone: ",$indexSet,"\n";
+   # print "Building cone: ",$indexSet,"\n";
    my $rays = new Matrix($vertices->minor($indexSet, All));
-   print $rays,"----\n";
+   # print $rays,"----\n";
    my $v = $vertices->[$common];
-   print $v,"\n----\n";
+   # print $v,"\n----\n";
    $rays = new Matrix(map{$_-$v}@$rays);
    $rays = $rays->minor(All, ~[0]);
-   print $rays;
+   # print $rays;
    return new Cone(INPUT_RAYS=>$rays);
 }
 
