@@ -17,7 +17,7 @@ object PolyhedralComplex {
       my $hd = $this->HASSE_DIAGRAM;
       for(my $i=0; $i<=$d; $i++){
          my $sigmaDim = $d - $i;
-         print "Looking at dim ",$sigmaDim,"\n";
+         # print "Looking at dim ",$sigmaDim,"\n";
          my $sigmas = $hd->nodes_of_dim($sigmaDim);
          foreach my $sigma (@$sigmas) {
             my $honestSigma = $hd->FACES->[$sigma];
@@ -41,7 +41,7 @@ object PolyhedralComplex {
       my $d = $this->FAN_DIM - 1;
       my $chosenBases = $this->CHOSEN_BASES;
       my $hd = $this->HASSE_DIAGRAM;
-      print $d,"\n";
+      # print $d,"\n";
       for(my $i=0; $i<$d; $i++){
          my $sigmas = $hd->nodes_of_dim($d-$i);
          my $taus = $hd->nodes_of_dim($d-$i-1);
@@ -50,7 +50,7 @@ object PolyhedralComplex {
             foreach my $tau (@$taus) {
                my $honestTau = $hd->FACES->[$tau];
                my $keyPair = new Pair<Set<Int>, Set<Int> >($honestSigma, $honestTau);
-               print $honestSigma," - ",$honestTau," - ",compute_sign($honestSigma, $honestTau),"\n";
+               # print $honestSigma," - ",$honestTau," - ",compute_sign($honestSigma, $honestTau),"\n";
                my $sigmaBasis = $chosenBases->{$honestSigma};
                my $tauBasis = $chosenBases->{$honestTau};
                my $map;
@@ -76,7 +76,7 @@ object PolyhedralComplex {
       my $vertices = $this->VERTICES;
       my $hd = $this->HASSE_DIAGRAM;
       my $chosenBases = $this->CHOSEN_BASES;
-      print $d,"\n";
+      # print $d,"\n";
       my $sign;
       for(my $i=0; $i<$d; $i++){
          my $sigmas = $hd->nodes_of_dim($d-$i);
@@ -94,7 +94,7 @@ object PolyhedralComplex {
                   my $genVector = $vectorNotInTau - $vertices->[$honestTau->[0]]; #This creates a vector in span of Sigma not in Tauand pointing same as Sigma
                   $genVector = new Matrix($genVector);
                   my $sigmaBasis = $chosenBases->{$honestSigma};
-                  print "SigmaBasis:\n", $sigmaBasis,"\n",$genVector,"\n";
+                  # print "SigmaBasis:\n", $sigmaBasis,"\n",$genVector,"\n";
                   my $relativeRow = new Matrix(build_matrix($sigmaBasis,  $genVector));
                   my $dxdMinus1 = $blocks->{$keyPair}; 
                   my $baseChangeMatrix = new Matrix($relativeRow / $dxdMinus1);   
@@ -124,6 +124,7 @@ object PolyhedralComplex {
       for(my $i=0; $i<$d; $i++){
          my $sigmas = $hd->nodes_of_dim($d-$i);
          my $taus = $hd->nodes_of_dim($d-$i-1);
+         print "i: ", $i," Sigmas: ",$sigmas->size," Taus: ",$taus->size,"\n";
          my $chainmap = new Matrix($taus->size * ($d-$i-1), 0);
          foreach my $sigma (@$sigmas) {
             my $honestSigma = $hd->FACES->[$sigma];
