@@ -82,7 +82,7 @@ sub wedge_matrix{
       my @rowBases = all_subsets_of_k($p, (0..$n -1));
       my @colBases = all_subsets_of_k($p, (0..$m -1));
       # print scalar @rowBases;
-      print "\n";
+      # print "\n";
       my @result = ();
       for(my $i=0; $i<@rowBases; $i++){
          my @tmp = ();
@@ -95,7 +95,7 @@ sub wedge_matrix{
    }
    my $k = $n>=$p ? binomial($n,$p) : 0;
    my $l = $m>=$p ? binomial($m,$p) : 0;
-   return( new Matrix($k,$l));
+   return new Matrix($k,$l);
 }
 
 
