@@ -24,6 +24,7 @@ declare object Complex {
       print "Hello.\n";
       for(my $i = 0; $i<$differentials->size-1; $i++){
          $homologies->[$i] = compute_homology($differentials->[$i+1], $differentials->[$i]);
+         print "Rows: ",$homologies->[$i]->rows," cols: ",$homologies->[$i]->cols,"\n";
       }
       $this->HOMOLOGIES = $homologies;
    }
