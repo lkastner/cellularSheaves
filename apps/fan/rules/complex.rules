@@ -8,6 +8,8 @@ declare object Complex {
 
    property BETTI_NUMBERS : Vector<Int>;
 
+   property IS_WELLDEFINED : Bool; 
+
    rule DIFFERENTIALS : INPUT_DIFFERENTIALS {
       my @input = @{$this->INPUT_DIFFERENTIALS};
       my $n = @input;
@@ -38,27 +40,61 @@ declare object Complex {
       $this->BETTI_NUMBERS = $betti_num;
    }
 
-   user_method wedge( $ ){
+   rule IS_WELLDEFINED : DIFFERENTIALS {
+      my $differentials = $this->DIFFERENTIALS;
+      for (my $i=0; $i<$differentials->size-1;$i++){
+         if ($differentials->[$i]->cols != $differentials->[$i+1]->rows){
+            $this->IS_WELLDEFINED = 0;
+            print "Dimension mismatch at position ",$i,"\n";
+            return;
+         }
+         else{
+            my $test = $differentials->[$i]*$differentials->[$i+1];
+            if($test != zero_matrix($test->rows,$test->cols)){
+               $this->IS_WELLDEFINED =0;
+               print "Not a differential at position ",$i,"\n";
+               return;
+            }
+         }
+      }
+      $this->IS_WELLDEFINED = 1;
+   }
+
+   user_method wedge_complex( $ ){
       my($this, $p) = @_;
-      #TODO
-      return 0;
+      my $old_differentials = $this->DIFFERENTIALS;
+      my $new_differentials = new Array<Matrix>($this->DIFFERENTIALS->size()-1);
+      for(my $i = 0; $i<$new_differentials->size; $i++){
+         $new_differentials->[$i] = wedge_matrix($old_differentials->[$i],$p);
+      }
+      return new Complex(DIFFERENTIALS=>$new_differentials);
    }
 
 }
 
 sub wedge_matrix{
    my($A, $p) = @_;
-   my @rowBases = all_subsets_of_k($p, (0..$A->rows -1));
-   my @colBases = all_subsets_of_k($p, (0..$A->cols -1));
-   my @result = ();
-   for(my $i=0; $i<@rowBases; $i++){
-      my @tmp = ();
-      for(my $j=0; $j<@colBases; $j++){
-         push @tmp, det($A->minor($rowBases[$i], $colBases[$j]));
+   print "Hello\n";
+   my $n = $A->rows;
+   my $m = $A->cols;
+   if ($p <= $n && $p <= $m){
+      my @rowBases = all_subsets_of_k($p, (0..$n -1));
+      my @colBases = all_subsets_of_k($p, (0..$m -1));
+      print scalar @rowBases;
+      print "\n";
+      my @result = ();
+      for(my $i=0; $i<@rowBases; $i++){
+         my @tmp = ();
+         for(my $j=0; $j<@colBases; $j++){
+            push @tmp, det($A->minor($rowBases[$i], $colBases[$j]));
+         }
+         push @result, new Vector(@tmp);
       }
-      push @result, new Vector(@tmp);
+      return new Matrix(@result);
    }
-   return new Matrix(@result);
+   my $k = $n>=$p ? binomial($n,$p) : 0;
+   my $l = $m>=$p ? binomial($m,$p) : 0;
+   return( new Matrix($k,$l));
 }
 
 
