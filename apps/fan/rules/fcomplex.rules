@@ -1,0 +1,34 @@
+object PolyhedralComplex {
+
+ 
+}
+
+ 
+sub find_max_containing{
+   my($honestTau, $pc) = @_;
+   my $max_cones = $pc->MAXIMAL_CONES;
+   my @result = ();
+   foreach my $sigma (@$max_cones) {
+   		my $test = $sigma*$honestTau;
+        if($test->size == $honestTau->size){
+        	push @result, $sigma;
+        }
+    }
+	return @result;
+}
+
+
+sub build_matrix_f{
+	my($honestTau, $pc, $p) =@_;
+	my $n = $pc->AMBIENT_DIM;
+	my @max_cones_tau = find_max_containing($honestTau, $pc);
+	my $cols = new Int(binomial($n, $p));
+	my $generators  = zero_matrix(1, $cols);
+	my $chosenBases = $pc->CHOSEN_BASES;  #this is really unnecessary, only need CHOSEN_BASES top cones.
+	foreach my $sigma (@max_cones_tau) {
+		my $wedged_basis = new Matrix wedge_matrix($chosenBases->{$sigma}, $p);	
+		print $wedged_basis ,"\n";
+		$generators = new Matrix( $generators / $wedged_basis);
+	}	
+	return choose_basis_cpp($generators);
+}

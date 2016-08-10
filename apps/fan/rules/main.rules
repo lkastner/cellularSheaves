@@ -2,6 +2,7 @@ INCLUDE
    complex.rules
    homology.rules
    wcomplex.rules
+   fcomplex.rules
 
 user_function wedge_matrix_cpp<Element=Rational>(Matrix, $ ) : c++ (include => "polymake/fan/linalg_tools.h");
 
