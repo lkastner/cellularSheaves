@@ -1,5 +1,5 @@
 INCLUDE
-   homology.rules
+   basic.rules
    complex.rules
    wcomplex.rules
 
