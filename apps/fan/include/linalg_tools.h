@@ -40,18 +40,18 @@ wedge_matrix(const Matrix<E>& input, int n){
    Matrix<E> result;
    nrows = input.rows();
    ncols = input.cols();
-   resultNrows = (int) Integer::binom(nrows, n);
-   resultNcols = (int) Integer::binom(ncols, n);
+   resultNrows = Integer::binom(nrows, n).to_int();
+   resultNcols = Integer::binom(ncols, n).to_int();
    if((resultNrows == 0) || (resultNcols == 0)){
       return zero_matrix<E>(resultNrows, resultNcols);
    }
    result = Matrix<E>(resultNrows, resultNcols);
    i=0;
-   for (auto selectedRow=entire(all_subsets_of_k(sequence(0,nrows),n)); !selectedRow.at_end(); ++selectedRow) {
+   for (Entire<Subsets_of_k<const sequence&> >::const_iterator selectedRow=entire(all_subsets_of_k(sequence(0,nrows),n)); !selectedRow.at_end(); ++selectedRow) {
       j=0;
       cout << *selectedRow << endl;
-      for (auto selectedCol=entire(all_subsets_of_k(sequence(0,ncols),n)); !selectedCol.at_end(); ++selectedCol) {
-         result(i,j) = det(input.minor(*selectedRow, *selectedCol));
+      for (Entire<Subsets_of_k<const sequence&> >::const_iterator selectedCol=entire(all_subsets_of_k(sequence(0,ncols),n)); !selectedCol.at_end(); ++selectedCol) {
+         result(i,j) = pm::det(input.minor(*selectedRow, *selectedCol));
          j++;
       }
       i++;
@@ -64,7 +64,7 @@ Matrix<E>
 choose_basis(const Matrix<E>& input){
 	int desired = rank(input), current = 0, test;
 	Matrix<E> result(0, input.cols());
-	for(auto rowit = entire(rows(input)); !rowit.at_end(); ++rowit){
+	for(typename Entire<Rows<Matrix<E> > >::const_iterator rowit = entire(rows(input)); !rowit.at_end(); ++rowit){
 		if(desired == rank(result)){
 			return result;
 		}
@@ -79,9 +79,9 @@ choose_basis(const Matrix<E>& input){
 
 template <typename E> inline
 Matrix<E>
-assemble_matrix(const Array<Set<int>> sigmas, 
-               const Array<Set<int>> taus, 
-               const Map<std::pair<Set<int>, Set<int> >, Matrix<E>> blocks, 
+assemble_matrix(const Array<Set<int> > sigmas, 
+               const Array<Set<int> > taus, 
+               const Map<std::pair<Set<int>, Set<int> >, Matrix<E> > blocks, 
                const Map<std::pair<Set<int>, Set<int> >, int> orientations){
    int nrows = taus.size(), ncols = sigmas.size(), i, j, blockRow, blockCol;
    std::pair<Set<int>, Set<int> > first_pair(sigmas[0], taus[0]), currentPair;
@@ -93,9 +93,9 @@ assemble_matrix(const Array<Set<int>> sigmas,
    ncols *= blockCol;
    Matrix<E> result(nrows, ncols);
    i = 0;
-   for(auto tau = entire(taus); !tau.at_end(); ++tau){
+   for(typename Entire<Array<Set<int> > >::const_iterator tau = entire(taus); !tau.at_end(); ++tau){
       j = 0;
-      for(auto sigma = entire(sigmas); !sigma.at_end(); ++sigma){
+      for(typename Entire<Array<Set<int> > >::const_iterator sigma = entire(sigmas); !sigma.at_end(); ++sigma){
          currentPair = std::pair<Set<int>, Set<int> >(*sigma, *tau);
          cout << "Hello." << endl;
          cout << result << endl;
