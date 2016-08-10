@@ -1,0 +1,49 @@
+declare object Sheaf {
+   
+   property BASES : Map<Set<Int>, Matrix>;
+   
+   property BLOCKS : Map<Pair<Set<Int>, Set<Int> >, Matrix >;
+
+   property CHAIN_COMPLEX : ChainComplex;
+
+}
+
+declare object CoSheaf {
+   
+   property BASES : Map<Set<Int>, Matrix>;
+   
+   property BLOCKS : Map<Pair<Set<Int>, Set<Int> >, Matrix >;
+
+   property CHAIN_COMPLEX : ChainComplex;
+   
+}
+
+object PolyhedralComplex {
+
+   property SHEAF : Sheaf : multiple;
+   
+   property COSHEAF : CoSheaf : multiple;
+
+   rule SHEAF.CHAIN_COMPLEX.INPUT_DIFFERENTIALS : HASSE_DIAGRAM, FAN_DIM, SHEAF.BLOCKS, ORIENTATIONS {
+      my $d = $this->FAN_DIM - 1;
+      my $result = new Array<Matrix>($d+1);
+      my $hd = $this->HASSE_DIAGRAM;
+      my $blocks = $this->SHEAF->BLOCKS;
+      my $orientations = $this->ORIENTATIONS;
+      for(my $i=0; $i<$d-1; $i++){
+         # print "i: ", $i," Sigmas: ",$sigmas->size," Taus: ",$taus->size,"\n";
+         my $s = $hd->nodes_of_dim($d-$i);
+         my @s = map($hd->FACES->[$_], @$s);
+         my $sigmas = new Array<Set<Int> >(\@s);
+         my $t = $hd->nodes_of_dim($d-$i-1);
+         my @t = map($hd->FACES->[$_], @$t);
+         my $taus = new Array<Set<Int> >(\@t);
+         $result->[$d-$i] = assemble_matrix($sigmas, $taus, $blocks, $orientations);
+      }
+      $result->[1] = zero_matrix(0,$result->[2]->rows);
+      $this->SHEAF->CHAIN_COMPLEX->INPUT_DIFFERENTIALS = $result;
+   }
+
+   # rule SHEAF.BLOCKS : ... SHEAF.BASES{...}
+
+}
