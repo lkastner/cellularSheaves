@@ -116,6 +116,20 @@ assemble_matrix_cpp(const Array<Set<int> > sigmas,
    
 }
 
+template <typename E> inline
+Matrix<E>
+build_matrix_cpp(const Matrix<E>& bigger, const Matrix<E>& smaller){
+  Matrix<E> result(smaller.rows(), bigger.cols()),test,image;
+   for(typename Entire<Rows<Matrix<E> > >::const_iterator rowit = entire(rows(smaller)); !rowit.at_end(); ++rowit){
+      test = bigger / *rowit;
+      image = null_space(test);
+      cout << image << endl;
+   }
+   return result;
+}
+ 
+   
+
 } // namespace fan
 } // namespace polymake
 #endif

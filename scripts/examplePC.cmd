@@ -21,6 +21,9 @@ print $pc->CHOSEN_BASES->{$t};
 application "fan";
 $pc = new PolyhedralComplex(check_fan_objects(new Cone(cube(4))));
 
+$A = zero_matrix(4,3);
+print choose_basis($A)->rows;
+print choose_basis($A)->cols;
 
 
 $A = new Matrix([[2, 1/2, 0],[1,0,0]]);
