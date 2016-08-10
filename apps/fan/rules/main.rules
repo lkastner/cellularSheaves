@@ -7,6 +7,8 @@ user_function wedge_matrix_cpp<Element=Rational>(Matrix, $ ) : c++ (include => "
 
 user_function choose_basis_cpp<Element=Rational>(Matrix) : c++ (include => "polymake/fan/linalg_tools.h");
 
+user_function build_matrix_cpp<Element=Rational>(Matrix,Matrix) : c++ (include => "polymake/fan/linalg_tools.h");
+
 user_function assemble_matrix_cpp<Element=Rational>(Array<Set<Int>>, Array<Set<Int>>, Map<Pair<Set<Int>, Set<Int> >, Matrix>, Map<Pair<Set<Int>, Set<Int> >, Int>) : c++ (include => "polymake/fan/linalg_tools.h");
 
 sub assemble_matrix{
