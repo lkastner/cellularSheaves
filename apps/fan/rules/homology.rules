@@ -202,25 +202,25 @@ sub build_cone{
    return new Cone(INPUT_RAYS=>$rays);
 }
 
-sub choose_basis{
-   my($A) = @_;
-   my @result = ();
-   my $desired = rank($A);
-   my $ambient = $A->cols();
-   my $zero = zero_vector($ambient);
-   my @gens = @$A;
-   @gens = grep($_ != $zero, @gens);
-   push @result, shift @gens;
-   my $test = new Matrix(@result);
-   while(rank($test) < $desired){
-      my $next = shift @gens;
-      if(rank($test / $next) > rank($test)){
-         push @result, $next;
-         $test = new Matrix(@result);
-      }
-   }
-   return $test;
-}
+# sub choose_basis{
+#    my($A) = @_;
+#    my @result = ();
+#    my $desired = rank($A);
+#    my $ambient = $A->cols();
+#    my $zero = zero_vector($ambient);
+#    my @gens = @$A;
+#    @gens = grep($_ != $zero, @gens);
+#    push @result, shift @gens;
+#    my $test = new Matrix(@result);
+#    while(rank($test) < $desired){
+#       my $next = shift @gens;
+#       if(rank($test / $next) > rank($test)){
+#          push @result, $next;
+#          $test = new Matrix(@result);
+#       }
+#    }
+#    return $test;
+# }
 
 
 sub to_lattice_basis{

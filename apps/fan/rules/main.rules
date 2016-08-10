@@ -3,4 +3,6 @@ INCLUDE
    homology.rules
    wcomplex.rules
 
+user_function wedge_matrix<Element=Rational>(Matrix, $ ) : c++ (include => "polymake/fan/linalg_tools.h");
 
+user_function choose_basis<Element=Rational>(Matrix) : c++ (include => "polymake/fan/linalg_tools.h");
