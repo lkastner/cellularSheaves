@@ -7,7 +7,8 @@ object PolyhedralComplex {
       foreach my $key (keys %$simpleBlocks){
          $newblocks->{$key} = wedge_matrix($simpleBlocks->{$key}, $p);
       }
-      return new ChainComplex(PC=>$pc, BLOCKS=>$newblocks);
+      my $sheaf = $pc->add("SHEAF", BLOCKS=>$newblocks);
+      return $sheaf;
    }
 
 }
