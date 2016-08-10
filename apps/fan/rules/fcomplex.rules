@@ -1,7 +1,8 @@
 object PolyhedralComplex {
 
- 
+
 }
+
 
  
 sub find_max_containing{
@@ -27,7 +28,6 @@ sub build_matrix_f{
 	my $chosenBases = $pc->CHOSEN_BASES;  #this is really unnecessary, only need CHOSEN_BASES top cones.
 	foreach my $sigma (@max_cones_tau) {
 		my $wedged_basis = new Matrix wedge_matrix($chosenBases->{$sigma}, $p);	
-		print $wedged_basis ,"\n";
 		$generators = new Matrix( $generators / $wedged_basis);
 	}	
 	return choose_basis_cpp($generators);
