@@ -1,6 +1,6 @@
 INCLUDE
+   basics.rules
    complex.rules
-   homology.rules
    wcomplex.rules
    fcomplex.rules
 
@@ -19,5 +19,16 @@ sub assemble_matrix{
       return zero_matrix($nrows, $ncols);
    } else {
       return assemble_matrix_cpp($sigmas, $taus, $blocks, $orientations);
+   }
+}
+
+sub choose_basis{
+   my($A) = @_;
+   my $desired = rank($A);
+   if($desired == 0){
+      return zero_matrix($A->rows,0);
+   }
+   else{
+      return choose_basis_cpp($A);
    }
 }
