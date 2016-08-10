@@ -1,13 +1,13 @@
 object PolyhedralComplex {
 
    user_method wcomplex( $ ){
-      my($oldpc, $p) = @_;
-      my $oldblocks = $oldpc->BLOCKS;
+      my($pc, $p) = @_;
+      my $simpleBlocks = $pc->SIMPLE_BLOCKS;
       my $newblocks = new Map<Pair<Set<Int>, Set<Int> >, Matrix >();
-      foreach my $key (keys %$oldblocks){
-         $newblocks->{$key} = wedge_matrix($oldblocks->{$key}, $p);
+      foreach my $key (keys %$simpleBlocks){
+         $newblocks->{$key} = wedge_matrix($simpleBlocks->{$key}, $p);
       }
-      return new PolyhedralComplex(VERTICES=>$oldpc->VERTICES, MAXIMAL_POLYTOPES=>$oldpc->MAXIMAL_POLYTOPES, BLOCKS=>$newblocks, ORIENTATIONS=>$oldpc->ORIENTATIONS, HASSE_DIAGRAM=>$oldpc->HASSE_DIAGRAM);
+      return new ChainComplex(PC=>$pc, BLOCKS=>$newblocks);
    }
 
 }
