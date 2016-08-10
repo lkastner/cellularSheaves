@@ -29,6 +29,7 @@ object PolyhedralComplex {
                $result->{$honestSigma} = new Matrix(0, $d);
             } else {
                $result->{$honestSigma} = choose_basis($generators);
+               print "Chosen basis is:\n",$result->{$honestSigma},"\n";
             }
          }
       }
@@ -122,35 +123,14 @@ object PolyhedralComplex {
       my $blocks = $this->BLOCKS;
       my $orientations = $this->ORIENTATIONS;
       for(my $i=0; $i<$d-1; $i++){
-         my $sigmas = $hd->nodes_of_dim($d-$i);
-         my $taus = $hd->nodes_of_dim($d-$i-1);
          # print "i: ", $i," Sigmas: ",$sigmas->size," Taus: ",$taus->size,"\n";
-         my $chainmap = 0;
-         my $outerinit = 0;
-         foreach my $sigma (@$sigmas) {
-            my $honestSigma = $hd->FACES->[$sigma];
-            my $columns = 0;
-            my $init = 0;
-            foreach my $tau (@$taus) {
-               my $honestTau = $hd->FACES->[$tau];
-               my $keyPair = new Pair<Set<Int>, Set<Int> >($honestSigma, $honestTau);
-               my $sign = $orientations->{$keyPair};
-               if($init == 0){
-                  $columns = $sign * $blocks->{$keyPair};
-                  $init = 1;
-               } else {
-                  $columns = new Matrix($columns / ($sign * $blocks->{$keyPair}));
-               }
-            }
-            if($outerinit == 0){
-               $chainmap = $columns;
-               $outerinit =1;
-            } else {
-               $chainmap = new Matrix($chainmap | $columns);
-            }
-         }
-         # print "Rows: ",$chainmap->rows," Cols: ",$chainmap->cols,"\n";
-         $result->[$d-$i] = new Matrix($chainmap);
+         my $s = $hd->nodes_of_dim($d-$i);
+         my @s = map($hd->FACES->[$_], @$s);
+         my $sigmas = new Array<Set<Int> >(\@s);
+         my $t = $hd->nodes_of_dim($d-$i-1);
+         my @t = map($hd->FACES->[$_], @$t);
+         my $taus = new Array<Set<Int> >(\@t);
+         $result->[$d-$i] = assemble_matrix($sigmas, $taus, $blocks, $orientations);
       }
       $result->[1] = zero_matrix(0,$result->[2]->rows);
       $this->CHAIN_COMPLEX = new Complex(INPUT_DIFFERENTIALS=>$result);

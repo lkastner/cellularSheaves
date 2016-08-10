@@ -74,9 +74,43 @@ choose_basis(const Matrix<E>& input){
 			result /= *rowit;
 		}
 	}
-   return input;
+   return result;
 }
 
+template <typename E> inline
+Matrix<E>
+assemble_matrix(const Array<Set<int>> sigmas, 
+               const Array<Set<int>> taus, 
+               const Map<std::pair<Set<int>, Set<int> >, Matrix<E>> blocks, 
+               const Map<std::pair<Set<int>, Set<int> >, int> orientations){
+   int nrows = taus.size(), ncols = sigmas.size(), i, j, blockRow, blockCol;
+   std::pair<Set<int>, Set<int> > first_pair(sigmas[0], taus[0]), currentPair;
+   cout << "FP: " << first_pair << endl;
+   cout << blocks << endl;
+   blockRow = blocks[first_pair].rows();
+   blockCol = blocks[first_pair].cols();
+   nrows *= blockRow;
+   ncols *= blockCol;
+   Matrix<E> result(nrows, ncols);
+   i = 0;
+   for(auto tau = entire(taus); !tau.at_end(); ++tau){
+      j = 0;
+      for(auto sigma = entire(sigmas); !sigma.at_end(); ++sigma){
+         currentPair = std::pair<Set<int>, Set<int> >(*sigma, *tau);
+         cout << "Hello." << endl;
+         cout << result << endl;
+         cout << blocks[currentPair] << endl;
+         cout << i*blockRow << " " << (i+1)*blockRow << endl;
+         cout << j*blockCol << " " << (j+1)*blockCol << endl;
+         cout << sequence(3,5) << endl;
+         result.minor(sequence(i*blockRow, blockRow), sequence(j*blockCol, blockCol)) = orientations[currentPair] * blocks[currentPair];
+         j++;
+      }
+      i++;
+   }
+   return result;
+   
+}
 
 } // namespace fan
 } // namespace polymake
