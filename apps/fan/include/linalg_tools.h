@@ -119,13 +119,20 @@ assemble_matrix_cpp(const Array<Set<int> > sigmas,
 template <typename E> inline
 Matrix<E>
 build_matrix_cpp(const Matrix<E>& bigger, const Matrix<E>& smaller){
-  Matrix<E> result(smaller.rows(), bigger.cols()),test,image;
+  Matrix<E> result(0, bigger.cols()+1),test,image;
+  E lastVal;
    for(typename Entire<Rows<Matrix<E> > >::const_iterator rowit = entire(rows(smaller)); !rowit.at_end(); ++rowit){
       test = bigger / *rowit;
-      image = null_space(test);
-      cout << image << endl;
+      image = null_space(T(test));
+      if (image.rows() != 1){
+         
+      }
+      lastVal = image(0,image.cols()-1);
+      image = -1/lastVal * image;
+      result /= image;
+
    }
-   return result;
+   return result.minor(All,~scalar2set(result.cols()-1));
 }
  
    

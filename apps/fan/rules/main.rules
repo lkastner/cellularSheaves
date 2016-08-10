@@ -35,3 +35,14 @@ sub choose_basis{
       return choose_basis_cpp($A);
    }
 }
+
+sub build_matrix{
+   my($bigger, $smaller) = @_;
+   my $nrows = $smaller->rows;
+   if ($nrows == 0){
+      return zero_matrix(0,$bigger->rows);
+   }
+   else{
+      return build_matrix_cpp($bigger,$smaller);
+   }
+}
