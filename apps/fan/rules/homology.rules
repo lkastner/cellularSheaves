@@ -28,8 +28,8 @@ object PolyhedralComplex {
             if($honestSigma->size == 1) {
                $result->{$honestSigma} = new Matrix(0, $d);
             } else {
-               $result->{$honestSigma} = choose_basis($generators);
-               print "Chosen basis is:\n",$result->{$honestSigma},"\n";
+               $result->{$honestSigma} = choose_basis_cpp($generators);
+               # print "Chosen basis is:\n",$result->{$honestSigma},"\n";
             }
          }
       }

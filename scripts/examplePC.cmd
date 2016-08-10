@@ -50,9 +50,19 @@ application "fan";
 $d = 4;
 $pc = new PolyhedralComplex(check_fan_objects(new Cone(cube($d))));
 $pc->CHAIN_COMPLEX;
+$w2 = $pc->wcomplex(2);
+$s = new Set<Int>(12,13,14,15);
+$t = new Set<Int>(14,15);
+$p = new Pair<Set<Int>, Set<Int> >($s, $t);
+print $pc->BLOCKS->{$p};
+print $w2->BLOCKS->{$p};
+print $w2->CHAIN_COMPLEX->IS_WELLDEFINED;
+print wedge_matrix($pc->BLOCKS->{$p},2)->cols;
+
+
 for(my $i = 1; $i<$d; $i++){
    my $wi = $pc->wcomplex($i);
-   print $wi->CHAIN_COMPLEX->BETTI_NUMBERS,"\n";
+   print $i,": ",$wi->CHAIN_COMPLEX->BETTI_NUMBERS,"\n";
 }
 
 ################################################################
