@@ -1,5 +1,9 @@
-declare object Complex {
+declare object ChainComplex {
 
+   property PC : PolyhedralComplex;
+
+   property BLOCKS : Map<Pair<Set<Int>, Set<Int> >, Matrix >;
+   
    property INPUT_DIFFERENTIALS : Array<Matrix>;
    
    property DIFFERENTIALS : Array<Matrix>;
@@ -9,6 +13,26 @@ declare object Complex {
    property BETTI_NUMBERS : Vector<Int>;
 
    property IS_WELLDEFINED : Bool; 
+   
+   rule INPUT_DIFFERENTIALS : PC.HASSE_DIAGRAM, PC.FAN_DIM, BLOCKS, PC.ORIENTATIONS {
+      my $d = $this->PC->FAN_DIM - 1;
+      my $result = new Array<Matrix>($d+1);
+      my $hd = $this->PC->HASSE_DIAGRAM;
+      my $blocks = $this->BLOCKS;
+      my $orientations = $this->PC->ORIENTATIONS;
+      for(my $i=0; $i<$d-1; $i++){
+         # print "i: ", $i," Sigmas: ",$sigmas->size," Taus: ",$taus->size,"\n";
+         my $s = $hd->nodes_of_dim($d-$i);
+         my @s = map($hd->FACES->[$_], @$s);
+         my $sigmas = new Array<Set<Int> >(\@s);
+         my $t = $hd->nodes_of_dim($d-$i-1);
+         my @t = map($hd->FACES->[$_], @$t);
+         my $taus = new Array<Set<Int> >(\@t);
+         $result->[$d-$i] = assemble_matrix($sigmas, $taus, $blocks, $orientations);
+      }
+      $result->[1] = zero_matrix(0,$result->[2]->rows);
+      $this->INPUT_DIFFERENTIALS = $result;
+   }
 
    rule DIFFERENTIALS : INPUT_DIFFERENTIALS {
       my @input = @{$this->INPUT_DIFFERENTIALS};
