@@ -54,3 +54,12 @@ for(my $i = 1; $i<$d; $i++){
    my $wi = $pc->wcomplex($i);
    print $wi->CHAIN_COMPLEX->BETTI_NUMBERS,"\n";
 }
+
+################################################################
+# Testing c++ methods
+
+application "fan";
+$m = new Matrix([[1,2,3,4],[3,4,5,6],[5,6,7,8]]);
+print wedge_matrix($m, 1);
+print choose_basis($m);
+
