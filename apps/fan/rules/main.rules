@@ -3,8 +3,20 @@ INCLUDE
    homology.rules
    wcomplex.rules
 
-user_function wedge_matrix<Element=Rational>(Matrix, $ ) : c++ (include => "polymake/fan/linalg_tools.h");
+user_function wedge_matrix_cpp<Element=Rational>(Matrix, $ ) : c++ (include => "polymake/fan/linalg_tools.h");
 
-user_function choose_basis<Element=Rational>(Matrix) : c++ (include => "polymake/fan/linalg_tools.h");
+user_function choose_basis_cpp<Element=Rational>(Matrix) : c++ (include => "polymake/fan/linalg_tools.h");
 
-user_function assemble_matrix<Element=Rational>(Array<Set<Int>>, Array<Set<Int>>, Map<Pair<Set<Int>, Set<Int> >, Matrix>, Map<Pair<Set<Int>, Set<Int> >, Int>) : c++ (include => "polymake/fan/linalg_tools.h");
+user_function assemble_matrix_cpp<Element=Rational>(Array<Set<Int>>, Array<Set<Int>>, Map<Pair<Set<Int>, Set<Int> >, Matrix>, Map<Pair<Set<Int>, Set<Int> >, Int>) : c++ (include => "polymake/fan/linalg_tools.h");
+
+sub assemble_matrix{
+   my($sigmas, $taus, $blocks, $orientations) = @_;
+   my $firstPair = new Pair<Set<Int>, Set<Int> >($sigmas->[0], $taus->[0]);
+   my $ncols = $sigmas->size * $blocks->{$firstPair}->cols;
+   my $nrows = $taus->size * $blocks->{$firstPair}->rows;
+   if($nrows * $ncols == 0){
+      return zero_matrix($nrows, $ncols);
+   } else {
+      return assemble_matrix_cpp($sigmas, $taus, $blocks, $orientations);
+   }
+}

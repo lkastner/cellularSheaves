@@ -26,7 +26,7 @@ declare object Complex {
       # print "Hello.\n";
       for(my $i = 0; $i<$differentials->size-1; $i++){
          $homologies->[$i] = compute_homology($differentials->[$i+1], $differentials->[$i]);
-         print "Rows: ",$homologies->[$i]->rows," cols: ",$homologies->[$i]->cols,"\n";
+         # print "Rows: ",$homologies->[$i]->rows," cols: ",$homologies->[$i]->cols,"\n";
       }
       $this->HOMOLOGIES = $homologies;
    }
@@ -73,31 +73,16 @@ declare object Complex {
 
 }
 
-# sub wedge_matrix{
-#    my($A, $p) = @_;
-#    # print "Hello\n";
-#    my $n = $A->rows;
-#    my $m = $A->cols;
-#    if ($p <= $n && $p <= $m){
-#       my @rowBases = all_subsets_of_k($p, (0..$n -1));
-#       my @colBases = all_subsets_of_k($p, (0..$m -1));
-#       # print scalar @rowBases;
-#       # print "\n";
-#       my @result = ();
-#       for(my $i=0; $i<@rowBases; $i++){
-#          my @tmp = ();
-#          for(my $j=0; $j<@colBases; $j++){
-#             push @tmp, det($A->minor($rowBases[$i], $colBases[$j]));
-#          }
-#          push @result, new Vector(@tmp);
-#       }
-#       return new Matrix(@result);
-#    }
-#    my $k = $n>=$p ? binomial($n,$p) : 0;
-#    my $l = $m>=$p ? binomial($m,$p) : 0;
-#    return zero_matrix($k,$l);
-# }
-
+sub wedge_matrix{
+   my($A, $p) = @_;
+   my $nrows = binomial($A->rows, $p);
+   my $ncols = binomial($A->cols, $p);
+   if(($nrows == 0) || ($ncols == 0)){
+      return zero_matrix($nrows, $ncols);
+   } else {
+      return wedge_matrix_cpp($A, $p);
+   }
+}
 
 sub compute_homology{
    my($imof,$kerof) = @_;
