@@ -46,7 +46,7 @@ object PolyhedralComplex {
             my $honestSigma = $hd->FACES->[$sigma];
             foreach my $tau (@$taus) {
                my $honestTau = $hd->FACES->[$tau];
-               print $honestSigma," ",$honestTau,"\n";
+               # print $honestSigma," ",$honestTau,"\n";
                my $keyPair = new Pair<Set<Int>, Set<Int> >($honestSigma, $honestTau);
                my $sigmaBasis = $chosenBases->{$honestSigma};
                my $tauBasis = $chosenBases->{$honestTau};
@@ -114,21 +114,21 @@ object PolyhedralComplex {
 
 
 
-sub build_matrix{
-   my($bigger, $smaller) = @_;
-   my @images = map{
-      my $v = $_;
-      my $C = $bigger/(-$v);
-      my $image = null_space(transpose($C));
-      $image->rows() == 1 or die("Something went wrong.".$image->rows());
-      my $Cv = $image->[0];
-      my $length = $Cv->dim - 1;
-      my $last = $Cv->[$length];
-      $Cv = $Cv->slice(0, $length);
-      (1/$last) * $Cv
-   }@$smaller;
-   return new Matrix(@images);
-}
+# sub build_matrix{
+#    my($bigger, $smaller) = @_;
+#    my @images = map{
+#       my $v = $_;
+#       my $C = $bigger/(-$v);
+#       my $image = null_space(transpose($C));
+#       $image->rows() == 1 or die("Something went wrong.".$image->rows());
+#       my $Cv = $image->[0];
+#       my $length = $Cv->dim - 1;
+#       my $last = $Cv->[$length];
+#       $Cv = $Cv->slice(0, $length);
+#       (1/$last) * $Cv
+#    }@$smaller;
+#    return new Matrix(@images);
+# }
 
 sub build_cone{
    my($vertices, $indexSet, $common) = @_;
