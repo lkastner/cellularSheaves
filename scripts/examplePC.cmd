@@ -63,3 +63,17 @@ $m = new Matrix([[1,2,3,4],[3,4,5,6],[5,6,7,8]]);
 print wedge_matrix($m, 1);
 print choose_basis($m);
 
+application "fan";
+$d = 4;
+$pc = new PolyhedralComplex(check_fan_objects(new Cone(cube($d))));
+$s = $pc->HASSE_DIAGRAM->nodes_of_dim(3);
+@s = map($pc->HASSE_DIAGRAM->FACES->[$_], @$s);
+$sigmas = new Array<Set<Int> >(\@s);
+$t = $pc->HASSE_DIAGRAM->nodes_of_dim(2);
+@t = map($pc->HASSE_DIAGRAM->FACES->[$_], @$t);
+$taus = new Array<Set<Int> >(\@t);
+$orientations = $pc->ORIENTATIONS;
+$blocks = $pc->BLOCKS;
+print assemble_matrix($sigmas, $taus, $blocks, $orientations);
+
+
