@@ -76,3 +76,9 @@ $blocks = $pc->SIMPLE_BLOCKS;
 print assemble_matrix($sigmas, $taus, $blocks, $orientations);
 
 
+###########################################################
+
+#Testing f blocks
+
+
+print build_generator_matrix_f($tau, $pc, 1); 
