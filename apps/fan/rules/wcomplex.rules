@@ -3,12 +3,24 @@ object PolyhedralComplex {
    user_method wcomplex( $ ){
       my($pc, $p) = @_;
       my $simpleBlocks = $pc->SIMPLE_BLOCKS;
-      my $newblocks = new Map<Pair<Set<Int>, Set<Int> >, Matrix >();
+      my $newblocks = new Map<Set<Set<Int> >, Matrix >();
       foreach my $key (keys %$simpleBlocks){
          $newblocks->{$key} = wedge_matrix($simpleBlocks->{$key}, $p);
       }
       my $sheaf = $pc->add("SHEAF", BLOCKS=>$newblocks);
       return $sheaf;
+   }
+
+   user_method dualwcomplex( $ ){
+      my($pc, $p) = @_;
+      my $simpleBlocks = $pc->SIMPLE_BLOCKS;
+      my $newblocks = new Map<Set<Set<Int> >, Matrix >();
+      foreach my $key (keys %$simpleBlocks){
+         my $newkey = new Set<Set<Int> >($key->[1], $key->[0]);
+         $newblocks->{$newkey} = transpose(wedge_matrix($simpleBlocks->{$key}, $p));
+      }
+      my $cosheaf = $pc->add("COSHEAF", BLOCKS=>$newblocks);
+      return $cosheaf;
    }
 
 }

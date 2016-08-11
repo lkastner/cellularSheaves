@@ -1,10 +1,10 @@
 object PolyhedralComplex {
 
-   property SIMPLE_BLOCKS : Map<Pair<Set<Int>, Set<Int> >, Matrix >;
+   property SIMPLE_BLOCKS : Map<Set<Set<Int> >, Matrix >;
 
    property CHOSEN_BASES : Map<Set<Int>, Matrix>;
 
-   property ORIENTATIONS : Map<Pair<Set<Int>, Set<Int> >, Int >;
+   property ORIENTATIONS : Map<Set<Set<Int> >, Int >;
 
    rule CHOSEN_BASES : VERTICES, HASSE_DIAGRAM, FAN_DIM {
       my $result = new Map<Set<Int>, Matrix>();
@@ -34,7 +34,7 @@ object PolyhedralComplex {
 
    
    rule SIMPLE_BLOCKS : HASSE_DIAGRAM, FAN_DIM, CHOSEN_BASES {
-      my $result = new Map<Pair<Set<Int>, Set<Int> >, Matrix>();
+      my $result = new Map<Set<Set<Int> >, Matrix>();
       my $d = $this->FAN_DIM - 1;
       my $chosenBases = $this->CHOSEN_BASES;
       my $hd = $this->HASSE_DIAGRAM;
@@ -47,7 +47,7 @@ object PolyhedralComplex {
             foreach my $tau (@$taus) {
                my $honestTau = $hd->FACES->[$tau];
                # print $honestSigma," ",$honestTau,"\n";
-               my $keyPair = new Pair<Set<Int>, Set<Int> >($honestSigma, $honestTau);
+               my $keySet = new Set<Set<Int> >($honestSigma, $honestTau);
                my $sigmaBasis = $chosenBases->{$honestSigma};
                my $tauBasis = $chosenBases->{$honestTau};
                my $map;
@@ -57,7 +57,7 @@ object PolyhedralComplex {
                } else {
                   $map = zero_matrix($tauBasis->rows, $sigmaBasis->rows);
                }
-               $result->{$keyPair} = $map;
+               $result->{$keySet} = $map;
             }
          }
       }
@@ -68,7 +68,7 @@ object PolyhedralComplex {
  	rule ORIENTATIONS : HASSE_DIAGRAM, FAN_DIM, SIMPLE_BLOCKS, VERTICES, CHOSEN_BASES {
       # returns either 0, +1, -1 depending on the compatibility of thechosen ordered bases
       my $d = $this->FAN_DIM - 1;
-      my $result = new Map<Pair<Set<Int>, Set<Int> >, Int>();
+      my $result = new Map<Set<Set<Int> >, Int>();
       my $blocks = $this->SIMPLE_BLOCKS;
       my $vertices = $this->VERTICES;
       my $hd = $this->HASSE_DIAGRAM;
@@ -82,7 +82,7 @@ object PolyhedralComplex {
             my $honestSigma = $hd->FACES->[$sigma];
             foreach my $tau (@$taus) {
                my $honestTau = $hd->FACES->[$tau];
-               my $keyPair = new Pair<Set<Int>, Set<Int> >($honestSigma, $honestTau);
+               my $keySet = new Set<Set<Int> >($honestSigma, $honestTau);
                my $test = $honestSigma*$honestTau;
                if($test->size == $honestTau->size){
                   my $honestNotInTau = $honestSigma - $honestTau;
@@ -93,7 +93,7 @@ object PolyhedralComplex {
                   my $sigmaBasis = $chosenBases->{$honestSigma};
                   # print "SigmaBasis:\n", $sigmaBasis,"\n",$genVector,"\n";
                   my $relativeRow = new Matrix(build_matrix($sigmaBasis,  $genVector));
-                  my $dxdMinus1 = $blocks->{$keyPair}; 
+                  my $dxdMinus1 = $blocks->{$keySet}; 
                   my $baseChangeMatrix = new Matrix($relativeRow / $dxdMinus1);   
                   if (det($baseChangeMatrix) >= 0){
                      $sign = 1;
@@ -103,7 +103,7 @@ object PolyhedralComplex {
                } else { 
                   $sign = 0;
                }
-               $result->{$keyPair} = $sign;
+               $result->{$keySet} = $sign;
             }
          } 
       }
