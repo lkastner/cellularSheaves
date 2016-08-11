@@ -82,12 +82,13 @@ template <typename E> inline
 Matrix<E>
 assemble_matrix_cpp(const Array<Set<int> > sigmas, 
                const Array<Set<int> > taus, 
-               const Map<std::pair<Set<int>, Set<int> >, Matrix<E> > blocks, 
-               const Map<std::pair<Set<int>, Set<int> >, int> orientations){
+               const Map<Set<Set<int> >, Matrix<E> > blocks, 
+               const Map<Set<Set<int> >, int> orientations){
    int nrows = taus.size(), ncols = sigmas.size(), i, j, blockRow, blockCol;
-   std::pair<Set<int>, Set<int> > first_pair(sigmas[0], taus[0]), currentPair;
-   //cout << "FP: " << first_pair << endl;
-   //cout << blocks << endl;
+   Set<Set<int> > first_pair(), currentPair;
+   first_pair.collect(sigmas[0]);
+   first_pair.collect(taus[0]);
+   cout << blocks << endl;
    blockRow = blocks[first_pair].rows();
    blockCol = blocks[first_pair].cols();
    nrows *= blockRow;
@@ -100,7 +101,9 @@ assemble_matrix_cpp(const Array<Set<int> > sigmas,
    for(typename Entire<Array<Set<int> > >::const_iterator tau = entire(taus); !tau.at_end(); ++tau){
       j = 0;
       for(typename Entire<Array<Set<int> > >::const_iterator sigma = entire(sigmas); !sigma.at_end(); ++sigma){
-         currentPair = std::pair<Set<int>, Set<int> >(*sigma, *tau);
+         currentPair = Set<Set<int> >();
+         currentPair.collect(*sigma); 
+         currentPair.collect(*tau);
          // cout << "Hello." << endl;
          // cout << result << endl;
          // cout << blocks[currentPair] << endl;
