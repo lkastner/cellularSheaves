@@ -4,10 +4,7 @@ object PolyhedralComplex {
    user_method fcomplex( $ ){
       my($pc, $p) = @_;
       my $simpleBlocks = $pc->SIMPLE_BLOCKS;   #THIS IS UNNECESSARY DON'T NEED TO CALL SIMPLEBLOCKS TO GET KEYS
-      my $newblocks = new Map<Pair<Set<Int>, Set<Int> >, Matrix >();
-      foreach my $key (keys %$simpleBlocks){
-         $newblocks->{$key} =  zero_matrix(1, 1);  #$build_blocks_f($pc, $p)->{$key};  
-      }
+      my $newblocks = build_blocks_f($pc, $p);  
       my $sheaf = $pc->add("SHEAF", BLOCKS=>$newblocks);
       return $sheaf;
    }

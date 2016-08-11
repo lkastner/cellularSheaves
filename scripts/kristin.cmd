@@ -6,6 +6,8 @@ $sigma = $pc->HASSE_DIAGRAM->FACES->[2];
 print find_max_containing($tau, $pc);
 print build_matrix_f($tau, $pc, 1);
 print build_blocks_f($pc, 1);
+$f2 = $pc->fcomplex(2);
+print $f2->CHAIN_COMPLEX->DIFFERENTIALS;
 
 $key = new Pair<Set<Int>, Set<Int> >($sigma, $tau);
 print $key;
