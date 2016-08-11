@@ -85,9 +85,10 @@ assemble_matrix_cpp(const Array<Set<int> > sigmas,
                const Map<Set<Set<int> >, Matrix<E> > blocks, 
                const Map<Set<Set<int> >, int> orientations){
    int nrows = taus.size(), ncols = sigmas.size(), i, j, blockRow, blockCol;
-   Set<Set<int> > first_pair(), currentPair;
-   first_pair.collect(sigmas[0]);
-   first_pair.collect(taus[0]);
+   cout << "AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH" << endl;
+   Set<Set<int> > first_pair(sigmas[0]), currentPair;
+   first_pair += Set<Set<int> >(taus[0]);
+   cout << "FP: " << first_pair << endl;
    cout << blocks << endl;
    blockRow = blocks[first_pair].rows();
    blockCol = blocks[first_pair].cols();
