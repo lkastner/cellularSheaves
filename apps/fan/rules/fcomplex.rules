@@ -1,10 +1,20 @@
+
 object PolyhedralComplex {
 
+   user_method fcomplex( $ ){
+      my($pc, $p) = @_;
+      my $simpleBlocks = $pc->SIMPLE_BLOCKS;   #THIS IS UNNECESSARY DON'T NEED TO CALL SIMPLEBLOCKS TO GET KEYS
+      my $newblocks = new Map<Pair<Set<Int>, Set<Int> >, Matrix >();
+      foreach my $key (keys %$simpleBlocks){
+         $newblocks->{$key} =  zero_matrix(1, 1);  #$build_blocks_f($pc, $p)->{$key};  
+      }
+      my $sheaf = $pc->add("SHEAF", BLOCKS=>$newblocks);
+      return $sheaf;
+   }
 
 }
 
 
- 
 sub find_max_containing{
    my($honestTau, $pc) = @_;
    my $max_cones = $pc->MAXIMAL_CONES;
@@ -31,4 +41,34 @@ sub build_matrix_f{
 		$generators = new Matrix( $generators / $wedged_basis);
 	}	
 	return choose_basis_cpp($generators);
+}
+
+
+sub build_blocks_f{ 
+	my($pc, $p) =@_;
+	my $d = $pc->FAN_DIM - 1;
+	my $hd = $pc->HASSE_DIAGRAM;
+	my $newBlocks = new Map<Pair<Set<Int>, Set<Int> >, Matrix >();
+	for(my $i=0; $i<$d; $i++){
+         my $sigmas = $hd->nodes_of_dim($d-$i);
+         my $taus = $hd->nodes_of_dim($d-$i-1);
+         foreach my $sigma (@$sigmas) {
+            my $honestSigma = $hd->FACES->[$sigma];
+            foreach my $tau (@$taus) {
+               my $honestTau = $hd->FACES->[$tau];
+               my $keyPair = new Pair<Set<Int>, Set<Int> >($honestSigma, $honestTau);
+               my $fpSigmaBasis = new Matrix (build_matrix_f($honestSigma, $pc, $p));
+               my $fpTauBasis = new Matrix (build_matrix_f($honestTau, $pc, $p));
+               my $map;
+               my $test = $honestSigma*$honestTau;
+               if($test->size == $honestTau->size){
+                  $map = build_matrix($fpSigmaBasis, $fpTauBasis);
+               } else {
+                  $map = zero_matrix($fpTauBasis->rows, $fpSigmaBasis->rows);
+               }
+               $newBlocks->{$keyPair} = $map;
+            }   
+		}
+	}
+	return $newBlocks; 
 }
