@@ -18,8 +18,6 @@
 #define POLYMAKE_WEDGE_MATRIX
 
 #include "polymake/client.h"
-#include "polymake/SparseVector.h"
-#include "polymake/SparseMatrix.h"
 #include "polymake/GenericMatrix.h"
 #include "polymake/ListMatrix.h"
 #include "polymake/Map.h"
