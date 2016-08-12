@@ -21,8 +21,6 @@ for(my $i = 0; $i<=7; $i++){
    print ". \n";
 }
 print $wd1->CHAIN_COMPLEX->BETTI_NUMBERS;
-
-
 for(my $i = 0; $i<=7; $i++){
    print $i;
    print " : ";
@@ -31,3 +29,8 @@ for(my $i = 0; $i<=7; $i++){
    print $w1->CHAIN_COMPLEX->DIFFERENTIALS->[$i]->cols;
    print ". \n";
 }
+print $w1->CHAIN_COMPLEX->BETTI_NUMBERS;
+$w2 = $pc->wcomplex(2);
+$wd2 = $pc->dualwcomplex(2);
+print $w2->CHAIN_COMPLEX->BETTI_NUMBERS;
+print $wd2->CHAIN_COMPLEX->BETTI_NUMBERS;
