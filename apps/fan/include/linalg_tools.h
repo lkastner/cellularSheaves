@@ -102,9 +102,8 @@ assemble_matrix_cpp(const Array<Set<int> > sigmas,
    for(typename Entire<Array<Set<int> > >::const_iterator tau = entire(taus); !tau.at_end(); ++tau){
       j = 0;
       for(typename Entire<Array<Set<int> > >::const_iterator sigma = entire(sigmas); !sigma.at_end(); ++sigma){
-         currentPair = Set<Set<int> >();
-         currentPair.collect(*sigma); 
-         currentPair.collect(*tau);
+         currentPair = Set<Set<int> >(*sigma);
+         currentPair += Set<Set<int> >(*tau);
          // cout << "Hello." << endl;
          // cout << result << endl;
          // cout << blocks[currentPair] << endl;
