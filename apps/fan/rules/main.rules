@@ -1,5 +1,6 @@
 INCLUDE
    basics.rules
+   faces.rules
    complex.rules
    sheaves.rules
    wcomplex.rules
