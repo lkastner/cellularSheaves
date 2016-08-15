@@ -4,11 +4,11 @@ object PolyhedralComplex {
    
    property FAR_FACES : NodeMap<Directed, Set<Int>>;
    
-   rule HASSE_DIAGRAM.BOUNDED_FACES : HASSE_DIAGRAM.FACES, VERTICES {
+   rule BOUNDED_FACES : HASSE_DIAGRAM.FACES, VERTICES {
       # TODO
    }
 
-   rule HASSE_DIAGRAM.FAR_FACES : HASSE_DIAGRAM.FACES, VERTICES {
+   rule FAR_FACES : HASSE_DIAGRAM.FACES, VERTICES {
       # TODO
    }
 
