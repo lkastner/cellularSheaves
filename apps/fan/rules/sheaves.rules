@@ -60,9 +60,10 @@ object PolyhedralComplex {
          my $t = $hd->nodes_of_dim($d-$i-1);
          my @t = map($hd->FACES->[$_], @$t);
          my $taus = new Array<Set<Int> >(\@t);
-         $result->[$d-$i] = assemble_matrix($taus, $sigmas, $blocks, $orientations);
+         $result->[$i+1] = assemble_matrix($taus, $sigmas, $blocks, $orientations);
       }
-      $result->[1] = zero_matrix(0,$result->[2]->rows);
+      $result->[0] = zero_matrix(0,$result->[1]->rows);
+      $result->[$d] = zero_matrix($result->[$d-1]->cols,0);
       $this->COSHEAF->CHAIN_COMPLEX->INPUT_DIFFERENTIALS = $result;
    }
 }

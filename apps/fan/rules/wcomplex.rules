@@ -16,8 +16,7 @@ object PolyhedralComplex {
       my $simpleBlocks = $pc->SIMPLE_BLOCKS;
       my $newblocks = new Map<Set<Set<Int> >, Matrix >();
       foreach my $key (keys %$simpleBlocks){
-         my $newkey = new Set<Set<Int> >($key->[1], $key->[0]);
-         $newblocks->{$newkey} = transpose(wedge_matrix($simpleBlocks->{$key}, $p));
+         $newblocks->{$key} = transpose(wedge_matrix($simpleBlocks->{$key}, $p));
       }
       my $cosheaf = $pc->add("COSHEAF", BLOCKS=>$newblocks);
       return $cosheaf;
