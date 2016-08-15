@@ -18,8 +18,6 @@
 #define POLYMAKE_WEDGE_MATRIX
 
 #include "polymake/client.h"
-#include "polymake/SparseVector.h"
-#include "polymake/SparseMatrix.h"
 #include "polymake/GenericMatrix.h"
 #include "polymake/ListMatrix.h"
 #include "polymake/Map.h"
@@ -85,11 +83,11 @@ assemble_matrix_cpp(const Array<Set<int> > sigmas,
                const Map<Set<Set<int> >, Matrix<E> > blocks, 
                const Map<Set<Set<int> >, int> orientations){
    int nrows = taus.size(), ncols = sigmas.size(), i, j, blockRow, blockCol;
-   cout << "AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH" << endl;
+   //cout << "AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH" << endl;
    Set<Set<int> > first_pair(sigmas[0]), currentPair;
    first_pair += Set<Set<int> >(taus[0]);
-   cout << "FP: " << first_pair << endl;
-   cout << blocks << endl;
+   //cout << "FP: " << first_pair << endl;
+   //cout << blocks << endl;
    blockRow = blocks[first_pair].rows();
    blockCol = blocks[first_pair].cols();
    nrows *= blockRow;
