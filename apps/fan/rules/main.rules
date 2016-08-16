@@ -16,6 +16,9 @@ user_function assemble_matrix_cpp<Element=Rational>(Array<Set<Int>>, Array<Set<I
 
 sub assemble_matrix{
    my($sigmas, $taus, $blocks, $orientations) = @_;
+   if ($sigmas->size ==0 || $taus->size == 0){
+   		return zero_matrix(0, 0);
+   }
    my $firstSet = new Set<Set<Int> >($sigmas->[0], $taus->[0]);
    my $ncols = $sigmas->size * $blocks->{$firstSet}->cols;
    my $nrows = $taus->size * $blocks->{$firstSet}->rows;
