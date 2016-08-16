@@ -6,6 +6,8 @@ In this extension for [polymake] (https://www.polymake.org) was developed to com
 We defined sheaves and cosheaves for a polyhedral complex. For those we can associate 
 a chain complex and determine its Betti numbers. 
 
+This extension currently works with polymake version 3.0. It will not work with the polymake developer version.
+
 ## Details
 For a polyhedral complex, we associate to each face sigma a linear space LL(sigma). 
 This information is stored as CHOSEN_BASIS. 
