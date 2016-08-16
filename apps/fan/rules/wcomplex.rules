@@ -1,5 +1,5 @@
 object PolyhedralComplex {
-
+	
    user_method wcomplex( $ ){
       my($pc, $p) = @_;
       my $simpleBlocks = $pc->SIMPLE_BLOCKS;
@@ -21,6 +21,26 @@ object PolyhedralComplex {
       my $cosheaf = $pc->add("COSHEAF", BLOCKS=>$newblocks);
       return $cosheaf;
    }
+   
+   
+  user_method usual_chain_complex( $ ){
+ 		my($pc, $sheaf) = @_;
+		my $blocks = $sheaf->BLOCKS;
+		my $boundedFaces = $pc->BOUNDED_FACES; 
+		my $orientations = $pc->ORIENTATIONS;
+		my $usualChain = build_chain_complex($blocks, $boundedFaces, $orientations);
+		return $usualChain;
+	 }
+	
+	user_method borel_moore_complex( $ ){
+ 		my($pc, $sheaf) = @_;
+		my $blocks = $sheaf->BLOCKS;
+		my $nonFarFaces = $pc->NON_FAR_FACES; 
+		my $orientations = $pc->ORIENTATIONS;
+		my $borelMooreChain = build_chain_complex($blocks, $nonFarFaces, $orientations);
+		return $borelMooreChain;
+	 } 
+
 
 }
 
