@@ -1,16 +1,66 @@
 object PolyhedralComplex {
    
-   property BOUNDED_FACES : NodeMap<Directed, Set<Int>>;
+   property BOUNDED_FACES : Map<Int, Array<Set<Int>>>;
    
-   property FAR_FACES : NodeMap<Directed, Set<Int>>;
+   property UNBOUNDED_FACES : Map<Int, Array<Set<Int>>>;
    
-   rule BOUNDED_FACES : HASSE_DIAGRAM.FACES, VERTICES {
-      # TODO
+   property FAR_FACES : Map<Int, Array<Set<Int>>>;
+   
+   property NON_FAR_FACES : Map<Int, Array<Set<Int>>>;
+  
+	rule BOUNDED_FACES, UNBOUNDED_FACES: HASSE_DIAGRAM, VERTICES, FAR_VERTICES, FAN_DIM {
+   	   my $infVert = $this->FAR_VERTICES;
+   	   my $hd = $this->HASSE_DIAGRAM;
+   	   my $d = $this->FAN_DIM - 1;
+       my $sigmas = $this->HASSE_DIAGRAM->FACES;
+       my $boundedFaces = new Map<Int, Array<Set<Int>>>();
+       my $unboundedFaces = new Map<Int, Array<Set<Int>>>();
+       for(my $i=0; $i<=$d; $i++){
+       		my @boundedFacesDim_i = ();
+       		my @unboundedFacesDim_i = ();
+        	my $sigmas = $hd->nodes_of_dim($i);
+       		foreach my $sigma (@$sigmas) {
+       			my $honestSigma = $hd->FACES->[$sigma];
+       			if ( ($honestSigma * $infVert)->size == 0) { 
+        			push @boundedFacesDim_i,   $honestSigma;
+        		} else {
+        			push @unboundedFacesDim_i,   $honestSigma;
+        		}
+       		}
+       		$boundedFaces->{$i} = new Array<Set<Int>>(\@boundedFacesDim_i);
+       		$unboundedFaces->{$i} = new Array<Set<Int>>(\@unboundedFacesDim_i);
+       } 
+       $this->BOUNDED_FACES = $boundedFaces;
+       $this->UNBOUNDED_FACES = $unboundedFaces;
+    
    }
 
-   rule FAR_FACES : HASSE_DIAGRAM.FACES, VERTICES {
-      # TODO
-   }
+	rule FAR_FACES, NON_FAR_FACES : HASSE_DIAGRAM, VERTICES, FAR_VERTICES, FAN_DIM {
+		my $infVert = $this->FAR_VERTICES;
+		my $hd = $this->HASSE_DIAGRAM;
+   	    my $d = $this->FAN_DIM - 1;
+        my $sigmas = $this->HASSE_DIAGRAM->FACES;
+        my $farFaces = new Map<Int, Array<Set<Int>>>();
+        my $non_farFaces = new Map<Int, Array<Set<Int>>>();
+		for(my $i=0; $i<=$d; $i++){
+			my @farFacesDim_i = ();
+			my @non_farFacesDim_i = ();
+       		my $sigmas = $hd->nodes_of_dim($i);
+       		foreach my $sigma (@$sigmas) {
+       			my $honestSigma = $hd->FACES->[$sigma];
+       			if ( ($honestSigma * $infVert)->size == $honestSigma->size) { 
+        			push @farFacesDim_i, $honestSigma;
+        		} else {
+        		    push @non_farFacesDim_i, $honestSigma;
+        		}
+       		}
+       			$farFaces->{$i} = new Array<Set<Int>>(\@farFacesDim_i);
+       			$non_farFaces->{$i} = new Array<Set<Int>>(\@non_farFacesDim_i);
+       } 
+       $this->FAR_FACES = $farFaces;
+       $this->NON_FAR_FACES = $non_farFaces;
+    	
+	}
 
 }
 

@@ -19,3 +19,13 @@ $val_matroid = new matroid::ValuatedMatroid<Min>(BASES=>matroid::uniform_matroid
 VALUATION_ON_BASES=>$v,N_ELEMENTS=>4);
 $tls = tropical::linear_space($val_matroid);
 $tls->VISUAL;
+
+
+application "fan";
+$poly = new Polytope(POINTS=>[[0, 1, 0], [1,0,0], [0, 0, 1]]);
+$pc = new PolyhedralComplex(check_fan_objects(new Cone($poly)));
+print $pc->HASSE_DIAGRAM->FACES;
+print $pc->BOUNDED_FACES;
+print $pc->UNBOUNDED_FACES;
+print $pc->FAR_FACES;
+print $pc->NON_FAR_FACES;
