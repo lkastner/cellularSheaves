@@ -29,3 +29,5 @@ print $pc->BOUNDED_FACES;
 print $pc->UNBOUNDED_FACES;
 print $pc->FAR_FACES;
 print $pc->NON_FAR_FACES;
+$w2 = $pc->wcomplex(2);
+$boundedChain = build_chain_complex($w2->BLOCKS, $pc->BOUNDED_FACES, $pc->ORIENTATIONS);

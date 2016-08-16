@@ -77,18 +77,35 @@ declare object ChainComplex {
 
 user_function build_chain_complex(Map<Set<Set<Int> >, Matrix >, Map<Int, Array<Set<Int>>>, Map<Set<Set<Int> >, Int >){
 	  my ($blocks, $faces, $orientations) = @_;
-	  my $d  = max(keys %{$faces}); 
-	  my $m = min(keys %{$faces}); 
+	  print keys %$faces,"\n";
+	  my @k = keys %$faces;
+	  my $d  = maxwrap(@k);
+	  my $m = minwrap(@k);
+	  print $d, " ", $m, "\n";
       my $result = new Array<Matrix>($d+1);
-      for(my $i=$m; $i<$d-1; $i++){
-         my $sigmas = $faces->[$d-$i];
-         my $taus = $faces->[$d-$i-1];
+      for(my $i=$m; $i<$d; $i++){
+         my $sigmas = $faces->{$d-$i};
+         my $taus = $faces->{$d-$i-1};
          $result->[$d-$i] = assemble_matrix($sigmas, $taus, $blocks, $orientations);
       }
       #$result->[1] = zero_matrix(0,$result->[2]->rows);
       return new ChainComplex(INPUT_DIFFERENTIALS=>$result);
 }
 
+sub maxwrap{
+	my @a =@_;
+	if(@a==0) {return 0;}
+	my $result = $a[0];
+	foreach my $v (@a){
+		$result = $result < $v ? $v : $result;
+	}
+	return $result;
+}
+
+sub minwrap{
+	my @a = @_;
+	return -maxwrap(map(-$_, @a));
+}
 
 
 sub wedge_matrix{
