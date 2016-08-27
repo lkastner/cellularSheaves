@@ -31,3 +31,36 @@ print $pc->FAR_FACES;
 print $pc->NON_FAR_FACES;
 $w2 = $pc->wcomplex(2);
 $boundedChain = build_chain_complex($w2->BLOCKS, $pc->BOUNDED_FACES, $pc->ORIENTATIONS);
+
+
+
+#####################
+application "matroid";
+$m = uniform_matroid(2,4); 
+application "tropical";
+$mFan = matroid_fan<Max>($m);
+application "fan";
+$pcFan = new PolyhedralComplex($mFan);
+$f1 = $pcFan->fcomplex(1);
+
+application "tropical";
+$v = new matroid::ValuatedMatroid<Min>(N_ELEMENTS=>5, BASES=>[[0,1,2],[0,1,3],[0,1,4],[0,2,3],[0,2,4],[0,3,4], [1,2,3], [1,2,4],[1,3,4],[2,3,4]], VALUATION_ON_BASES=>[1,0,3,2,6,1,0,3,1,0]);
+$l = tropical::linear_space($v);
+
+
+$v3 = new matroid::ValuatedMatroid<Min>(N_ELEMENTS=>6, BASES=>[[0,1,2],[0,1,3],[0,1,4],[0,1,5],[0,2,3],[0,2,4], [0,2,5], [0,3,4],[0,3,5], [0,4,5], [1,2,3], [1,2,4], [1,2,5],[1,3,4],[1,3,5], [1,4,5], [2,3,4], [2,3,5], [2,4,5],[3,4,5]], VALUATION_ON_BASES=>[0,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0,1,0,0,0]);
+$l3 = tropical::linear_space($v3);
+print $l3->F_VECTOR;
+$p = 1;
+$boundedChain = build_chain_complex($l->$wcomplex($p)->BLOCKS, $l->BOUNDED_FACES, $l->ORIENTATIONS);
+
+$v2 = new matroid::ValuatedMatroid<Min>(N_ELEMENTS=>5, BASES=>[[3,4],[2,4],[2,3],[1,4],[1,3],[1,2], [0,4], [0,3],[0,2],[0,1]], VALUATION_ON_BASES=>[1,0,3,2,6,1,0,3,1,0]);
+
+
+application "tropical";
+$f = toTropicalPolynomial("max(0,x,y,z)");
+$div = divisor( (projective_torus<Max>(3)) , rational_fct_from_affine_numerator($f));
+application "fan";
+$pc = new PolyhedralComplex($div);
+print $pc->VERTICES;
+$f1= $pc->fcomplex(1);
