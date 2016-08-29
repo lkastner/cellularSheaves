@@ -23,6 +23,7 @@ declare object ChainComplex {
    rule HOMOLOGIES : DIFFERENTIALS {
       my $differentials = $this->DIFFERENTIALS;
       my $homologies = new Array<Matrix>($differentials->size - 1);
+#      my $homologies = new Array<Matrix>($differentials->size - 1);
       # print "Hello.\n";
       for(my $i = 0; $i<$differentials->size-1; $i++){
          $homologies->[$i] = compute_homology($differentials->[$i+1], $differentials->[$i]);
