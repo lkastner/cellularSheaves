@@ -58,7 +58,7 @@ sub build_blocks_f{
                my $map;
                my $test = $honestSigma*$honestTau;
                if($test->size == $honestTau->size){
-                  $map = build_matrix($fpSigmaBasis, $fpTauBasis);
+                  $map = build_matrix($fpTauBasis, $fpSigmaBasis);
                } else {
                   $map = zero_matrix($fpTauBasis->rows, $fpSigmaBasis->rows);
                }
