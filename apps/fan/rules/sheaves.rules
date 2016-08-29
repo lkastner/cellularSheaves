@@ -40,7 +40,7 @@ object PolyhedralComplex {
          my $taus = new Array<Set<Int> >(\@t);
          $result->[$d-$i] = assemble_matrix($sigmas, $taus, $blocks, $orientations);
       }
-      $result->[1] = zero_matrix(0,$result->[2]->rows);
+      # $result->[1] = zero_matrix(0,$result->[2]->rows);
       $this->SHEAF->CHAIN_COMPLEX->INPUT_DIFFERENTIALS = $result;
    }
 
