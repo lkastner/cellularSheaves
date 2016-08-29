@@ -30,17 +30,23 @@ object PolyhedralComplex {
       my $hd = $this->HASSE_DIAGRAM;
       my $blocks = $this->SHEAF->BLOCKS;
       my $orientations = $this->ORIENTATIONS;
-      for(my $i=0; $i<$d-1; $i++){
-         # print "i: ", $i," Sigmas: ",$sigmas->size," Taus: ",$taus->size,"\n";
+      for(my $i=0; $i<=$d; $i++){
          my $s = $hd->nodes_of_dim($d-$i);
          my @s = map($hd->FACES->[$_], @$s);
          my $sigmas = new Array<Set<Int> >(\@s);
-         my $t = $hd->nodes_of_dim($d-$i-1);
+         my $t;
+         if($d-$i-1 >= 0){
+            $t = $hd->nodes_of_dim($d-$i-1);
+         } else {
+            $t = new Set<Int>();
+         }
          my @t = map($hd->FACES->[$_], @$t);
          my $taus = new Array<Set<Int> >(\@t);
+         # print "i: ", $i," Sigmas: ",$sigmas," Taus: ",$taus,"\n";
          $result->[$d-$i] = assemble_matrix($sigmas, $taus, $blocks, $orientations);
+         # print "Resulted in: ", $result->[$d-$i]->rows()," ",$result->[$d-$i]->cols(),"\n";
       }
-      # $result->[1] = zero_matrix(0,$result->[2]->rows);
+      #$result->[0] = zero_matrix(0,$result->[2]->rows);
       $this->SHEAF->CHAIN_COMPLEX->INPUT_DIFFERENTIALS = $result;
    }
 

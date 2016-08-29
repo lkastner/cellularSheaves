@@ -3,8 +3,11 @@ object PolyhedralComplex {
    user_method wcomplex( $ ){
       my($pc, $p) = @_;
       my $simpleBlocks = $pc->SIMPLE_BLOCKS;
+      # print $simpleBlocks;
       my $newblocks = new Map<Set<Set<Int> >, Matrix >();
       foreach my $key (keys %$simpleBlocks){
+         # print $key,"\n";
+         # print $simpleBlocks->{$key},"\n";
          $newblocks->{$key} = wedge_matrix($simpleBlocks->{$key}, $p);
       }
       my $sheaf = $pc->add("SHEAF", BLOCKS=>$newblocks);

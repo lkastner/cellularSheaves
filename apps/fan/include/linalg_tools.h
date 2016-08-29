@@ -130,7 +130,6 @@ build_matrix_cpp(const Matrix<E>& bigger, const Matrix<E>& smaller){
       lastVal = image(0,image.cols()-1);
       image = -1/lastVal * image;
       result /= image;
-
    }
    return result.minor(All,~scalar2set(result.cols()-1));
 }
