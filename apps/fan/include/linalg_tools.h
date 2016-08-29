@@ -125,12 +125,11 @@ build_matrix_cpp(const Matrix<E>& bigger, const Matrix<E>& smaller){
       test = bigger / *rowit;
       image = null_space(T(test));
       if (image.rows() != 1){
-         
+         cout << "Something is going wrong. There are " << image.rows() << " solutions for this vector." << endl;
       }
       lastVal = image(0,image.cols()-1);
       image = -1/lastVal * image;
       result /= image;
-
    }
    return result.minor(All,~scalar2set(result.cols()-1));
 }

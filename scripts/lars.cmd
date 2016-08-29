@@ -83,3 +83,22 @@ print assemble_matrix($sigmas, $taus, $blocks, $orientations);
 
 
 print build_generator_matrix_f($tau, $pc, 1); 
+
+###########################################################
+
+application "graph";
+$g = complete(4);
+application "matroid";
+$m = matroid_from_graph($g);
+print $m->BASES;
+application "tropical";
+$t = matroid_fan<Max>($m);
+application "fan";
+print $t->RAYS;
+$pcFan = new PolyhedralComplex($t);
+$f1 = $pcFan->fcomplex(1);
+$boundedChain = build_chain_complex($f1->BLOCKS, $pcFan->BOUNDED_FACES, $pcFan->ORIENTATIONS);
+
+
+
+

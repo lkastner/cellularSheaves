@@ -59,6 +59,7 @@ object PolyhedralComplex {
                   $map = zero_matrix($tauBasis->rows, $sigmaBasis->rows);
                }
                $result->{$keySet} = $map;
+               # print $result->{$keySet}->rows()," ",$result->{$keySet}->cols(),"\n";
             }
          }
       }
