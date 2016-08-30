@@ -2,13 +2,14 @@ object PolyhedralComplex {
 	
    user_method wcomplex( $ ){
       my($pc, $p) = @_;
-      my $simpleBlocks = $pc->SIMPLE_BLOCKS;
-      # print $simpleBlocks;
       my $newblocks = new Map<Set<Set<Int> >, Matrix >();
-      foreach my $key (keys %$simpleBlocks){
-         # print $key,"\n";
-         # print $simpleBlocks->{$key},"\n";
-         $newblocks->{$key} = transpose(wedge_matrix($simpleBlocks->{$key}, $p));
+      if ($p == 0){
+         $newblocks = build_blocks_constant($pc);
+      } else{ 
+         my $simpleBlocks = $pc->SIMPLE_BLOCKS;
+         foreach my $key (keys %$simpleBlocks){
+            $newblocks->{$key} = transpose(wedge_matrix($simpleBlocks->{$key}, $p));
+         }
       }
       my $sheaf = $pc->add("COSHEAF", BLOCKS=>$newblocks);
       return $sheaf;
