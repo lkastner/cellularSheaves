@@ -9,7 +9,7 @@ object PolyhedralComplex {
       } else{ 
       		$newblocks = build_blocks_f($pc, $p); 
       }
-      my $sheaf = $pc->add("SHEAF", BLOCKS=>$newblocks);
+      my $sheaf = $pc->add("COSHEAF", BLOCKS=>$newblocks);
       return $sheaf;
    }
 
@@ -17,7 +17,7 @@ object PolyhedralComplex {
 	user_method constant_sheaf( ){
 		my($pc) = @_;
 		my $newblocks = build_blocks_constant($pc);
-		my $const_sheaf = $pc->add("SHEAF", BLOCKS => $newblocks);
+		my $const_sheaf = $pc->add("COSHEAF", BLOCKS => $newblocks);
 		return $const_sheaf;
 	}
 

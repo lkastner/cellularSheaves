@@ -5,6 +5,8 @@ declare object Sheaf {
    property BLOCKS : Map<Set<Set<Int> >, Matrix >;
 
    property CHAIN_COMPLEX : ChainComplex;
+   
+   #property STALKS : Map<Set<Int>, Matrix>;
 
 }
 

@@ -39,6 +39,11 @@ $boundedChain = build_chain_complex($w2->BLOCKS, $pc->BOUNDED_FACES, $pc->ORIENT
 $boundedChain = build_chain_complex($w1->BLOCKS, $pc->BOUNDED_FACES, $pc->ORIENTATIONS);
 
 
+###printing all differential dimensions.
+
+map{print $_->rows, " ", $_->cols, "\n"}@{$bm2->DIFFERENTIALS};
+
+
 #####################
 application "matroid";
 $m = uniform_matroid(2,4); 
@@ -72,6 +77,39 @@ $f1= $pc->fcomplex(1);
 
 
 
+
+application "tropical";
+$f = toTropicalPolynomial("max(0,x,y,z)");
+$div = divisor( (projective_torus<Max>(3)) , rational_fct_from_affine_numerator($f));
+application "fan";
+$f1 = $div->fcomplex(1);
+$f2  = $div->fcomplex(2);
+$f0 = $div->fcomplex(0);
+$f3 = $div->fcomplex(3);
+$bm1  = $div->borel_moore_complex($f1); 
+$bm2  = $div->borel_moore_complex($f2); 
+$bm0  = $div->borel_moore_complex($f0); 
+$bm3  = $div->borel_moore_complex($f3); 
+print $bm1->IS_WELLDEFINED;
+print $bm2->IS_WELLDEFINED;
+print $bm3->IS_WELLDEFINED;
+
+
+
+
+$pc = new PolyhedralComplex($div);
+print $pc->VERTICES;
+$f1= $pc->fcomplex(1);
+
+
+
+application "tropical";
+$f = toTropicalPolynomial("max(0,x,y)");
+$div = divisor( (projective_torus<Max>(2)) , rational_fct_from_affine_numerator($f));
+application "fan";
+$pc = new PolyhedralComplex($div);
+print $pc->VERTICES;
+$f1= $pc->fcomplex(1);
 
 
 ####testing constant_sheaf
