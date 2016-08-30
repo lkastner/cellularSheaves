@@ -26,11 +26,11 @@ object PolyhedralComplex {
 
    rule SHEAF.CHAIN_COMPLEX.INPUT_DIFFERENTIALS : HASSE_DIAGRAM, FAN_DIM, SHEAF.BLOCKS, ORIENTATIONS {
       my $d = $this->FAN_DIM - 1;
-      my $result = new Array<Matrix>($d+1);
+      my $result = new Array<Matrix>($d);
       my $hd = $this->HASSE_DIAGRAM;
       my $blocks = $this->SHEAF->BLOCKS;
       my $orientations = $this->ORIENTATIONS;
-      for(my $i=0; $i<=$d; $i++){
+      for(my $i=0; $i<$d; $i++){
          my $s = $hd->nodes_of_dim($d-$i);
          my @s = map($hd->FACES->[$_], @$s);
          my $sigmas = new Array<Set<Int> >(\@s);
@@ -43,8 +43,8 @@ object PolyhedralComplex {
          my @t = map($hd->FACES->[$_], @$t);
          my $taus = new Array<Set<Int> >(\@t);
          # print "i: ", $i," Sigmas: ",$sigmas," Taus: ",$taus,"\n";
-         $result->[$d-$i] = assemble_matrix($sigmas, $taus, $blocks, $orientations);
-         # print "Resulted in: ", $result->[$d-$i]->rows()," ",$result->[$d-$i]->cols(),"\n";
+         $result->[$d-$i-1] = assemble_matrix($sigmas, $taus, $blocks, $orientations);
+         # print "Resulted in: ", $result->[$d-$i-1]->rows()," ",$result->[$d-$i-1]->cols(),"\n";
       }
       #$result->[0] = zero_matrix(0,$result->[2]->rows);
       $this->SHEAF->CHAIN_COMPLEX->INPUT_DIFFERENTIALS = $result;
