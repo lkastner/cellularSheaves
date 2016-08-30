@@ -83,11 +83,11 @@ user_function build_chain_complex(Map<Set<Set<Int> >, Matrix >, Map<Int, Array<S
 	  my $d  = maxwrap(@k);
 	  my $m = minwrap(@k);
 	  print $d, " ", $m, "\n";
-      my $result = new Array<Matrix>($d+1);
+      my $result = new Array<Matrix>($d);
       for(my $i=$m; $i<$d; $i++){
          my $sigmas = $faces->{$d-$i};
          my $taus = $faces->{$d-$i-1};
-         $result->[$d-$i] = assemble_matrix($sigmas, $taus, $blocks, $orientations);
+         $result->[$d-$i-1] = assemble_matrix($sigmas, $taus, $blocks, $orientations);
       }
       #$result->[1] = zero_matrix(0,$result->[2]->rows);
       return new ChainComplex(INPUT_DIFFERENTIALS=>$result);

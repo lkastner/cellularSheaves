@@ -42,11 +42,11 @@ object PolyhedralComplex {
          }
          my @t = map($hd->FACES->[$_], @$t);
          my $taus = new Array<Set<Int> >(\@t);
-         # print "i: ", $i," Sigmas: ",$sigmas," Taus: ",$taus,"\n";
+         print "i: ", $i," Sigmas: ",$sigmas," Taus: ",$taus,"\n";
          $result->[$d-$i-1] = assemble_matrix($sigmas, $taus, $blocks, $orientations);
-         # print "Resulted in: ", $result->[$d-$i-1]->rows()," ",$result->[$d-$i-1]->cols(),"\n";
+         print "Resulted in: ", $result->[$d-$i-1]->rows()," ",$result->[$d-$i-1]->cols(),"\n";
       }
-      #$result->[0] = zero_matrix(0,$result->[2]->rows);
+      # $result->[0] = zero_matrix(0,$result->[1]->rows);
       $this->SHEAF->CHAIN_COMPLEX->INPUT_DIFFERENTIALS = $result;
    }
 
