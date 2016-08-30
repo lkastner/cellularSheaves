@@ -24,12 +24,7 @@ sub assemble_matrix{
    my $firstSet = new Set<Set<Int> >($sigmas->[0], $taus->[0]);
    my $ncols = $sigmas->size * $blocks->{$firstSet}->cols;
    my $nrows = $taus->size * $blocks->{$firstSet}->rows;
-   # if($nrows * $ncols == 0){
-   #    print "Assembling: ",$nrows," ",$ncols,"\n";
-   #    return zero_matrix($nrows, $ncols);
-   # } else {
-      return assemble_matrix_cpp($sigmas, $taus, $blocks, $orientations);
-   # }
+   return assemble_matrix_cpp($sigmas, $taus, $blocks, $orientations);
 }
 
 sub choose_basis{

@@ -72,9 +72,9 @@ sub build_blocks_f{
             if($test->size == $honestTau->size){
                $map = build_matrix($fpTauBasis, $fpSigmaBasis);
             } else {
-               $map = zero_matrix($fpTauBasis->rows, $fpSigmaBasis->rows);
+               $map = zero_matrix($fpSigmaBasis->rows, $fpTauBasis->rows);
             }
-            $newBlocks->{$keySet} = $map;
+            $newBlocks->{$keySet} = transpose($map);
          }   
 		}
 	}

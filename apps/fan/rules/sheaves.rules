@@ -27,6 +27,7 @@ object PolyhedralComplex {
    property COSHEAF : CoSheaf : multiple;
 
    rule SHEAF.CHAIN_COMPLEX.INPUT_DIFFERENTIALS : HASSE_DIAGRAM, FAN_DIM, SHEAF.BLOCKS, ORIENTATIONS {
+      # print "Hello!\n";
       my $d = $this->FAN_DIM - 1;
       my $result = new Array<Matrix>($d);
       my $hd = $this->HASSE_DIAGRAM;
