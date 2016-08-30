@@ -36,8 +36,12 @@ print wedge_matrix($A, 2);
 
 application "fan";
 $pc = new PolyhedralComplex(check_fan_objects(new Cone(cube(3))));
-$w2 = $pc->wcomplex(2);
-print $w2->CHAIN_COMPLEX->BETTI_NUMBERS;
+@result = ();
+for(my $i=0; $i<4; $i++){
+   my $w = $pc->wcomplex($i);
+   push @result, $w->CHAIN_COMPLEX->BETTI_NUMBERS;
+}
+print new Matrix(@result);
 
 application "fan";
 $d = 4;
