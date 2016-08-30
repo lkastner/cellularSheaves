@@ -31,6 +31,7 @@ sub choose_basis{
    my($A) = @_;
    my $desired = rank($A);
    if($desired == 0){
+   		print "hello";
       return zero_matrix($A->rows,0);
    }
    else{
@@ -40,6 +41,7 @@ sub choose_basis{
 
 sub build_matrix{
    my($bigger, $smaller) = @_;
+   print "bigger", $bigger, "\n", "smaller", $smaller, "*******";
    my $nrows = $smaller->rows;
    if ($nrows == 0){
       return zero_matrix(0,$bigger->rows);
