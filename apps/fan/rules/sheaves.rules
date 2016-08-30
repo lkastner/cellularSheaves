@@ -42,9 +42,9 @@ object PolyhedralComplex {
          }
          my @t = map($hd->FACES->[$_], @$t);
          my $taus = new Array<Set<Int> >(\@t);
-         print "i: ", $i," Sigmas: ",$sigmas," Taus: ",$taus,"\n";
+         # print "i: ", $i," Sigmas: ",$sigmas," Taus: ",$taus,"\n";
          $result->[$d-$i-1] = assemble_matrix($sigmas, $taus, $blocks, $orientations);
-         print "Resulted in: ", $result->[$d-$i-1]->rows()," ",$result->[$d-$i-1]->cols(),"\n";
+         # print "Resulted in: ", $result->[$d-$i-1]->rows()," ",$result->[$d-$i-1]->cols(),"\n";
       }
       # $result->[0] = zero_matrix(0,$result->[1]->rows);
       $this->SHEAF->CHAIN_COMPLEX->INPUT_DIFFERENTIALS = $result;
@@ -55,21 +55,19 @@ object PolyhedralComplex {
 
    rule COSHEAF.CHAIN_COMPLEX.INPUT_DIFFERENTIALS : HASSE_DIAGRAM, FAN_DIM, COSHEAF.BLOCKS, ORIENTATIONS{
       my $d = $this->FAN_DIM - 1;
-      my $result = new Array<Matrix>($d+1);
+      my $result = new Array<Matrix>($d);
       my $hd = $this->HASSE_DIAGRAM;
       my $blocks = $this->COSHEAF->BLOCKS;
       my $orientations = $this->ORIENTATIONS;
-      for(my $i=0; $i<$d-1; $i++){
+      for(my $i=0; $i<$d; $i++){
          my $s = $hd->nodes_of_dim($d-$i);
          my @s = map($hd->FACES->[$_], @$s);
          my $sigmas = new Array<Set<Int> >(\@s);
          my $t = $hd->nodes_of_dim($d-$i-1);
          my @t = map($hd->FACES->[$_], @$t);
          my $taus = new Array<Set<Int> >(\@t);
-         $result->[$i+1] = assemble_matrix($taus, $sigmas, $blocks, $orientations);
+         $result->[$i] = assemble_matrix($taus, $sigmas, $blocks, $orientations);
       }
-      $result->[0] = zero_matrix(0,$result->[1]->rows);
-      $result->[$d] = zero_matrix($result->[$d-1]->cols,0);
       $this->COSHEAF->CHAIN_COMPLEX->INPUT_DIFFERENTIALS = $result;
    }
 }

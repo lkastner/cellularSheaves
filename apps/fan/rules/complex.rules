@@ -71,6 +71,21 @@ declare object ChainComplex {
       }
       return new Complex(DIFFERENTIALS=>$new_differentials);
    }
+   
+   user_method print(){
+      my($this) = @_;
+      if($this->IS_WELLDEFINED){
+         my @dimensions = map{$_->rows}@{$this->DIFFERENTIALS};
+         push @dimensions, $this->DIFFERENTIALS->[$this->DIFFERENTIALS->size -1]->cols;
+         @dimensions = map("k^".$_, @dimensions);
+         print join(" <-- ",@dimensions),"\n";
+      }
+      my $i = 0;
+      for my $d (@{$this->DIFFERENTIALS}){
+         print "d^",$i," rows: ", $d->rows,", cols: ",$d->cols,"\n";
+         $i++;
+      }
+   }
 
 }
 

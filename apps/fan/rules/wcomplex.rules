@@ -8,9 +8,9 @@ object PolyhedralComplex {
       foreach my $key (keys %$simpleBlocks){
          # print $key,"\n";
          # print $simpleBlocks->{$key},"\n";
-         $newblocks->{$key} = wedge_matrix($simpleBlocks->{$key}, $p);
+         $newblocks->{$key} = transpose(wedge_matrix($simpleBlocks->{$key}, $p));
       }
-      my $sheaf = $pc->add("SHEAF", BLOCKS=>$newblocks);
+      my $sheaf = $pc->add("COSHEAF", BLOCKS=>$newblocks);
       return $sheaf;
    }
 
