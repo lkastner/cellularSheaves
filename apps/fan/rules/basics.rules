@@ -25,7 +25,7 @@ object PolyhedralComplex {
             if($honestSigma->size == 1) {
                $result->{$honestSigma} = new Matrix(0, $d);
             } else {
-               $result->{$honestSigma} = choose_basis($generators->minor(All, ~[0]));
+               $result->{$honestSigma} = choose_basis_cpp($generators->minor(All, ~[0]));
                # print "Chosen basis is:\n",$result->{$honestSigma},"\n";
             }
          }
@@ -75,8 +75,6 @@ object PolyhedralComplex {
       my $vertices = $this->VERTICES;
       my $hd = $this->HASSE_DIAGRAM;
       my $chosenBases = $this->CHOSEN_BASES;
-      # print $d,"\n";
-      my $sign;
       for(my $i=0; $i<$d; $i++){
          my $sigmas = $hd->nodes_of_dim($d-$i);
          my $taus = $hd->nodes_of_dim($d-$i-1);
@@ -85,38 +83,7 @@ object PolyhedralComplex {
             foreach my $tau (@$taus) {
                my $honestTau = $hd->FACES->[$tau];
                my $keySet = new Set<Set<Int> >($honestSigma, $honestTau);
-               my $test = $honestSigma*$honestTau;
-               if($test->size == $honestTau->size){
-                  my $honestNotInTau = $honestSigma - $honestTau;
-                  my $genVector = zero_vector(1);
-                  #my $c = -1;
-                  print "honestTau is", $honestTau;
-                  #while($genVector == zero_vector($genVector->dim)){
-                  	my $indexNotInTau = $honestNotInTau->[0];
-                  	my $vectorNotInTau = $vertices->[$indexNotInTau];
-                  	print $vectorNotInTau, "-", $vertices->[$honestTau->[0]], "\n";
-                  	$genVector = $vectorNotInTau - $vertices->[$honestTau->[0]]; #This creates a vector in span of Sigma not in Tauand pointing same as Sigma
-                  	$genVector = $genVector->slice(1);
-                  	if ($genVector == zero_vector($genVector->dim)){
-                  	$sign = 1;
-                  	} else{
-                  #}
-                  my $sigmaBasis = $chosenBases->{$honestSigma};
-                  print "SigmaBasis:\n", $sigmaBasis,"\n",$genVector,"\n";
-                  my $relativeRow = new Matrix(build_matrix($sigmaBasis,  new Matrix($genVector)));
-                  my $dxdMinus1 = $blocks->{$keySet}; 
-                  my $baseChangeMatrix = new Matrix($relativeRow / $dxdMinus1);   
-                  if (det($baseChangeMatrix) >= 0){
-                     $sign = 1;
-                  } else {
-                     $sign = -1;
-                  }
-                }
-               } else { 
-                  $sign = 0;
-               }
-               
-               $result->{$keySet} = $sign;
+               $result->{$keySet} = compute_orientation($honestSigma, $honestTau, $vertices);
             }
          } 
       }
@@ -126,22 +93,59 @@ object PolyhedralComplex {
 }
 
 
+sub compute_orientation{
+   my($sigma, $tau, $vertices) = @_;
+   if($tau->size == 1){
+      # If tau is a vertex, it has dim 0 and bothers us later, unless we deal
+      # with it here. The orientation does not matter for this case.
+      return 0;
+   }
+   if(is_face($sigma, $tau)){
+      return compute_orientation_for_face($sigma, $tau, $vertices);
+   } else { 
+      return 0;
+   }
+}
 
-# sub build_matrix{
-#    my($bigger, $smaller) = @_;
-#    my @images = map{
-#       my $v = $_;
-#       my $C = $bigger/(-$v);
-#       my $image = null_space(transpose($C));
-#       $image->rows() == 1 or die("Something went wrong.".$image->rows());
-#       my $Cv = $image->[0];
-#       my $length = $Cv->dim - 1;
-#       my $last = $Cv->[$length];
-#       $Cv = $Cv->slice(0, $length);
-#       (1/$last) * $Cv
-#    }@$smaller;
-#    return new Matrix(@images);
-# }
+
+sub is_face{
+   my($sigma, $tau) = @_;
+   my $test = $sigma * $tau;
+   return $test->size == $tau->size;
+}
+
+
+sub compute_orientation_for_face{
+   my($sigma, $tau, $vertices) = @_;
+   my $genVector = get_genVector($sigma, $tau, $vertices);
+   my $sigmaBasis = $chosenBases->{$sigma};
+   print "SigmaBasis:\n", $sigmaBasis,"\n",$genVector,"\n";
+   my $relativeRow = new Matrix(build_matrix($sigmaBasis,  new Matrix($genVector)));
+   my $dxdMinus1 = $blocks->{$keySet}; 
+   my $baseChangeMatrix = new Matrix($relativeRow / $dxdMinus1);   
+   if (det($baseChangeMatrix) >= 0){
+      return 1;
+   } else {
+      return -1;
+   }
+}
+
+
+sub get_genVector{
+   my($sigma, $tau, $vertices) = @_;
+   my $honestNotInTau = $sigma - $tau;
+   my $indexNotInTau = $honestNotInTau->[0];
+   my $vectorNotInTau = $vertices->[$indexNotInTau];
+   my $genVector = $vectorNotInTau - $vertices->[$tau->[0]]; #This creates a vector in span of Sigma not in Tauand pointing same as Sigma
+   $genVector = $genVector->slice(1);
+   if ($genVector == zero_vector($genVector->dim)){
+      my $genVector = $vectorNotInTau - $vertices->[$tau->[1]]; #This creates a vector in span of Sigma not in Tauand pointing same as Sigma
+      $genVector = $genVector->slice(1);
+   }
+   return $genVector;
+}
+
+
 
 sub build_cone{
    my($vertices, $indexSet, $common) = @_;

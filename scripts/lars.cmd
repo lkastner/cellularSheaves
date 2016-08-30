@@ -105,6 +105,7 @@ $boundedChain = build_chain_complex($f1->BLOCKS, $pcFan->BOUNDED_FACES, $pcFan->
 
 
 
+###############################################################################
 
 
 application "tropical"; 
@@ -124,3 +125,15 @@ $bm0 = $div->borel_moore_complex($f0);
 $bm3 = $div->borel_moore_complex($f3); 
 $bm1->print();
 print $bm1->IS_WELLDEFINED;
+
+###############################################################################
+
+application "tropical";
+$f = toTropicalPolynomial("max(0,x,y, x+y+1)");
+$div = tropical::divisor( (projective_torus<Max>(2)) , rational_fct_from_affine_numerator($f));
+application "fan";
+print $div->ORIENTATIONS;
+$f1 = $div->fcomplex(1);
+
+
+

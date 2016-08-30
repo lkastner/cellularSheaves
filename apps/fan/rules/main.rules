@@ -15,11 +15,11 @@ user_function build_matrix_cpp<Element=Rational>(Matrix,Matrix) : c++ (include =
 
 user_function assemble_matrix_cpp<Element=Rational>(Array<Set<Int>>, Array<Set<Int>>, Map<Set<Set<Int> >, Matrix>, Map<Set<Set<Int> >, Int>) : c++ (include => "polymake/fan/linalg_tools.h");
 
+
 sub assemble_matrix{
    my($sigmas, $taus, $blocks, $orientations) = @_;
    if ($sigmas->size == 0 || $taus->size == 0){
       return zero_matrix(0, 0);
-      print "hello", "\n";
    }
    my $firstSet = new Set<Set<Int> >($sigmas->[0], $taus->[0]);
    my $ncols = $sigmas->size * $blocks->{$firstSet}->cols;
@@ -27,11 +27,11 @@ sub assemble_matrix{
    return assemble_matrix_cpp($sigmas, $taus, $blocks, $orientations);
 }
 
+
 sub choose_basis{
    my($A) = @_;
    my $desired = rank($A);
    if($desired == 0){
-   		print "hello";
       return zero_matrix($A->rows,0);
    }
    else{
@@ -39,14 +39,25 @@ sub choose_basis{
    }
 }
 
+
 sub build_matrix{
    my($bigger, $smaller) = @_;
-   print "bigger", $bigger, "\n", "smaller", $smaller, "*******";
    my $nrows = $smaller->rows;
    if ($nrows == 0){
       return zero_matrix(0,$bigger->rows);
-   }
-   else{
+   } else {
       return build_matrix_cpp($bigger,$smaller);
+   }
+}
+
+
+sub wedge_matrix{
+   my($A, $p) = @_;
+   my $nrows = binomial($A->rows, $p);
+   my $ncols = binomial($A->cols, $p);
+   if(($nrows == 0) || ($ncols == 0)){
+      return zero_matrix($nrows, $ncols);
+   } else {
+      return wedge_matrix_cpp($A, $p);
    }
 }

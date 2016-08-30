@@ -147,16 +147,6 @@ sub minwrap{
 }
 
 
-sub wedge_matrix{
-   my($A, $p) = @_;
-   my $nrows = binomial($A->rows, $p);
-   my $ncols = binomial($A->cols, $p);
-   if(($nrows == 0) || ($ncols == 0)){
-      return zero_matrix($nrows, $ncols);
-   } else {
-      return wedge_matrix_cpp($A, $p);
-   }
-}
 
 sub compute_homology{
    my($imof,$kerof) = @_;
