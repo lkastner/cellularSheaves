@@ -172,3 +172,5 @@ sub to_lattice_basis{
    my ($D, $L, $R) = @{smith_normal_form($Aint)};
    return $R->minor([0..$A->rows()-1],All);
 }
+
+

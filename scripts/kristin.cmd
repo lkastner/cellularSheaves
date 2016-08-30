@@ -29,9 +29,14 @@ print $pc->BOUNDED_FACES;
 print $pc->UNBOUNDED_FACES;
 print $pc->FAR_FACES;
 print $pc->NON_FAR_FACES;
+$w4 = $pc->wcomplex(4);
+$w3 = $pc->wcomplex(3);
 $w2 = $pc->wcomplex(2);
+$w1 = $pc->wcomplex(1);
+$boundedChain = build_chain_complex($w4->BLOCKS, $pc->BOUNDED_FACES, $pc->ORIENTATIONS);
+$boundedChain = build_chain_complex($w3->BLOCKS, $pc->BOUNDED_FACES, $pc->ORIENTATIONS);
 $boundedChain = build_chain_complex($w2->BLOCKS, $pc->BOUNDED_FACES, $pc->ORIENTATIONS);
-
+$boundedChain = build_chain_complex($w1->BLOCKS, $pc->BOUNDED_FACES, $pc->ORIENTATIONS);
 
 
 #####################
@@ -64,3 +69,17 @@ application "fan";
 $pc = new PolyhedralComplex($div);
 print $pc->VERTICES;
 $f1= $pc->fcomplex(1);
+
+
+
+
+
+####testing constant_sheaf
+
+application "fan";
+$d = 2;
+$pc = new PolyhedralComplex(check_fan_objects(new Cone(cube($d))));
+$const = $pc->constant_sheaf;
+$bmcomp = $pc->borel_moore_complex($const);
+print $bmcomp->DIFFERENTIALS;
+print $bmcomp->BETTI_NUMBERS;

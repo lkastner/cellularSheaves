@@ -8,8 +8,15 @@ object PolyhedralComplex {
       return $sheaf;
    }
 
-}
 
+	user_method constant_sheaf( ){
+		my($pc) = @_;
+		my $newblocks = build_blocks_constant($pc);
+		my $const_sheaf = $pc->add("SHEAF", BLOCKS => $newblocks);
+		return $const_sheaf;
+	}
+
+}
 
 sub find_max_containing{
    my($honestTau, $pc) = @_;
@@ -68,3 +75,26 @@ sub build_blocks_f{
 	}
 	return $newBlocks; 
 }
+
+sub build_blocks_constant{
+	my($pc) = @_;
+	my $d = $pc->FAN_DIM - 1;
+	my $hd = $pc->HASSE_DIAGRAM;
+	my $orientations = $pc->ORIENTATIONS;
+	my $newBlocks = new Map<Set<Set<Int>>, Matrix>();
+	for(my $i=0; $i<$d; $i++){
+      my $sigmas = $hd->nodes_of_dim($d-$i);
+      my $taus = $hd->nodes_of_dim($d-$i-1);
+      foreach my $sigma (@$sigmas) {
+         my $honestSigma = $hd->FACES->[$sigma];
+         foreach my $tau (@$taus) {
+            my $honestTau = $hd->FACES->[$tau];
+            my $keySet = new Set<Set<Int> >($honestSigma, $honestTau);
+            my $entry = $orientations->{$keySet};
+			my $block = new Matrix ( [[$entry*$entry]] );
+			$newBlocks->{$keySet} = $block;
+			}
+		}
+	}
+	return $newBlocks;	
+} 
