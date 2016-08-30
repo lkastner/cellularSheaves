@@ -36,7 +36,7 @@ declare object ChainComplex {
       # print "Hello.\n";
       for(my $i = 0; $i<$differentials->size-1; $i++){
          $homologies->[$i] = compute_homology($differentials->[$i+1], $differentials->[$i]);
-         print "Rows: ",$homologies->[$i]->rows," cols: ",$homologies->[$i]->cols,"\n";
+         # print "Rows: ",$homologies->[$i]->rows," cols: ",$homologies->[$i]->cols,"\n";
       }
       $this->HOMOLOGIES = $homologies;
    }
@@ -114,20 +114,21 @@ declare object ChainComplex {
 
 
 user_function build_chain_complex(Map<Set<Set<Int> >, Matrix >, Map<Int, Array<Set<Int>>>, Map<Set<Set<Int> >, Int >){
-	  my ($blocks, $faces, $orientations) = @_;
-	  print keys %$faces,"\n";
-	  my @k = keys %$faces;
-	  my $d  = maxwrap(@k);
-	  my $m = minwrap(@k);
-	  print $d, " ", $m, "\n";
-      my $result = new Array<Matrix>($d);
-      for(my $i=$m; $i<$d; $i++){
-         my $sigmas = $faces->{$d-$i};
-         my $taus = $faces->{$d-$i-1};
-         $result->[$d-$i-1] = assemble_matrix($sigmas, $taus, $blocks, $orientations);
-      }
-      #$result->[1] = zero_matrix(0,$result->[2]->rows);
-      return new ChainComplex(INPUT_DIFFERENTIALS=>$result);
+   my ($blocks, $faces, $orientations) = @_;
+   print keys %$faces,"\n";
+   my @k = keys %$faces;
+   my $d  = maxwrap(@k);
+   my $m = minwrap(@k);
+   print $d, " ", $m, "\n";
+   my $result = new Array<Matrix>($d);
+   for(my $i=$m; $i<$d; $i++){
+      my $sigmas = $faces->{$d-$i};
+      my $taus = $faces->{$d-$i-1};
+      # print "Sigmas: ",$sigmas," Taus: ",$taus,"\n";
+      $result->[$d-$i-1] = assemble_matrix($sigmas, $taus, $blocks, $orientations);
+   }
+   #$result->[1] = zero_matrix(0,$result->[2]->rows);
+   return new ChainComplex(INPUT_DIFFERENTIALS=>$result);
 }
 
 sub maxwrap{
