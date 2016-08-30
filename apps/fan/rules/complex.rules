@@ -1,8 +1,12 @@
 declare object ChainComplex {
    
    property INPUT_DIFFERENTIALS : Array<Matrix>;
+
+   property INPUT_ZERO_POS : Integer;
    
    property DIFFERENTIALS : Array<Matrix>;
+
+   property ZERO_POS : Integer;
 
    property HOMOLOGIES : Array<Matrix>;
 
@@ -10,7 +14,7 @@ declare object ChainComplex {
 
    property IS_WELLDEFINED : Bool; 
    
-   rule DIFFERENTIALS : INPUT_DIFFERENTIALS {
+   rule DIFFERENTIALS, ZERO_POS : INPUT_DIFFERENTIALS, INPUT_ZERO_POS {
       my @input = @{$this->INPUT_DIFFERENTIALS};
       my $n = @input;
       my $first = zero_matrix(0,$input[0]->rows);
@@ -18,6 +22,11 @@ declare object ChainComplex {
       unshift @input, $first;
       push @input, $last;
       $this->DIFFERENTIALS = new Array<Matrix>(@input);
+      $this->ZERO_POS = $this->INPUT_ZERO_POS + 1;
+   }
+
+   rule INPUT_ZERO_POS : {
+      $this->INPUT_ZERO_POS = 0;
    }
 
    rule HOMOLOGIES : DIFFERENTIALS {
@@ -77,10 +86,23 @@ declare object ChainComplex {
       if($this->IS_WELLDEFINED){
          my @dimensions = map{$_->rows}@{$this->DIFFERENTIALS};
          push @dimensions, $this->DIFFERENTIALS->[$this->DIFFERENTIALS->size -1]->cols;
-         @dimensions = map("k^".$_, @dimensions);
-         print join(" <-- ",@dimensions),"\n";
+         my @lengths = map(length $_."", @dimensions);
+         my $i = -$this->ZERO_POS;
+         @lengths = map{
+            my $l = $_ + 1;
+            my $indexLen = length $i."";
+            my $result = " ".$i.(" "x($l-$indexLen));
+            $i++;
+            $result
+         } @lengths;
+         @dimensions = reverse map("k^".$_, @dimensions);
+         print join("     ", reverse @lengths),"\n";
+         print join(" --> ",@dimensions),"\n";
+      } else {
+         print "Complex is not well-defined.\n";
       }
-      my $i = 0;
+      my $i = -$this->ZERO_POS;
+      print "The diagonals / should agree.\n";
       for my $d (@{$this->DIFFERENTIALS}){
          print "d^",$i," rows: ", $d->rows,", cols: ",$d->cols,"\n";
          $i++;
