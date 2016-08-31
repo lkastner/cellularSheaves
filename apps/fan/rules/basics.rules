@@ -7,8 +7,9 @@ object PolyhedralComplex {
 
    property ORIENTATIONS : Map<Set<Set<Int> >, Int >;
 
-   rule CHOSEN_BASES : VERTICES, HASSE_DIAGRAM, FAN_DIM {
+   rule CHOSEN_BASES : VERTICES, HASSE_DIAGRAM, FAN_DIM, LINEALITY_SPACE {
       my $result = new Map<Set<Int>, Matrix>();
+      my $lin = $this->LINEALITY_SPACE;
       my $d = $this->FAN_DIM - 1;
       my $vertices = $this->VERTICES;
       my $hd = $this->HASSE_DIAGRAM;
@@ -18,15 +19,14 @@ object PolyhedralComplex {
          my $sigmas = $hd->nodes_of_dim($sigmaDim);
          foreach my $sigma (@$sigmas) {
             my $honestSigma = $hd->FACES->[$sigma];
-            my $vIndex = $honestSigma->[0];
-            my $v = $vertices->[$vIndex];
-            my $generators = $vertices->minor($honestSigma, All);
-            $generators = new Matrix(map($_-$v, @$generators));
-            if($honestSigma->size == 1) {
-               $result->{$honestSigma} = new Matrix(0, $d);
+            my $vertSigma = $vertices->minor($honestSigma, All);
+            my $p = new Polytope(POINTS=>$vertSigma, INPUT_LINEALITY=>$lin);
+            if($p->FEASIBLE){
+               my $aff = $p->AFFINE_HULL;
+               $aff = $aff->minor(All, ~[0]);
+               $result->{$honestSigma} = null_space($aff);
             } else {
-               $result->{$honestSigma} = choose_basis_cpp($generators->minor(All, ~[0]));
-               # print "Chosen basis is:\n",$result->{$honestSigma},"\n";
+               $result->{$honestSigma} = new Matrix(0, $d);
             }
          }
       }
