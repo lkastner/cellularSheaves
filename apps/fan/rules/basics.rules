@@ -96,11 +96,6 @@ object PolyhedralComplex {
 
 sub compute_orientation{
    my($sigma, $tau, $vertices, $chosenBases, $block) = @_;
-   if($tau->size == 1){
-      # If tau is a vertex, it has dim 0 and bothers us later, unless we deal
-      # with it here. The orientation does not matter for this case.
-      return 0;
-   }
    if(is_face($sigma, $tau)){
       return compute_orientation_for_face($sigma, $tau, $vertices, $chosenBases, $block);
    } else { 
