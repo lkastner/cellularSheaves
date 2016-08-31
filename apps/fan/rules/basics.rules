@@ -134,7 +134,11 @@ sub get_genVector{
    my $genVector = $vectorNotInTau - $vertices->[$tau->[0]]; #This creates a vector in span of Sigma not in Tauand pointing same as Sigma
    $genVector = $genVector->slice(1);
    if ($genVector == zero_vector($genVector->dim)){
-      my $genVector = $vectorNotInTau - $vertices->[$tau->[1]]; #This creates a vector in span of Sigma not in Tauand pointing same as Sigma
+      if($vectorNotInTau->[0] == 0){
+         $genVector = 2*$vectorNotInTau - $vertices->[$tau->[0]];
+      } else {
+         $genVector = $vectorNotInTau - 2*$vertices->[$tau->[0]];
+      }
       $genVector = $genVector->slice(1);
    }
    return $genVector;
