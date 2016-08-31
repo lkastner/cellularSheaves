@@ -83,7 +83,8 @@ object PolyhedralComplex {
             foreach my $tau (@$taus) {
                my $honestTau = $hd->FACES->[$tau];
                my $keySet = new Set<Set<Int> >($honestSigma, $honestTau);
-               $result->{$keySet} = compute_orientation($honestSigma, $honestTau, $vertices);
+               my $block = $blocks->{$keySet};
+               $result->{$keySet} = compute_orientation($honestSigma, $honestTau, $vertices, $chosenBases, $block);
             }
          } 
       }
@@ -94,14 +95,14 @@ object PolyhedralComplex {
 
 
 sub compute_orientation{
-   my($sigma, $tau, $vertices) = @_;
+   my($sigma, $tau, $vertices, $chosenBases, $block) = @_;
    if($tau->size == 1){
       # If tau is a vertex, it has dim 0 and bothers us later, unless we deal
       # with it here. The orientation does not matter for this case.
       return 0;
    }
    if(is_face($sigma, $tau)){
-      return compute_orientation_for_face($sigma, $tau, $vertices);
+      return compute_orientation_for_face($sigma, $tau, $vertices, $chosenBases, $block);
    } else { 
       return 0;
    }
@@ -116,12 +117,11 @@ sub is_face{
 
 
 sub compute_orientation_for_face{
-   my($sigma, $tau, $vertices) = @_;
+   my($sigma, $tau, $vertices, $chosenBases, $dxdMinus1) = @_;
    my $genVector = get_genVector($sigma, $tau, $vertices);
    my $sigmaBasis = $chosenBases->{$sigma};
    print "SigmaBasis:\n", $sigmaBasis,"\n",$genVector,"\n";
    my $relativeRow = new Matrix(build_matrix($sigmaBasis,  new Matrix($genVector)));
-   my $dxdMinus1 = $blocks->{$keySet}; 
    my $baseChangeMatrix = new Matrix($relativeRow / $dxdMinus1);   
    if (det($baseChangeMatrix) >= 0){
       return 1;
