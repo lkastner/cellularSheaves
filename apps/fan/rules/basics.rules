@@ -84,7 +84,7 @@ object PolyhedralComplex {
                my $honestTau = $hd->FACES->[$tau];
                my $keySet = new Set<Set<Int> >($honestSigma, $honestTau);
                my $block = $blocks->{$keySet};
-               $result->{$keySet} = compute_orientation($honestSigma, $honestTau, $vertices, $chosenBases, $block);
+               $result->{$keySet} = compute_orientation($honestSigma, $honestTau, $chosenBases, $block);
             }
          } 
       }
@@ -95,9 +95,11 @@ object PolyhedralComplex {
 
 
 sub compute_orientation{
-   my($sigma, $tau, $vertices, $chosenBases, $block) = @_;
+   my($sigma, $tau, $chosenBases, $block) = @_;
    if(is_face($sigma, $tau)){
-      return compute_orientation_for_face($sigma, $tau, $vertices, $chosenBases, $block);
+      my $sigmaBasis = $chosenBases->{$sigma};
+      my $tauBasis = $chosenBases->{$tau};
+      return compute_orientation_for_face($sigmaBasis, $tauBasis, $block);
    } else { 
       return 0;
    }
@@ -112,9 +114,8 @@ sub is_face{
 
 
 sub compute_orientation_for_face{
-   my($sigma, $tau, $vertices, $chosenBases, $dxdMinus1) = @_;
-   my $genVector = get_genVector($sigma, $tau, $vertices);
-   my $sigmaBasis = $chosenBases->{$sigma};
+   my($sigmaBasis, $tauBasis, $dxdMinus1) = @_;
+   my $genVector = get_genVector($sigmaBasis, $tauBasis);
    print "SigmaBasis:\n", $sigmaBasis,"\n",$genVector,"\n";
    my $relativeRow = new Matrix(build_matrix($sigmaBasis,  new Matrix($genVector)));
    my $baseChangeMatrix = new Matrix($relativeRow / $dxdMinus1);   
@@ -127,21 +128,14 @@ sub compute_orientation_for_face{
 
 
 sub get_genVector{
-   my($sigma, $tau, $vertices) = @_;
-   my $honestNotInTau = $sigma - $tau;
-   my $indexNotInTau = $honestNotInTau->[0];
-   my $vectorNotInTau = $vertices->[$indexNotInTau];
-   my $genVector = $vectorNotInTau - $vertices->[$tau->[0]]; #This creates a vector in span of Sigma not in Tauand pointing same as Sigma
-   $genVector = $genVector->slice(1);
-   if ($genVector == zero_vector($genVector->dim)){
-      if($vectorNotInTau->[0] == 0){
-         $genVector = 2*$vectorNotInTau - $vertices->[$tau->[0]];
-      } else {
-         $genVector = $vectorNotInTau - 2*$vertices->[$tau->[0]];
+   my($sigmaBasis, $tauBasis) = @_;
+   for my $s (@$sigmaBasis){
+      my $id = grep($_ == $s, @$tauBasis);
+      if($id == 0){
+         return $s;
       }
-      $genVector = $genVector->slice(1);
    }
-   return $genVector;
+   die "No good vector found.";
 }
 
 
