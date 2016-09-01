@@ -97,9 +97,14 @@ object PolyhedralComplex {
 sub compute_orientation{
    my($sigma, $tau, $chosenBases, $block) = @_;
    if(is_face($sigma, $tau)){
+      print "Sigma: ",$sigma," Tau: ",$tau,"\n";
       my $sigmaBasis = $chosenBases->{$sigma};
       my $tauBasis = $chosenBases->{$tau};
-      return compute_orientation_for_face($sigmaBasis, $tauBasis, $block);
+      if($tauBasis->rows == 0){
+         return 0;
+      } else {
+         return compute_orientation_for_face($sigmaBasis, $tauBasis, $block);
+      }
    } else { 
       return 0;
    }
@@ -118,6 +123,8 @@ sub compute_orientation_for_face{
    my $genVector = get_genVector($sigmaBasis, $tauBasis);
    print "SigmaBasis:\n", $sigmaBasis,"\n",$genVector,"\n";
    my $relativeRow = new Matrix(build_matrix($sigmaBasis,  new Matrix($genVector)));
+   print $relativeRow,"\n";
+   print "Block:\n",$dxdMinus1;
    my $baseChangeMatrix = new Matrix($relativeRow / $dxdMinus1);   
    if (det($baseChangeMatrix) >= 0){
       return 1;
