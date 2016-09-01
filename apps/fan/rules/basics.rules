@@ -101,7 +101,7 @@ sub compute_orientation{
       my $sigmaBasis = $chosenBases->{$sigma};
       my $tauBasis = $chosenBases->{$tau};
       if($tauBasis->rows == 0){
-         return 0;
+         return 1;
       } else {
          return compute_orientation_for_face($sigmaBasis, $tauBasis, $block);
       }
