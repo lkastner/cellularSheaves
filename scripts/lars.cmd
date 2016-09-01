@@ -85,6 +85,7 @@ print assemble_matrix($sigmas, $taus, $blocks, $orientations);
 
 #Testing f blocks
 
+borel_moore_complex($f1);
 
 print build_generator_matrix_f($tau, $pc, 1); 
 
