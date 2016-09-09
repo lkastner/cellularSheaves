@@ -113,23 +113,27 @@ application "tropical";
 $f = toTropicalPolynomial("max(0,x,y,z)"); 
 $div = divisor( (projective_torus<Max>(3)) , rational_fct_from_affine_numerator($f)); 
 application "fan"; 
+$f0 = $div->fcomplex(0); 
 $f1 = $div->fcomplex(1); 
+$f2 = $div->fcomplex(2);
+$f3 = $div->fcomplex(3); 
+$bm0 = $div->borel_moore_complex($f0); 
+$bm1 = $div->borel_moore_complex($f1); 
+$bm2 = $div->borel_moore_complex($f2); 
+$bm3 = $div->borel_moore_complex($f3); 
+$bm0->print();
+$bm1->print();
+$bm2->print();
+$bm3->print();
+
+
+print $bm1->IS_WELLDEFINED;
+
 print $div->ORIENTATIONS;
 $u1 = $div->usual_chain_complex($f1);
 
 $bm1 = $div->borel_moore_complex($f1); 
 $bm1->print();
-
-$f2 = $div->fcomplex(2);
-$f0 = $div->fcomplex(0); 
-$f3 = $div->fcomplex(3); 
-$bm1 = $div->borel_moore_complex($f1); 
-$bm2 = $div->borel_moore_complex($f2); 
-$bm0 = $div->borel_moore_complex($f0); 
-$bm3 = $div->borel_moore_complex($f3); 
-$bm1->print();
-print $bm1->IS_WELLDEFINED;
-
 ###############################################################################
 
 application "tropical";
@@ -140,4 +144,13 @@ print $div->ORIENTATIONS;
 $f1 = $div->fcomplex(1);
 
 
+###############################################################################
+application "fan"; 
+$pc = new PolyhedralComplex(check_fan_objects(new Cone(cube(3))));
+print $pc->ORIENTATIONS->{new Set<Set<Int> >([[2,3],[3]])};
+print $pc->ORIENTATIONS->{new Set<Set<Int> >([[2,3],[2]])};
+$w0 = $pc->wcomplex(0);
+$w1 = $pc->wcomplex(1);
+$w2 = $pc->wcomplex(2);
+$w3 = $pc->wcomplex(3);
 

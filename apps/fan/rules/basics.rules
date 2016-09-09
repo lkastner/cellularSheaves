@@ -5,7 +5,6 @@ object PolyhedralComplex {
 
    property CHOSEN_BASES : Map<Set<Int>, Matrix>;
 
-   property ORIENTATIONS : Map<Set<Set<Int> >, Int >;
 
    rule CHOSEN_BASES : VERTICES, HASSE_DIAGRAM, FAN_DIM, LINEALITY_SPACE {
       my $result = new Map<Set<Int>, Matrix>();
@@ -67,118 +66,17 @@ object PolyhedralComplex {
    }
    
     	
- 	rule ORIENTATIONS : HASSE_DIAGRAM, FAN_DIM, SIMPLE_BLOCKS, VERTICES, CHOSEN_BASES {
-      # returns either 0, +1, -1 depending on the compatibility of thechosen ordered bases
-      my $d = $this->FAN_DIM - 1;
-      my $result = new Map<Set<Set<Int> >, Int>();
-      my $blocks = $this->SIMPLE_BLOCKS;
-      my $vertices = $this->VERTICES;
-      my $hd = $this->HASSE_DIAGRAM;
-      my $chosenBases = $this->CHOSEN_BASES;
-      for(my $i=0; $i<$d; $i++){
-         my $sigmas = $hd->nodes_of_dim($d-$i);
-         my $taus = $hd->nodes_of_dim($d-$i-1);
-         foreach my $sigma (@$sigmas) {
-            my $honestSigma = $hd->FACES->[$sigma];
-            foreach my $tau (@$taus) {
-               my $honestTau = $hd->FACES->[$tau];
-               my $keySet = new Set<Set<Int> >($honestSigma, $honestTau);
-               my $block = $blocks->{$keySet};
-               $result->{$keySet} = compute_orientation($honestSigma, $honestTau, $chosenBases, $block);
-            }
-         } 
-      }
-      $this->ORIENTATIONS = $result;
-   }
+ 	# rule ORIENTATIONS : HASSE_DIAGRAM, FAN_DIM, SIMPLE_BLOCKS, VERTICES, CHOSEN_BASES {
+   #    # returns either 0, +1, -1 depending on the compatibility of thechosen ordered bases
+   # }
 
 }
 
 
-sub compute_orientation{
-   my($sigma, $tau, $chosenBases, $block) = @_;
-   if(is_face($sigma, $tau)){
-      print "Sigma: ",$sigma," Tau: ",$tau,"\n";
-      my $sigmaBasis = $chosenBases->{$sigma};
-      my $tauBasis = $chosenBases->{$tau};
-      if($tauBasis->rows == 0){
-         return 1;
-      } else {
-         return compute_orientation_for_face($sigmaBasis, $tauBasis, $block);
-      }
-   } else { 
-      return 0;
-   }
-}
-
-
-sub is_face{
-   my($sigma, $tau) = @_;
-   my $test = $sigma * $tau;
-   return $test->size == $tau->size;
-}
-
-
-sub compute_orientation_for_face{
-   my($sigmaBasis, $tauBasis, $dxdMinus1) = @_;
-   my $genVector = get_genVector($sigmaBasis, $tauBasis);
-   print "SigmaBasis:\n", $sigmaBasis,"\n",$genVector,"\n";
-   my $relativeRow = new Matrix(build_matrix($sigmaBasis,  new Matrix($genVector)));
-   print $relativeRow,"\n";
-   print "Block:\n",$dxdMinus1;
-   my $baseChangeMatrix = new Matrix($relativeRow / $dxdMinus1);   
-   if (det($baseChangeMatrix) >= 0){
-      return 1;
-   } else {
-      return -1;
-   }
-}
-
-
-sub get_genVector{
-   my($sigmaBasis, $tauBasis) = @_;
-   for my $s (@$sigmaBasis){
-      my $id = grep($_ == $s, @$tauBasis);
-      if($id == 0){
-         return $s;
-      }
-   }
-   die "No good vector found.";
-}
 
 
 
-sub build_cone{
-   my($vertices, $indexSet, $common) = @_;
-   # print "Building cone: ",$indexSet,"\n";
-   my $rays = new Matrix($vertices->minor($indexSet, All));
-   # print $rays,"----\n";
-   my $v = $vertices->[$common];
-   # print $v,"\n----\n";
-   $rays = new Matrix(map{$_-$v}@$rays);
-   $rays = $rays->minor(All, ~[0]);
-   # print $rays;
-   return new Cone(INPUT_RAYS=>$rays);
-}
 
-# sub choose_basis{
-#    my($A) = @_;
-#    my @result = ();
-#    my $desired = rank($A);
-#    my $ambient = $A->cols();
-#    my $zero = zero_vector($ambient);
-#    my @gens = @$A;
-#    @gens = grep($_ != $zero, @gens);
-#    push @result, shift @gens;
-#    my $test = new Matrix(@result);
-#    while(rank($test) < $desired){
-#       my $next = shift @gens;
-#       if(rank($test / $next) > rank($test)){
-#          push @result, $next;
-#          $test = new Matrix(@result);
-#       }
-#    }
-#    return $test;
-# }
 
 
 sub to_lattice_basis{
