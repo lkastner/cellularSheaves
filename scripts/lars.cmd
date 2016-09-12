@@ -125,7 +125,21 @@ $bm0->print();
 $bm1->print();
 $bm2->print();
 $bm3->print();
+print $bm0->BETTI_NUMBERS;
+print $bm1->BETTI_NUMBERS;
+print $bm2->BETTI_NUMBERS;
+print $bm3->BETTI_NUMBERS;
 
+
+$us0 = $div->usual_chain_complex($f0);
+$us1 = $div->usual_chain_complex($f1); 
+$us2 = $div->usual_chain_complex($f2);
+$us3 = $div->usual_chain_complex($f3); 
+
+print $us0->BETTI_NUMBERS;
+print $us1->BETTI_NUMBERS;
+print $us2->BETTI_NUMBERS;
+print $us3->BETTI_NUMBERS;
 
 print $bm1->IS_WELLDEFINED;
 

@@ -68,8 +68,8 @@ $v2 = new matroid::ValuatedMatroid<Min>(N_ELEMENTS=>5, BASES=>[[3,4],[2,4],[2,3]
 
 
 application "tropical";
-$f = toTropicalPolynomial("max(0,x,y,z)");
-$div = divisor( (projective_torus<Max>(3)) , rational_fct_from_affine_numerator($f));
+$f = toTropicalPolynomial("max(0,x,y,z, 2*x +1, 2*y+5, x*y-8)");
+$div = divisor( (projective_torus<Max>(2)) , rational_fct_from_affine_numerator($f));
 application "fan";
 $pc = new PolyhedralComplex($div);
 print $pc->VERTICES;
