@@ -31,9 +31,7 @@ sub choose_bases_for_cones{
    my $result = new Map<Set<Int>, Matrix>();
    for my $face (@{$hd->FACES}){
       my $Crays = $rays->minor($face, All);
-      my $C = new Cone(INPUT_RAYS=>$Crays, INPUT_LINEALITY=>$lineality);
-      my $span = $C->LINEAR_SPAN;
-      $result->{$face} = null_space($span);
+      $result->{$face} = choose_basis($Crays/$lineality);
    }
    return $result;
 }
@@ -62,7 +60,7 @@ sub is_face{
 sub compute_orientation_for_face{
    my($sigmaBasis, $tauBasis) = @_;
    my $genVector = get_genVector($sigmaBasis, $tauBasis);
-   # print "SigmaBasis:\n", $sigmaBasis,"\n",$genVector,"\n";
+   # print "SigmaBasis:\n", $sigmaBasis,"\nTauBasis:\n",$tauBasis,"\ngenVector:",$genVector,"\n";
    my $relativeRow = new Matrix(build_matrix($sigmaBasis,  new Matrix($genVector)));
    # print $relativeRow,"\n";
    my $dxdMinus1 = build_matrix($sigmaBasis, $tauBasis);
