@@ -18,14 +18,27 @@ user_function assemble_matrix_cpp<Element=Rational>(Array<Set<Int>>, Array<Set<I
 
 
 sub assemble_matrix{
-   my($sigmas, $taus, $blocks, $orientations) = @_;
-   if ($sigmas->size == 0 || $taus->size == 0){
-      return zero_matrix(0, 0);
+   my($sigmas, $taus, $blocks, $orientations, $bases) = @_;
+   if ($sigmas->size == 0){
+   	   my $rowsize = 0; 
+   	   foreach my $tau (@$taus) { 
+   	   		$rowsize = $rowsize + $bases->{$tau}->cols;
+	   	}
+	   	return zero_matrix($rowsize, 0);
    }
+   elsif ($taus->size ==0){
+   		my $colsize = 0; 
+   	   foreach my $sigma (@$sigmas) { 
+   	   		$colsize = $colsize + $bases->{$sigma}->rows;
+	   	}
+	   	return zero_matrix(0, $colsize);
+   }
+   else { 
    my $firstSet = new Set<Set<Int> >($sigmas->[0], $taus->[0]);
    my $ncols = $sigmas->size * $blocks->{$firstSet}->cols;
    my $nrows = $taus->size * $blocks->{$firstSet}->rows;
    return assemble_matrix_cpp($sigmas, $taus, $blocks, $orientations);
+   }
 }
 
 

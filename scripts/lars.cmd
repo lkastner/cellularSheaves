@@ -136,6 +136,11 @@ $us1 = $div->usual_chain_complex($f1);
 $us2 = $div->usual_chain_complex($f2);
 $us3 = $div->usual_chain_complex($f3); 
 
+$us0->print();
+$us1->print();
+$us2->print();
+$us3->print();
+
 print $us0->BETTI_NUMBERS;
 print $us1->BETTI_NUMBERS;
 print $us2->BETTI_NUMBERS;

@@ -4,12 +4,15 @@ object PolyhedralComplex {
    user_method fcomplex( $ ){
       my($pc, $p) = @_;
       my $newblocks = new Map<Set<Set<Int> >, Matrix >();
+      my $newbases = new Map<Set<Int> , Matrix >();
       if ($p == 0){
       		$newblocks = build_blocks_constant($pc);
+      		$newbases = build_bases_f($pc, 0);
       } else{ 
       		$newblocks = build_blocks_f($pc, $p); 
+      		$newbases = build_bases_f($pc, $p);
       }
-      my $sheaf = $pc->add("COSHEAF", BLOCKS=>$newblocks);
+      my $sheaf = $pc->add("COSHEAF", BLOCKS=>$newblocks, BASES=>$newbases);
       return $sheaf;
    }
 
@@ -80,6 +83,31 @@ sub build_blocks_f{
 	}
 	return $newBlocks; 
 }
+
+
+sub build_bases_f{ 
+	my($pc, $p) =@_;
+	my $d = $pc->FAN_DIM - 1;
+	my $hd = $pc->HASSE_DIAGRAM;
+	my $newBases = new Map<Set<Int> , Matrix >();
+	for(my $i=0; $i<$d+1; $i++){
+      my $sigmas = $hd->nodes_of_dim($d-$i);
+      foreach my $sigma (@$sigmas) {
+         my $honestSigma = $hd->FACES->[$sigma];
+         my $keySet = new Set<Int> ($honestSigma);
+         my $fpSigmaBasis = new Matrix([[1]]);
+         if ($p ==0) {
+         	  $fpSigmaBasis = new Matrix([[1]]);
+         } else {
+         		$fpSigmaBasis = new Matrix (build_matrix_f($honestSigma, $pc, $p));
+         	}
+         $newBases->{$keySet} = transpose($fpSigmaBasis);
+       }   
+	}
+	return $newBases; 
+}
+
+
 
 sub build_blocks_constant{
 	my($pc) = @_;
