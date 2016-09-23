@@ -9,8 +9,8 @@ print build_matrix_cpp($A,$B);
 
 application "fan";
 $pc = new PolyhedralComplex(check_fan_objects(new Cone(cube(4))));
-$w1 = $pc->wcomplex(1);
-$wd1 = $pc->dualwcomplex(1);
+$w1 = $pc->wsheaf(1);
+$wd1 = $pc->wcosheaf(1);
 print $wd1->CHAIN_COMPLEX->IS_WELLDEFINED;
 for(my $i = 0; $i<=7; $i++){
    print $i;
@@ -30,7 +30,7 @@ for(my $i = 0; $i<=7; $i++){
    print ". \n";
 }
 print $w1->CHAIN_COMPLEX->BETTI_NUMBERS;
-$w2 = $pc->wcomplex(2);
-$wd2 = $pc->dualwcomplex(2);
+$w2 = $pc->wsheaf(2);
+$wd2 = $pc->wcosheaf(2);
 print $w2->CHAIN_COMPLEX->BETTI_NUMBERS;
 print $wd2->CHAIN_COMPLEX->BETTI_NUMBERS;

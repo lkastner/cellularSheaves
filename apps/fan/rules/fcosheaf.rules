@@ -1,7 +1,7 @@
 
 object PolyhedralComplex {
 
-   user_method fcomplex( $ ){
+   user_method fcosheaf( $ ){
       my($pc, $p) = @_;
       my $newblocks = new Map<Set<Set<Int> >, Matrix >();
       my $newbases = new Map<Set<Int> , Matrix >();

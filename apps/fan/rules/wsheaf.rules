@@ -1,6 +1,6 @@
 object PolyhedralComplex {
 	
-   user_method wcomplex( $ ){
+   user_method wsheaf( $ ){
       my($pc, $p) = @_;
       my $newblocks = new Map<Set<Set<Int> >, Matrix >();
       my $newbases = new Map<Set<Int> , Matrix >();
@@ -26,7 +26,7 @@ object PolyhedralComplex {
 
       
       
-   user_method dualwcomplex( $ ){
+   user_method wcosheaf( $ ){
       my($pc, $p) = @_;
       my $simpleBlocks = $pc->SIMPLE_BLOCKS;
       my $newblocks = new Map<Set<Set<Int> >, Matrix >();

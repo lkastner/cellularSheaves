@@ -4,8 +4,8 @@ INCLUDE
    faces.rules
    complex.rules
    sheaves.rules
-   wcomplex.rules
-   fcomplex.rules
+   wsheaf.rules
+   fcosheaf.rules
    functors.rules
 
 user_function wedge_matrix_cpp<Element=Rational>(Matrix, $ ) : c++ (include => "polymake/fan/linalg_tools.h");
