@@ -25,7 +25,7 @@ $v = [0,0,3,1,2,1,0,1,0,2,2,0,3,0,4,1,2,2,0,0];
 $val_matroid = new matroid::ValuatedMatroid<Min>(BASES=>matroid::uniform_matroid(3,6)->BASES,VALUATION_ON_BASES=>$v,N_ELEMENTS=>6);
 $tls = tropical::linear_space($val_matroid);
 @result = ();
-for(my $i=1;$i<=3;$i++){
+for(my $i=0;$i<3;$i++){
    my $wi = $tls->wsheaf($i);
    my $si=$tls->usual_chain_complex($wi);
    push @result, $si->BETTI_NUMBERS;
