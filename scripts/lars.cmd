@@ -38,7 +38,7 @@ application "fan";
 $pc = new PolyhedralComplex(check_fan_objects(new Cone(cube(3))));
 @result = ();
 for(my $i=0; $i<4; $i++){
-   my $w = $pc->wcomplex($i);
+   my $w = $pc->wsheaf($i);
    push @result, $w->CHAIN_COMPLEX->BETTI_NUMBERS;
 }
 print new Matrix(@result);
@@ -46,7 +46,7 @@ print new Matrix(@result);
 application "fan";
 $d = 4;
 $pc = new PolyhedralComplex(check_fan_objects(new Cone(cube($d))));
-$w2 = $pc->wcomplex(2);
+$w2 = $pc->wsheaf(2);
 $s = new Set<Int>(12,13,14,15);
 $t = new Set<Int>(14,15);
 $p = new Pair<Set<Int>, Set<Int> >($s, $t);
@@ -55,8 +55,8 @@ print wedge_matrix($pc->SIMPLE_BLOCKS->{$p},2)->cols;
 
 
 for(my $i = 1; $i<$d; $i++){
-   my $wi = $pc->wcomplex($i);
-   print $i,": ",$wi->BETTI_NUMBERS,"\n";
+   my $wi = $pc->wsheaf($i);
+   print $i,": ",$wi->CHAIN_COMPLEX->BETTI_NUMBERS,"\n";
 }
 
 ################################################################
@@ -101,7 +101,7 @@ $t = matroid_fan<Max>($m);
 application "fan";
 print $t->RAYS;
 $pcFan = new PolyhedralComplex($t);
-$f1 = $pcFan->fcomplex(1);
+$f1 = $pcFan->fcosheaf(1);
 $boundedChain = build_chain_complex($f1->BLOCKS, $pcFan->BOUNDED_FACES, $pcFan->ORIENTATIONS);
 
 
@@ -113,10 +113,10 @@ application "tropical";
 $f = toTropicalPolynomial("max(0,x,y,z)"); 
 $div = divisor( (projective_torus<Max>(3)) , rational_fct_from_affine_numerator($f)); 
 application "fan"; 
-$f0 = $div->fcomplex(0); 
-$f1 = $div->fcomplex(1); 
-$f2 = $div->fcomplex(2);
-$f3 = $div->fcomplex(3); 
+$f0 = $div->fcosheaf(0); 
+$f1 = $div->fcosheaf(1); 
+$f2 = $div->fcosheaf(2);
+$f3 = $div->fcosheaf(3); 
 $bm0 = $div->borel_moore_complex($f0); 
 $bm1 = $div->borel_moore_complex($f1); 
 $bm2 = $div->borel_moore_complex($f2); 
@@ -160,7 +160,7 @@ $f = toTropicalPolynomial("max(0,x+5,y+3, x+y+9)");
 $div = tropical::divisor( (projective_torus<Max>(2)) , rational_fct_from_affine_numerator($f));
 application "fan";
 print $div->ORIENTATIONS;
-$f1 = $div->fcomplex(1);
+$f1 = $div->fcosheaf(1);
 
 
 ###############################################################################
@@ -168,8 +168,8 @@ application "fan";
 $pc = new PolyhedralComplex(check_fan_objects(new Cone(cube(3))));
 print $pc->ORIENTATIONS->{new Set<Set<Int> >([[2,3],[3]])};
 print $pc->ORIENTATIONS->{new Set<Set<Int> >([[2,3],[2]])};
-$w0 = $pc->wcomplex(0);
-$w1 = $pc->wcomplex(1);
-$w2 = $pc->wcomplex(2);
-$w3 = $pc->wcomplex(3);
+$w0 = $pc->wsheaf(0);
+$w1 = $pc->wsheaf(1);
+$w2 = $pc->wsheaf(2);
+$w3 = $pc->wsheaf(3);
 

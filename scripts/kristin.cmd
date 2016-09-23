@@ -6,7 +6,7 @@ $sigma = $pc->HASSE_DIAGRAM->FACES->[2];
 print find_max_containing($tau, $pc);
 print build_matrix_f($tau, $pc, 1);
 print build_blocks_f($pc, 1);
-$f2 = $pc->fcomplex(2);
+$f2 = $pc->fcosheaf(2);
 print $f2->CHAIN_COMPLEX->DIFFERENTIALS;
 
 $key = new Pair<Set<Int>, Set<Int> >($sigma, $tau);
@@ -29,10 +29,10 @@ print $pc->BOUNDED_FACES;
 print $pc->UNBOUNDED_FACES;
 print $pc->FAR_FACES;
 print $pc->NON_FAR_FACES;
-$w4 = $pc->wcomplex(4);
-$w3 = $pc->wcomplex(3);
-$w2 = $pc->wcomplex(2);
-$w1 = $pc->wcomplex(1);
+$w4 = $pc->wsheaf(4);
+$w3 = $pc->wsheaf(3);
+$w2 = $pc->wsheaf(2);
+$w1 = $pc->wsheaf(1);
 $boundedChain = build_chain_complex($w4->BLOCKS, $pc->BOUNDED_FACES, $pc->ORIENTATIONS);
 $boundedChain = build_chain_complex($w3->BLOCKS, $pc->BOUNDED_FACES, $pc->ORIENTATIONS);
 $boundedChain = build_chain_complex($w2->BLOCKS, $pc->BOUNDED_FACES, $pc->ORIENTATIONS);
@@ -51,7 +51,7 @@ application "tropical";
 $mFan = matroid_fan<Max>($m);
 application "fan";
 $pcFan = new PolyhedralComplex($mFan);
-$f1 = $pcFan->fcomplex(1);
+$f1 = $pcFan->fcosheaf(1);
 
 application "tropical";
 $v = new matroid::ValuatedMatroid<Min>(N_ELEMENTS=>5, BASES=>[[0,1,2],[0,1,3],[0,1,4],[0,2,3],[0,2,4],[0,3,4], [1,2,3], [1,2,4],[1,3,4],[2,3,4]], VALUATION_ON_BASES=>[1,0,3,2,6,1,0,3,1,0]);
@@ -62,7 +62,7 @@ $v3 = new matroid::ValuatedMatroid<Min>(N_ELEMENTS=>6, BASES=>[[0,1,2],[0,1,3],[
 $l3 = tropical::linear_space($v3);
 print $l3->F_VECTOR;
 $p = 1;
-$boundedChain = build_chain_complex($l->$wcomplex($p)->BLOCKS, $l->BOUNDED_FACES, $l->ORIENTATIONS);
+$boundedChain = build_chain_complex($l->wsheaf($p)->BLOCKS, $l->BOUNDED_FACES, $l->ORIENTATIONS);
 
 $v2 = new matroid::ValuatedMatroid<Min>(N_ELEMENTS=>5, BASES=>[[3,4],[2,4],[2,3],[1,4],[1,3],[1,2], [0,4], [0,3],[0,2],[0,1]], VALUATION_ON_BASES=>[1,0,3,2,6,1,0,3,1,0]);
 
@@ -73,7 +73,7 @@ $div = divisor( (projective_torus<Max>(2)) , rational_fct_from_affine_numerator(
 application "fan";
 $pc = new PolyhedralComplex($div);
 print $pc->VERTICES;
-$f1= $pc->fcomplex(1);
+$f1= $pc->fcosheaf(1);
 
 
 
@@ -82,10 +82,10 @@ application "tropical";
 $f = toTropicalPolynomial("max(0,x,y,z)");
 $div = divisor( (projective_torus<Max>(3)) , rational_fct_from_affine_numerator($f));
 application "fan";
-$f1 = $div->fcomplex(1);
-$f2  = $div->fcomplex(2);
-$f0 = $div->fcomplex(0);
-$f3 = $div->fcomplex(3);
+$f1 = $div->fcosheaf(1);
+$f2  = $div->fcosheaf(2);
+$f0 = $div->fcosheaf(0);
+$f3 = $div->fcosheaf(3);
 $bm1  = $div->borel_moore_complex($f1); 
 $bm2  = $div->borel_moore_complex($f2); 
 $bm0  = $div->borel_moore_complex($f0); 
@@ -99,7 +99,7 @@ print $bm3->IS_WELLDEFINED;
 
 $pc = new PolyhedralComplex($div);
 print $pc->VERTICES;
-$f1= $pc->fcomplex(1);
+$f1= $pc->fcosheaf(1);
 
 
 
@@ -109,7 +109,7 @@ $div = divisor( (projective_torus<Max>(2)) , rational_fct_from_affine_numerator(
 application "fan";
 $pc = new PolyhedralComplex($div);
 print $pc->VERTICES;
-$f1= $pc->fcomplex(1);
+$f1= $pc->fcosheaf(1);
 
 
 ####testing constant_sheaf
