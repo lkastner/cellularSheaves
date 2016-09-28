@@ -50,6 +50,7 @@ print $simplex->DUAL_H_VECTOR;
 $m = matroid::uniform_matroid(2,3);
 application "tropical";
 $t = matroid_fan<Max>($m);
+print $t->VERTICES;
 application "fan";
 $berg = new PolyhedralComplex($t); 
 $f0 = $berg->fcosheaf(0);
