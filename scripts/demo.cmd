@@ -74,53 +74,42 @@ $g = complete(4);
 application "matroid";
 $m = matroid_from_graph($g);
 print $m->BASES;
-application "tropical";
-$t = matroid_fan<Max>($m);
+$t = tropical::matroid_fan<Max>($m);
+print $t->VERTICES;
 application "fan";
 $berg = new PolyhedralComplex($t);
-$f0 = $berg->fcosheaf(0);
-$f1 = $berg->fcosheaf(1);
-$f2 = $berg->fcosheaf(2);
-$f3 = $berg->fcosheaf(3);
-$s0 = $berg->usual_chain_complex($f0);
-$s1 = $berg->usual_chain_complex($f1);
-$s2 = $berg->usual_chain_complex($f2);
-$s3 = $berg->usual_chain_complex($f3);
-print $s0->BETTI_NUMBERS;
-print $s1->BETTI_NUMBERS;
-print $s2->BETTI_NUMBERS;
-print $s3->BETTI_NUMBERS;
+@result1 = ();
+@result2 = ();
+for(my $i=0; $i<3; $i++){
+   my $f = $berg->fcosheaf($i);
+   my $s = $berg->usual_chain_complex($f);
+   my $bm = $berg->borel_moore_complex($f);
+   push @result1, $s->BETTI_NUMBERS;
+   push @result2, $bm->BETTI_NUMBERS;
+}
+print new Matrix(@result1);
+print new Matrix(@result2);
 
-$bm0 = $berg->borel_moore_complex($f0);
-$bm1 = $berg->borel_moore_complex($f1);
-$bm2 = $berg->borel_moore_complex($f2);
-$bm3 = $berg->borel_moore_complex($f3);
-print $bm0->BETTI_NUMBERS;
-print $bm1->BETTI_NUMBERS;
-print $bm2->BETTI_NUMBERS;
-print $bm3->BETTI_NUMBERS;
 
 
 $m = matroid::uniform_matroid(3,6);
-$t = matroid_fan<Max>($m);
+$t = tropical::matroid_fan<Max>($m);
+print $t->VERTICES;
 application "fan";
 $berg = new PolyhedralComplex($t);
 
+@result1 = ();
+@result2 = ();
 for(my $i=0; $i<6; $i++){
    my $f = $berg->fcosheaf($i);
-   my $bm = $berg->usual_chain_complex($f);
-   push @result, $bm->BETTI_NUMBERS;
-}
-print new Matrix(@result);
-
-
-@result = ();
-for(my $i=0; $i<6; $i++){
-   my $f = $berg->fcosheaf($i);
+   my $s = $berg->usual_chain_complex($f);
    my $bm = $berg->borel_moore_complex($f);
-   push @result, $bm->BETTI_NUMBERS;
+   push @result1, $s->BETTI_NUMBERS;
+   push @result2, $bm->BETTI_NUMBERS;
 }
-print new Matrix(@result);
+print new Matrix(@result1);
+print new Matrix(@result2);
+
 
 
 ## Tropical linear spaces 
@@ -155,21 +144,17 @@ application "fan";
 print $div->F_VECTOR;
 print $div->BOUNDED_FACES;
 
-@result = ();
+@result1 = ();
+@result2 = ();
 for(my $i=0;$i<3;$i++){
    my $fi = $div->fcosheaf($i);
    my $si=$div->usual_chain_complex($fi);
-   push @result, $si->BETTI_NUMBERS;
+   my $bmi=$div->borel_moore_complex($fi);
+   push @result1, $si->BETTI_NUMBERS;
+   push @result2, $bmi->BETTI_NUMBERS;
 } 
-print new Matrix(@result);
-
-@result = ();
-for(my $i=0;$i<3;$i++){
-   my $fi = $div->fcosheaf($i);
-   my $si=$div->borel_moore_complex($fi);
-   push @result, $si->BETTI_NUMBERS;
-} 
-print new Matrix(@result);
+print new Matrix(@result1);
+print new Matrix(@result2);
 
 
 
