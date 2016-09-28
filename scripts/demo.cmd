@@ -156,7 +156,7 @@ print $div->BOUNDED_FACES;
 
 @result = ();
 for(my $i=0;$i<3;$i++){
-   my $fi = $div->fsheaf($i);
+   my $fi = $div->fcosheaf($i);
    my $si=$div->usual_chain_complex($fi);
    push @result, $si->BETTI_NUMBERS;
 } 
@@ -164,7 +164,7 @@ print new Matrix(@result);
 
 @result = ();
 for(my $i=0;$i<3;$i++){
-   my $fi = $div->fsheaf($i);
+   my $fi = $div->fcosheaf($i);
    my $si=$div->borel_moore_complex($fi);
    push @result, $si->BETTI_NUMBERS;
 } 
@@ -174,7 +174,12 @@ print new Matrix(@result);
 
 
 
-
-
+$f = toTropicalPolynomial("max(0,x,y,z, 2*x - 2, 2*y-2, 2*z-2, x+y-1, x+z-1, y+z-1, 3*x-6, 3*y-6, 3*z-6, 2*x+y - 4,2*y + x- 4, 2*x + z - 4, 2*z+x - 4, 2*y + z- 4, 2*z+y - 4, x+y+z +1, 4*x -12, 4*y-12, 4*z-12,  3*x+y -9,3*y + x- 9, 3*x + z - 9, 3*z+x - 9, 3*y + z- 9, 3*z+y - 9, 2*x + 2*y - 8, 2*x + 2*z - 8, 2*y + 2*z - 8,2*x + 2*y +z - 7, 2*x + 2*z +y - 7, 2*y + 2*z + x- 7  )");
  
+$div = tropical::divisor( (projective_torus<Max>(3)) , rational_fct_from_affine_numerator($f));
+
+application "fan";
+
+
+
 
