@@ -8,6 +8,7 @@ print $pc->ORIENTATIONS;
 $w1 = $pc->wsheaf(1);
 print $w1->BASES;
 print $w1->BLOCKS;
+print $w1->CHAIN_COMPLEX->print();
 print $w1->CHAIN_COMPLEX->BETTI_NUMBERS;
 print $w1->CHAIN_COMPLEX->HOMOLOGIES;
 
@@ -44,6 +45,19 @@ $simplex = polytope::simplex(5);
 print $simplex->DUAL_H_VECTOR;
 
 
+
+$vert = new Matrix([[1,0,0,1],[1,-1,0,0],[1,1,0,0],[1,0,-1,0],[1,0,1,0]]);
+$pyr = new Polytope(POINTS=>$vert);
+$pc = new PolyhedralComplex(check_fan_objects(new Cone($pyr)));
+@result = ();
+for(my $i=0; $i<4; $i++){
+   my $w = $pc->wsheaf($i);
+   push @result, $w->CHAIN_COMPLEX->BETTI_NUMBERS;
+   }
+print new Matrix(@result);
+
+
+
 # Bergman fans and tropical linear spaces
 
 
@@ -57,9 +71,10 @@ $f0 = $berg->fcosheaf(0);
 $f1 = $berg->fcosheaf(1);
 $f2 = $berg->fcosheaf(2);
 
-print $f0->BASES->{new Set<Int>({0})};
-print $f1->BASES->{new Set<Int>({0})};
-print $f2->BASES->{new Set<Int>({0})};
+print $berg->BOUNDED_FACES;
+print $f0->BASES->{new Set<Int>([3])};
+print $f1->BASES->{new Set<Int>([3])};
+print $f2->BASES->{new Set<Int>([3])};
 
 $s0 = $berg->usual_chain_complex($f0);
 $s1 = $berg->usual_chain_complex($f1);
