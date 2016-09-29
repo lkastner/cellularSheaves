@@ -56,6 +56,11 @@ $berg = new PolyhedralComplex($t);
 $f0 = $berg->fcosheaf(0);
 $f1 = $berg->fcosheaf(1);
 $f2 = $berg->fcosheaf(2);
+
+print $f0->BASES->{new Set<Int>({0})};
+print $f1->BASES->{new Set<Int>({0})};
+print $f2->BASES->{new Set<Int>({0})};
+
 $s0 = $berg->usual_chain_complex($f0);
 $s1 = $berg->usual_chain_complex($f1);
 $s2 = $berg->usual_chain_complex($f2);
@@ -84,6 +89,8 @@ $t = tropical::matroid_fan<Max>($m);
 print $t->VERTICES;
 application "fan";
 $berg = new PolyhedralComplex($t);
+
+
 @result1 = ();
 @result2 = ();
 for(my $i=0; $i<3; $i++){
