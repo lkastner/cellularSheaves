@@ -46,17 +46,18 @@ print $simplex->DUAL_H_VECTOR;
 
 
 
-$vert = new Matrix([[1,0,0,1],[1,-1,0,0],[1,1,0,0],[1,0,-1,0],[1,0,1,0]]);
-$pyr = new Polytope(POINTS=>$vert);
-$pc = new PolyhedralComplex(check_fan_objects(new Cone($pyr)));
+##simplicial non-simple has non-zero entries off the diagonal.
+application "fan";
+$vert = new Matrix([[1,0,0,0],[1,1,1,1],[1,3,0,0],[1,0,3,0],[1,1,1,-1]]);
+$P = new Polytope(POINTS=>$vert);
+print $P->F_VECTOR;
+$pc = new PolyhedralComplex(check_fan_objects(new Cone($P)));
 @result = ();
 for(my $i=0; $i<4; $i++){
    my $w = $pc->wsheaf($i);
    push @result, $w->CHAIN_COMPLEX->BETTI_NUMBERS;
    }
 print new Matrix(@result);
-
-
 
 # Bergman fans and tropical linear spaces
 
