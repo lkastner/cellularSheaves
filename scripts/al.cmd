@@ -34,3 +34,21 @@ $w2 = $pc->wsheaf(2);
 $wd2 = $pc->wcosheaf(2);
 print $w2->CHAIN_COMPLEX->BETTI_NUMBERS;
 print $wd2->CHAIN_COMPLEX->BETTI_NUMBERS;
+
+
+###############################################################
+############### Problems with zero maps again #################
+###############################################################
+application "fan";
+$v = [0,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0,1,0,0,0];
+$val_matroid = new matroid::ValuatedMatroid<Min>(BASES=>matroid::uniform_matroid(3,6)->BASES,VALUATION_ON_BASES=>$v,N_ELEMENTS=>6);
+$tls = tropical::linear_space($val_matroid);
+$w0 = $tls->wsheaf(0);
+$w1 = $tls->wsheaf(1);
+$w2 = $tls->wsheaf(2);
+$ws0 = $tls->usual_chain_complex($w0);
+$ws1 = $tls->usual_chain_complex($w1);
+$ws2 = $tls->usual_chain_complex($w2);
+$ws0->print_debug();
+$ws1->print_debug();
+$ws2->print_debug();
