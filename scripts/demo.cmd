@@ -120,7 +120,7 @@ print new Matrix(@result2);
 
 ## Tropical linear spaces 
 
-
+application "fan";
 $v = [0,0,3,1,2,1,0,1,0,2,2,0,3,0,4,1,2,2,0,0];
 $val_matroid = new matroid::ValuatedMatroid<Min>(BASES=>matroid::uniform_matroid(3,6)->BASES,VALUATION_ON_BASES=>$v,N_ELEMENTS=>6);
 $tls = tropical::linear_space($val_matroid);
