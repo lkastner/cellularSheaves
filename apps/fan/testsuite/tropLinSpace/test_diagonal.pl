@@ -24,5 +24,5 @@ sub test_tls{
 }
 
 ## build the tropical space in polymake and save it.
-my $tls = load("tls1.poly");
+my $tls = load("00100010000000101000.poly");
 test_tls($tls);
