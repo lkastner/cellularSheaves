@@ -118,21 +118,18 @@ print new Matrix(@result2);
 $v = [0,0,3,1,2,1,0,1,0,2,2,0,3,0,4,1,2,2,0,0];
 $val_matroid = new matroid::ValuatedMatroid<Min>(BASES=>matroid::uniform_matroid(3,6)->BASES,VALUATION_ON_BASES=>$v,N_ELEMENTS=>6);
 $tls = tropical::linear_space($val_matroid);
-@result = ();
+@result1 = ();
+@result2 = ();
 for(my $i=0;$i<3;$i++){
    my $fi = $tls->fcosheaf($i);
    my $si=$tls->usual_chain_complex($fi);
-   push @result, $si->BETTI_NUMBERS;
+   my $bmi=$tls->borel_moore_complex($fi);
+   push @result1, $si->BETTI_NUMBERS;
+   push @result2, $bmi->BETTI_NUMBERS;
 }  
-print new Matrix(@result);
+print new Matrix(@result1);
+print new Matrix(@result2);
 
-@result = ();
-for(my $i=0;$i<3;$i++){
-   my $fi = $tls->fcosheaf($i);
-   my $si=$tls->borel_moore_complex($fi);
-   push @result, $si->BETTI_NUMBERS;
-}  
-print new Matrix(@result);
 
 
 ### Some tropical hypersurfaces
