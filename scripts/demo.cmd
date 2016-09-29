@@ -120,7 +120,7 @@ $val_matroid = new matroid::ValuatedMatroid<Min>(BASES=>matroid::uniform_matroid
 $tls = tropical::linear_space($val_matroid);
 @result = ();
 for(my $i=0;$i<3;$i++){
-   my $fi = $tls->fsheaf($i);
+   my $fi = $tls->fcosheaf($i);
    my $si=$tls->usual_chain_complex($fi);
    push @result, $si->BETTI_NUMBERS;
 }  
@@ -128,7 +128,7 @@ print new Matrix(@result);
 
 @result = ();
 for(my $i=0;$i<3;$i++){
-   my $fi = $tls->fsheaf($i);
+   my $fi = $tls->fcosheaf($i);
    my $si=$tls->borel_moore_complex($fi);
    push @result, $si->BETTI_NUMBERS;
 }  
