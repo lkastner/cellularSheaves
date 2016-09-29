@@ -173,3 +173,24 @@ $w1 = $pc->wsheaf(1);
 $w2 = $pc->wsheaf(2);
 $w3 = $pc->wsheaf(3);
 
+###############################################################################
+application "fan";
+$v = [0,0,3,1,2,1,0,1,0,2,2,0,3,0,4,1,2,2,0,0];
+$val_matroid = new matroid::ValuatedMatroid<Min>(BASES=>matroid::uniform_matroid(3,6)->BASES,VALUATION_ON_BASES=>$v,N_ELEMENTS=>6);
+$tls = tropical::linear_space($val_matroid);
+$f1 = $tls->fcosheaf(1);
+$s1=$tls->usual_chain_complex($f1);
+$bm1=$tls->borel_moore_complex($f1);
+
+
+@result1 = ();
+@result2 = ();
+for(my $i=0;$i<3;$i++){
+   my $fi = $tls->fcosheaf($i);
+   my $si=$tls->usual_chain_complex($fi);
+   my $bmi=$tls->borel_moore_complex($fi);
+   push @result1, $si->BETTI_NUMBERS;
+   push @result2, $bmi->BETTI_NUMBERS;
+}  
+print new Matrix(@result1);
+print new Matrix(@result2);

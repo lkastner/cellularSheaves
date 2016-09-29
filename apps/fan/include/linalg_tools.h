@@ -81,36 +81,42 @@ assemble_matrix_cpp(const Array<Set<int>> sigmas,
                const Array<Set<int>> taus, 
                const Map<Set<Set<int> >, Matrix<E>> blocks, 
                const Map<Set<Set<int> >, int> orientations){
-   int nrows = taus.size(), ncols = sigmas.size(), i, j, blockRow, blockCol;
+   int nrows = 0, ncols = 0, blockRow=0, blockCol, currentRow, currentCol;
+   Matrix<E> currentBlock;
+   Set<Set<int> > currentPair;
+   for(auto tau = entire(taus); !tau.at_end(); ++tau){
+      currentPair = Set<Set<int> >(*tau);
+      currentPair += Set<Set<int> >(sigmas[0]);
+      nrows += blocks[currentPair].rows();
+   }
+   for(auto sigma = entire(sigmas); !sigma.at_end(); ++sigma){
+      currentPair = Set<Set<int> >(*sigma);
+      currentPair += Set<Set<int> >(taus[0]);
+      ncols += blocks[currentPair].cols();
+   }
    //cout << "AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH" << endl;
-   Set<Set<int> > first_pair(sigmas[0]), currentPair;
-   first_pair += Set<Set<int> >(taus[0]);
-   //cout << "FP: " << first_pair << endl;
-   //cout << blocks << endl;
-   blockRow = blocks[first_pair].rows();
-   blockCol = blocks[first_pair].cols();
-   nrows *= blockRow;
-   ncols *= blockCol;
    if((nrows == 0) || (ncols == 0)){
       return zero_matrix<E>(nrows, ncols);
    }
    Matrix<E> result(nrows, ncols);
-   i = 0;
+   currentRow = 0;
    for(auto tau = entire(taus); !tau.at_end(); ++tau){
-      j = 0;
+      currentCol = 0;
       for(auto sigma = entire(sigmas); !sigma.at_end(); ++sigma){
          currentPair = Set<Set<int> >(*sigma);
          currentPair += Set<Set<int> >(*tau);
+         currentBlock = blocks[currentPair];
+         blockRow = currentBlock.rows();
+         blockCol = currentBlock.cols();
+         // cout << "CurrentRow: " << currentRow << " CurrentCol: " << currentCol << endl;
          // cout << "Hello." << endl;
          // cout << result << endl;
          // cout << blocks[currentPair] << endl;
-         // cout << i*blockRow << " " << (i+1)*blockRow << endl;
-         // cout << j*blockCol << " " << (j+1)*blockCol << endl;
          // cout << sequence(3,5) << endl;
-         result.minor(sequence(i*blockRow, blockRow), sequence(j*blockCol, blockCol)) = orientations[currentPair] * blocks[currentPair];
-         j++;
+         result.minor(sequence(currentRow, blockRow), sequence(currentCol, blockCol)) = orientations[currentPair] * currentBlock;
+         currentCol += blocks[currentPair].cols();
       }
-      i++;
+      currentRow += blockRow;
    }
    return result;
    
