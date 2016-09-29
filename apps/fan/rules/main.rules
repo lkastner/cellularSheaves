@@ -32,12 +32,11 @@ sub assemble_matrix{
    	   		$colsize = $colsize + $bases->{$sigma}->rows;
 	   	}
 	   	return zero_matrix(0, $colsize);
-   }
-   else { 
-   my $firstSet = new Set<Set<Int> >($sigmas->[0], $taus->[0]);
-   my $ncols = $sigmas->size * $blocks->{$firstSet}->cols;
-   my $nrows = $taus->size * $blocks->{$firstSet}->rows;
-   return assemble_matrix_cpp($sigmas, $taus, $blocks, $orientations);
+   } else { 
+      my $firstSet = new Set<Set<Int> >($sigmas->[0], $taus->[0]);
+      my $ncols = $sigmas->size * $blocks->{$firstSet}->cols;
+      my $nrows = $taus->size * $blocks->{$firstSet}->rows;
+      return assemble_matrix_cpp($sigmas, $taus, $blocks, $orientations);
    }
 }
 
