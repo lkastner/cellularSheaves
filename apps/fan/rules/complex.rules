@@ -102,9 +102,9 @@ declare object ChainComplex {
          print "Complex is not well-defined.\n";
       }
       my $i = -$this->ZERO_POS;
-      print "The diagonals / should agree.\n";
+      # print "The diagonals / should agree.\n";
       for my $d (@{$this->DIFFERENTIALS}){
-         print "d^",$i," rows: ", $d->rows,", cols: ",$d->cols,"\n";
+         #print "d^",$i," rows: ", $d->rows,", cols: ",$d->cols,"\n";
          $i++;
       }
    }
