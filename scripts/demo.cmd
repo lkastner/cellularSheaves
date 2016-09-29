@@ -156,7 +156,7 @@ print new Matrix(@result2);
 
 
 
-$g = toTropicalPolynomial("max(0,x,y, 2*x - 2, 2*y-2, x+y-1, 3*x-6, 3*y-6, 2*x+y - 4,2*y + x- 4, 4*x -12, 4*y-12,  3*x+y -9,3*y + x- 9, 2*x + 2*y - 8");
+$g = toTropicalPolynomial("max(0,x,y, 2*x - 2, 2*y-2, x+y-1, 3*x-6, 3*y-6, 2*x+y - 4,2*y + x- 4, 4*x -12, 4*y-12,  3*x+y -9,3*y + x- 9, 2*x + 2*y - 8)");
 
 $gen3 = tropical::divisor( (projective_torus<Max>(2)) , rational_fct_from_affine_numerator)($f));  
 
