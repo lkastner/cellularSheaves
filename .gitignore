@@ -1,3 +1,5 @@
 build*
 Makefile
 *DS_store*
+*.swp
+configure.pl.template
