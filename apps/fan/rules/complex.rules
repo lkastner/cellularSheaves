@@ -109,6 +109,34 @@ declare object ChainComplex {
       }
    }
 
+   user_method print_debug(){
+      my($this) = @_;
+      if($this->IS_WELLDEFINED){
+         my @dimensions = map{$_->rows}@{$this->DIFFERENTIALS};
+         push @dimensions, $this->DIFFERENTIALS->[$this->DIFFERENTIALS->size -1]->cols;
+         my @lengths = map(length $_."", @dimensions);
+         my $i = -$this->ZERO_POS;
+         @lengths = map{
+            my $l = $_ + 1;
+            my $indexLen = length $i."";
+            my $result = " ".$i.(" "x($l-$indexLen));
+            $i++;
+            $result
+         } @lengths;
+         @dimensions = reverse map("k^".$_, @dimensions);
+         print join("     ", reverse @lengths),"\n";
+         print join(" --> ",@dimensions),"\n";
+      } else {
+         print "Complex is not well-defined.\n";
+      }
+      my $i = -$this->ZERO_POS;
+      print "The diagonals / should agree.\n";
+      for my $d (@{$this->DIFFERENTIALS}){
+      print "d^",$i," rows: ", $d->rows,", cols: ",$d->cols,"\n";
+         $i++;
+      }
+   }
+
 }
 
 
