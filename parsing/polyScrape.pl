@@ -11,7 +11,7 @@ $document = "LWP::Simple".get("http://www.uni-math.gwdg.de/jensen/Research/G3_7/
 
 @tables = $document =~ m/\<table.*?\/table\>/gs;
 @rows = $tables[0] =~ m/\<tr.*?\/tr\>/gs;
-@rows = grep($_ =~ m/\([-?\d+,]{50,}\)/gs, @rows);
+@rows = grep($_ =~ m/\([-?\d+,?]{50,}\)/gs, @rows);
 $i = 0;
 $currentName = "";
 for my $row (@rows) {
@@ -19,7 +19,7 @@ for my $row (@rows) {
       my $name = $1;
       $currentName = $name;
    }
-   my($pluecker) = $row =~ m/\([-?\d+,]{50,}\)/gs;
+   my($pluecker) = $row =~ m/\([-?\d+,?]{50,}\)/gs;
    print $i,": Name: ",$currentName," Pluecker: ",$pluecker,"\n";
    my @v = $pluecker =~ m/(-?\d+)/g;
    my $v = new Vector(\@v);
