@@ -52,3 +52,12 @@ $ws2 = $tls->usual_chain_complex($w2);
 $ws0->print_debug();
 $ws1->print_debug();
 $ws2->print_debug();
+
+
+application "fan";
+$v = [0,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0,1,0,0,0];
+$val_matroid = new matroid::ValuatedMatroid<Min>(BASES=>matroid::uniform_matroid(3,6)->BASES,VALUATION_ON_BASES=>$v,N_ELEMENTS=>6);
+$tls = tropical::linear_space($val_matroid);
+$w1 = $tls->wsheaf(1);
+$ws1 = $tls->usual_chain_complex($w1);
+$ws1->print_debug();
