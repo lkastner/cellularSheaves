@@ -20,7 +20,7 @@ sub test_tls{
    }
    my $A = new Matrix(@result);
    my $test = is_diagonal_matrix($A);
-   compare_values($tls->name,$test,1);
+   compare_values($tls->name."[diagonal]",$test,1);
 }
 
 ## build the tropical space in polymake and save it.
