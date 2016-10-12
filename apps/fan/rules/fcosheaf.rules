@@ -51,7 +51,7 @@ sub build_matrix_f{
 		my $wedged_basis = new Matrix wedge_matrix($chosenBases->{$sigma}, $p);	
 		$generators = new Matrix( $generators / $wedged_basis);
 	}	
-	return choose_basis_cpp($generators);
+	return choose_basis($generators);
 }
 
 
@@ -101,7 +101,7 @@ sub build_bases_f{
          } else {
          		$fpSigmaBasis = new Matrix (build_matrix_f($honestSigma, $pc, $p));
          	}
-         $newBases->{$keySet} = transpose($fpSigmaBasis);
+         $newBases->{$keySet} = $fpSigmaBasis;
        }   
 	}
 	return $newBases; 
