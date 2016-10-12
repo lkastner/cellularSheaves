@@ -1,0 +1,15 @@
+my $gen3 = load("gen3.poly");
+my $f0 = $gen3->fcosheaf(0);
+my $f1 = $gen3->fcosheaf(1);
+my $us0 = $gen3->usual_chain_complex($f0);
+my $us1 = $gen3->usual_chain_complex($f1);
+my $bm0 = $gen3->borel_moore_complex($f0);
+my $bm1 = $gen3->borel_moore_complex($f1);
+my @result = ();
+push @result, $us0->BETTI_NUMBERS;
+push @result, $us1->BETTI_NUMBERS;
+push @result, $bm0->BETTI_NUMBERS;
+push @result, $bm1->BETTI_NUMBERS;
+my $computed = new Matrix(@result);
+my $desired = new Matrix([1,3],[14,0],[0,14],[3,1]);
+compare_values("gen3",$desired,$computed);
