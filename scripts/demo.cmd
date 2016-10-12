@@ -246,3 +246,28 @@ print $bm1->BETTI_NUMBERS;
 $bm2->print();
 print $bm2->BETTI_NUMBERS;
 
+### to skip the waiting times in compute the f-cosheaves.
+
+$k3loaded = load("k3.poly");
+$f0 = $k3loaded->COSHEAF->[0];
+$f1 = $k3loaded->COSHEAF->[1];
+$f2 = $k3loaded->COSHEAF->[2];
+
+$us0 = $k3loaded->usual_chain_complex($f0);
+$us1 = $k3loaded->usual_chain_complex($f1);
+$us2 = $k3loaded->usual_chain_complex($f2);
+
+$bm0 = $k3loaded->borel_moore_complex($f0);
+$bm1 = $k3loaded->borel_moore_complex($f1);
+$bm2 = $k3loaded->borel_moore_complex($f2);
+
+@result1 = ();
+push @result1, $us0->BETTI_NUMBERS;
+push @result1, $us1->BETTI_NUMBERS;
+push @result1, $us2->BETTI_NUMBERS;
+@result2 = ();
+push @result2, $bm0->BETTI_NUMBERS;
+push @result2, $bm1->BETTI_NUMBERS;
+push @result2, $bm2->BETTI_NUMBERS;
+print new Matrix(@result1);
+print new Matrix(@result2);
