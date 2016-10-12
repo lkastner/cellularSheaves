@@ -12,11 +12,15 @@ sub compare_bm_usual{
    }
    my $A = new Matrix(@result1);
    my $B = new Matrix(@result2);
+   my $test = 1;
    for(my $i=0; $i<3; $i++){
       for(my $j=0; $j<3; $j++){
-         compare_values($tls->name."(".$i.",".$j.")", $A->elem($i, $j), $B->elem(2-$i, 2-$j));
+         if($A->elem($i, $j) != $B->elem(2-$i, 2-$j)){
+            $test = 0;
+         }
       }
    }
+   compare_values($tls->name, $test, 1);
 }
 
 my $files = `ls .`;
