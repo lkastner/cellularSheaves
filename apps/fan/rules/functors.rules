@@ -1,25 +1,45 @@
 object PolyhedralComplex {
 
   
-  user_method usual_chain_complex( $ ){
- 		my($pc, $sheaf) = @_;
-		my $bases = $sheaf->BASES;
-		my $blocks = $sheaf->BLOCKS;
+  user_method usual_chain_complex( CoSheaf ){
+ 		my($pc, $cosheaf) = @_;
+		my $bases = $cosheaf->BASES;
+		my $blocks = $cosheaf->BLOCKS;
 		my $boundedFaces = $pc->BOUNDED_FACES; 
 		my $orientations = $pc->ORIENTATIONS;
 		my $usualChain = build_chain_complex($blocks, $boundedFaces, $orientations, $bases);
 		return $usualChain;
 	 }
 	
-	user_method borel_moore_complex( $ ){
- 		my($pc, $sheaf) = @_;
- 		my $bases = $sheaf->BASES;
-		my $blocks = $sheaf->BLOCKS;
+	user_method borel_moore_complex( CoSheaf ){
+ 		my($pc, $cosheaf) = @_;
+ 		my $bases = $cosheaf->BASES;
+		my $blocks = $cosheaf->BLOCKS;
 		my $nonFarFaces = $pc->NON_FAR_FACES; 
 		my $orientations = $pc->ORIENTATIONS;
 		my $borelMooreChain = build_chain_complex($blocks, $nonFarFaces, $orientations, $bases);
 		return $borelMooreChain;
 	 } 
 
+  user_method usual_cochain_complex( Sheaf ){
+ 		my($pc, $sheaf) = @_;
+		my $bases = $sheaf->BASES;
+		my $blocks = $sheaf->BLOCKS;
+		my $boundedFaces = $pc->BOUNDED_FACES; 
+		my $orientations = $pc->ORIENTATIONS;
+		my $usualChain = build_cochain_complex($blocks, $boundedFaces, $orientations, $bases);
+		return $usualChain;
+	 }
+	
+	user_method compact_support_complex( Sheaf ){
+ 		my($pc, $sheaf) = @_;
+ 		my $bases = $sheaf->BASES;
+		my $blocks = $sheaf->BLOCKS;
+		my $nonFarFaces = $pc->NON_FAR_FACES; 
+		my $orientations = $pc->ORIENTATIONS;
+		my $borelMooreChain = build_cochain_complex($blocks, $nonFarFaces, $orientations, $bases);
+		return $borelMooreChain;
+	 } 
 
 }
+

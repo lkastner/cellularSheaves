@@ -1,6 +1,6 @@
 object PolyhedralComplex {
 	
-   user_method wsheaf( $ ){
+   user_method wcosheaf( $ ){
       my($pc, $p) = @_;
       my $newblocks = new Map<Set<Set<Int> >, Matrix >();
       my $newbases = new Map<Set<Int> , Matrix >();
@@ -20,22 +20,32 @@ object PolyhedralComplex {
       	 	
       	 }
       }
-      my $sheaf = $pc->add("SHEAF", BLOCKS=>$newblocks, BASES=>$newbases);
+      my $sheaf = $pc->add("COSHEAF", BLOCKS=>$newblocks, BASES=>$newbases);
       return $sheaf;
    }
 
       
       
-   user_method wcosheaf( $ ){
+   user_method wsheaf( $ ){
       my($pc, $p) = @_;
       my $simpleBlocks = $pc->SIMPLE_BLOCKS;
       my $newblocks = new Map<Set<Set<Int> >, Matrix >();
       my $newbases = new Map<Set<Int> , Matrix >();
       my $chosenBases = $pc->CHOSEN_BASES;
-      foreach my $key (keys %$simpleBlocks){
-         $newblocks->{$key} = transpose(wedge_matrix($simpleBlocks->{$key}, $p));
+      if ($p == 0){
+         $newblocks = build_blocks_constant($pc);
+         foreach my $basekey (keys %$chosenBases){
+         	$newbases->{$basekey} = new Matrix([[1]]);
+         }
+      } else{ 
+         foreach my $key (keys %$simpleBlocks){
+            $newblocks->{$key} = transpose(wedge_matrix($simpleBlocks->{$key}, $p));
+         }
+         foreach my $basekey (keys %$chosenBases){
+            $newbases->{$basekey} = wedge_matrix($chosenBases->{$basekey}, $p);
+         }
       }
-      my $cosheaf = $pc->add("COSHEAF", BLOCKS=>$newblocks, BASES=>$newbases);
+      my $cosheaf = $pc->add("SHEAF", BLOCKS=>$newblocks, BASES=>$newbases);
       return $cosheaf;
    }
    
