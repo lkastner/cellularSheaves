@@ -5,28 +5,33 @@ application "fan";
 $pc = new PolyhedralComplex(check_fan_objects(new Cone(cube(3))));
 print $pc->HASSE_DIAGRAM->FACES;
 print $pc->ORIENTATIONS;
-$w1 = $pc->wsheaf(1);
+$w1 = $pc->wcosheaf(1);
 print $w1->BASES;
 print $w1->BLOCKS;
-print $w1->CHAIN_COMPLEX->print();
-print $w1->CHAIN_COMPLEX->BETTI_NUMBERS;
-print $w1->CHAIN_COMPLEX->HOMOLOGIES;
+$cs1 = $pc->borel_moore_complex($w1);
+$cs1->print();
+print $cs1->BETTI_NUMBERS;
+print $cs1->HOMOLOGIES;
 
-$w2 = $pc->wsheaf(2);
+$w2 = $pc->wcosheaf(2);
+$cs2 = $pc->borel_moore_complex($w2);
 print $w2->BASES;
 print $w2->BLOCKS;
-print $w2->CHAIN_COMPLEX->BETTI_NUMBERS;
+print $cs2->BETTI_NUMBERS;
 
-$w3 = $pc->wsheaf(3);
-print $w3->CHAIN_COMPLEX->BETTI_NUMBERS;
+$w3 = $pc->wcosheaf(3);
+$cs3 = $pc->borel_moore_complex($w3);
+print $cs3->BETTI_NUMBERS;
 
-$w0 = $pc->wsheaf(0);
-print $w0->CHAIN_COMPLEX->BETTI_NUMBERS;
+$w0 = $pc->wcosheaf(0);
+$cs0 = $pc->borel_moore_complex($w0);
+print $cs0->BETTI_NUMBERS;
 
 @result = ();
 for(my $i=0; $i<4; $i++){
-   my $w = $pc->wsheaf($i);
-   push @result, $w->CHAIN_COMPLEX->BETTI_NUMBERS;
+   my $w = $pc->wcosheaf($i);
+   my $cs = $pc->borel_moore_complex($w);
+   push @result, $cs->BETTI_NUMBERS;
 }
 print new Matrix(@result);
 
@@ -36,8 +41,9 @@ print $cube->DUAL_H_VECTOR;
 $pc = new PolyhedralComplex(check_fan_objects(new Cone(simplex(5))));
 @result = ();
 for(my $i=0; $i<6; $i++){
-   my $w = $pc->wsheaf($i);
-   push @result, $w->CHAIN_COMPLEX->BETTI_NUMBERS;
+   my $w = $pc->wcosheaf($i);
+   my $cs = $pc->borel_moore_complex($w);
+   push @result, $cs->BETTI_NUMBERS;
 }
 print new Matrix(@result);
 
@@ -54,8 +60,9 @@ print $P->F_VECTOR;
 $pc = new PolyhedralComplex(check_fan_objects(new Cone($P)));
 @result = ();
 for(my $i=0; $i<4; $i++){
-   my $w = $pc->wsheaf($i);
-   push @result, $w->CHAIN_COMPLEX->BETTI_NUMBERS;
+   my $w = $pc->wcosheaf($i);
+   my $cs = $pc->borel_moore_complex($w);
+   push @result, $cs->BETTI_NUMBERS;
    }
 print new Matrix(@result);
 

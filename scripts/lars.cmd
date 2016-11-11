@@ -38,8 +38,9 @@ application "fan";
 $pc = new PolyhedralComplex(check_fan_objects(new Cone(cube(3))));
 @result = ();
 for(my $i=0; $i<4; $i++){
-   my $w = $pc->wsheaf($i);
-   push @result, $w->CHAIN_COMPLEX->BETTI_NUMBERS;
+   my $w = $pc->wcosheaf($i);
+   my $cs = $pc->borel_moore_complex($w);
+   push @result, $cs->BETTI_NUMBERS;
 }
 print new Matrix(@result);
 
@@ -55,8 +56,9 @@ print wedge_matrix($pc->SIMPLE_BLOCKS->{$p},2)->cols;
 
 
 for(my $i = 1; $i<$d; $i++){
-   my $wi = $pc->wsheaf($i);
-   print $i,": ",$wi->CHAIN_COMPLEX->BETTI_NUMBERS,"\n";
+   my $wi = $pc->wcosheaf($i);
+   my $cs = $pc->borel_moore_complex($wi);
+   print $i,": ",$cs->BETTI_NUMBERS,"\n";
 }
 
 ################################################################
