@@ -71,16 +71,6 @@ declare object ChainComplex {
       $this->IS_WELLDEFINED = 1;
    }
 
-   user_method wedge_complex( $ ){
-      my($this, $p) = @_;
-      my $old_differentials = $this->DIFFERENTIALS;
-      my $new_differentials = new Array<Matrix>($this->DIFFERENTIALS->size()-1);
-      for(my $i = 0; $i<$new_differentials->size; $i++){
-         $new_differentials->[$i] = wedge_matrix($old_differentials->[$i],$p);
-      }
-      return new Complex(DIFFERENTIALS=>$new_differentials);
-   }
-   
    user_method print(){
       my($this) = @_;
       if($this->IS_WELLDEFINED){
@@ -139,6 +129,28 @@ declare object ChainComplex {
 
 }
 
+declare object CoChainComplex {
+   
+   property INTERNAL_COMPLEX : ChainComplex;
+
+   property BETTI_NUMBERS : Vector<Int>;
+   
+   property IS_WELLDEFINED : Bool; 
+
+   rule BETTI_NUMBERS : INTERNAL_COMPLEX.BETTI_NUMBERS {
+      my $prev = $this->INTERNAL_COMPLEX->BETTI_NUMBERS;
+      my $result = new Vector<Int>($prev->dim);
+      for(my $i=0; $i<$prev->dim; $i++){
+         $result->[$i] = $prev->[$prev->dim - $i-1];
+      }
+      $this->BETTI_NUMBERS = $result;
+   }
+
+   rule IS_WELLDEFINED : INTERNAL_COMPLEX.IS_WELLDEFINED {
+      $this->IS_WELLDEFINED = $this->INTERNAL_COMPLEX->IS_WELLDEFINED;
+   }
+
+}
 
 
 user_function build_chain_complex(Map<Set<Set<Int> >, Matrix >, Map<Int, Array<Set<Int>>>, Map<Set<Set<Int> >, Int >, Map<Set<Int>, Matrix >){
@@ -176,7 +188,8 @@ user_function build_cochain_complex(Map<Set<Set<Int> >, Matrix >, Map<Int, Array
          # print "Sigmas: ",$sigmas,"\nTaus: ",$taus,"\n";
          $result->[$d-$i-1] = assemble_matrix($sigmas, $taus, $blocks, $orientations, $bases);
       }
-      return new ChainComplex(INPUT_DIFFERENTIALS=>$result);
+      my $internal = new ChainComplex(INPUT_DIFFERENTIALS=>$result);
+      return new CoChainComplex(INTERNAL_COMPLEX=>$internal);
 }
 
 sub maxwrap{
