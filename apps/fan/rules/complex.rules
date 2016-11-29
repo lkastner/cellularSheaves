@@ -186,7 +186,7 @@ user_function build_cochain_complex(Map<Set<Set<Int> >, Matrix >, Map<Int, Array
          # print $sigmas, "\n";
          my $taus = $faces->{$d-$i+1};
          # print "Sigmas: ",$sigmas,"\nTaus: ",$taus,"\n";
-         $result->[$d-$i-1] = assemble_matrix($sigmas, $taus, $blocks, $orientations, $bases);
+         $result->[$i-1] = assemble_matrix($sigmas, $taus, $blocks, $orientations, $bases);
       }
       my $internal = new ChainComplex(INPUT_DIFFERENTIALS=>$result);
       return new CoChainComplex(INTERNAL_COMPLEX=>$internal);
