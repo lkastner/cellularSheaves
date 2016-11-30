@@ -137,6 +137,8 @@ declare object CoChainComplex {
    
    property IS_WELLDEFINED : Bool; 
    
+   property ZERO_POS : Integer; 
+   
    property DIFFERENTIALS : Array<Matrix>;
 
    rule BETTI_NUMBERS : INTERNAL_COMPLEX.BETTI_NUMBERS {
@@ -152,8 +154,9 @@ declare object CoChainComplex {
       $this->IS_WELLDEFINED = $this->INTERNAL_COMPLEX->IS_WELLDEFINED;
    }
 	 
-	rule DIFFERENTIALS : INTERNAL_COMPLEX.DIFFERENTIALS {
+	rule DIFFERENTIALS, ZERO_POS : INTERNAL_COMPLEX.DIFFERENTIALS {
 		$this->DIFFERENTIALS = $this->INTERNAL_COMPLEX->DIFFERENTIALS;
+      $this->ZERO_POS = $this->INTERNAL_COMPLEX->ZERO_POS;
 	}
 
 	user_method print(){
@@ -162,7 +165,7 @@ declare object CoChainComplex {
          my @dimensions = map{$_->rows}@{$this->DIFFERENTIALS};
          push @dimensions, $this->DIFFERENTIALS->[$this->DIFFERENTIALS->size -1]->cols;
          my @lengths = map(length $_."", @dimensions);
-         my $i = -$this->INTERNAL_COMPLEX->ZERO_POS;
+         my $i = -$this->ZERO_POS;
          @lengths = map{
             my $l = $_ + 1;
             my $indexLen = length $i."";
@@ -171,7 +174,7 @@ declare object CoChainComplex {
             $result
          } @lengths;
          @dimensions = reverse map("k^".$_, @dimensions);
-         print join("     ", reverse @lengths),"\n";
+         print join("     ", @lengths),"\n";
          print join(" --> ",@dimensions),"\n";
       } else {
          print "Complex is not well-defined.\n";
