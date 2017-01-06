@@ -8,7 +8,7 @@ object PolyhedralFan {
       my $d = $this->FAN_DIM - 1;
       my $result = new Map<Set<Set<Int> >, Int>();
       my $hd = $this->HASSE_DIAGRAM;
-      my $chosenBases = choose_bases_for_cones($rays, $lineality, $hd);
+      my $chosenBases = choose_bases_for_cones($rays, $lineality, $hd, $d);
       for(my $i=0; $i<$d; $i++){
          my $sigmas = $hd->nodes_of_dim($d-$i);
          my $taus = $hd->nodes_of_dim($d-$i-1);
@@ -27,9 +27,10 @@ object PolyhedralFan {
 }
 
 sub choose_bases_for_cones{
-   my($rays, $lineality, $hd) = @_;
+   my($rays, $lineality, $hd, $d) = @_;
    my $result = new Map<Set<Int>, Matrix>();
-   for my $face (@{$hd->FACES}){
+   for my $key (@{$hd->nodes_of_dim_range(0,$d)}){
+      my $face = $hd->FACES->[$key];
       my $Crays = $rays->minor($face, All);
       $result->{$face} = choose_basis($Crays/$lineality);
    }
