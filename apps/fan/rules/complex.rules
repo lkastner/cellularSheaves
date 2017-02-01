@@ -137,9 +137,20 @@ declare object CoChainComplex {
    
    property IS_WELLDEFINED : Bool; 
    
+   property COHOMOLOGIES : Array<Matrix>;
+   
    property ZERO_POS : Integer; 
    
    property DIFFERENTIALS : Array<Matrix>;
+   
+   rule COHOMOLOGIES : INTERNAL_COMPLEX.HOMOLOGIES {
+      my $prev = $this->INTERNAL_COMPLEX->HOMOLOGIES;
+      my $result = new Array<Matrix>($prev->size);
+      for(my $i=0; $i<$prev->size; $i++){
+         $result->[$i] = $prev->[$prev->size - $i-1];
+      }
+      $this->COHOMOLOGIES = $result;
+   }
 
    rule BETTI_NUMBERS : INTERNAL_COMPLEX.BETTI_NUMBERS {
       my $prev = $this->INTERNAL_COMPLEX->BETTI_NUMBERS;
