@@ -1,0 +1,47 @@
+# This is a description file of a polymake extension rooted in this directory.
+# Please refer to the documentation under
+#   http://www.polymake.org/doku.php/reference/extensions
+# for detailed explanations of its contents.
+
+# URI is a unique identifier assigned to this extension.
+# This is the only mandatory entry in this file.
+URI cellularSheaves
+
+# Below you can put a short name for your extension.
+
+# NAME
+# short name of the extension
+
+
+# Below you can extol the features implemented in this extension,
+# put your copyright notice, or just refer to your website
+# unless its address is already contained in the URI.
+
+# CREDIT
+#  short description
+#  copyright your name, address, etc.
+
+
+# If this extension relies on functionality of further extensions,
+# please list their URIs below, separated by blanks and/or newlines.
+# Each URI can be versioned if certain minimal version is required.
+
+# REQUIRE
+#   URI URI#version ...
+
+
+# If this extension was formerly distributed under different URI
+# or was merged with other extensions,
+# please list the deprecated URIs below.
+
+# REPLACE
+#   URI ...
+
+
+# If this extension is known to be incompatible with other extensions,
+# please list their URIs below.
+
+# CONFLICT
+#   URI ...
+
+
