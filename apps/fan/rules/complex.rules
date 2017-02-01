@@ -1,4 +1,4 @@
-declare object ChainComplex<Type=Matrix<Rational>> {
+declare object ChainComplex<Type=SparseMatrix<Integer>> {
    
    property INPUT_DIFFERENTIALS : Array<Matrix>;
 
@@ -14,7 +14,7 @@ declare object ChainComplex<Type=Matrix<Rational>> {
 
    property IS_WELLDEFINED : Bool; 
 
-   property INNER : topaz::ChainComplex<Matrix<Integer>>;
+   property INNER : topaz::ChainComplex<Type>;
    
    rule DIFFERENTIALS, ZERO_POS : INPUT_DIFFERENTIALS, INPUT_ZERO_POS {
       my @input = @{$this->INPUT_DIFFERENTIALS};
@@ -33,7 +33,7 @@ declare object ChainComplex<Type=Matrix<Rational>> {
 
    rule INNER : DIFFERENTIALS {
       my @bla = @{$this->DIFFERENTIALS};
-      $this->INNER = new topaz::ChainComplex<Matrix<Integer>>((new Array<Matrix<Integer>>(reverse @bla)), 1);
+      $this->INNER = new topaz::ChainComplex<Type>((new Array<Type>(reverse @bla)), 1);
    }
 
    rule HOMOLOGIES : DIFFERENTIALS {
