@@ -31,8 +31,10 @@ object PolyhedralComplex {
        			if ( ($honestSigma * $infVert)->size == 0) { 
         			push @boundedFacesDim_i,   $honestSigma;
         		} else {
-        			push @unboundedFacesDim_i,   $honestSigma;
-        		}
+               if ( ($honestSigma - $infVert)->size != 0){
+        			   push @unboundedFacesDim_i,   $honestSigma;
+                  }
+        		   }
        		}
        		$allFaces->{$i} = new Array<Set<Int>>(\@allFacesDim_i);
        		$boundedFaces->{$i} = new Array<Set<Int>>(\@boundedFacesDim_i);
