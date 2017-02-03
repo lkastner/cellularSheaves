@@ -71,16 +71,6 @@ declare object ChainComplex {
       $this->IS_WELLDEFINED = 1;
    }
 
-   user_method wedge_complex( $ ){
-      my($this, $p) = @_;
-      my $old_differentials = $this->DIFFERENTIALS;
-      my $new_differentials = new Array<Matrix>($this->DIFFERENTIALS->size()-1);
-      for(my $i = 0; $i<$new_differentials->size; $i++){
-         $new_differentials->[$i] = wedge_matrix($old_differentials->[$i],$p);
-      }
-      return new Complex(DIFFERENTIALS=>$new_differentials);
-   }
-   
    user_method print(){
       my($this) = @_;
       if($this->IS_WELLDEFINED){
@@ -139,6 +129,76 @@ declare object ChainComplex {
 
 }
 
+declare object CoChainComplex {
+   
+   property INTERNAL_COMPLEX : ChainComplex;
+
+   property BETTI_NUMBERS : Vector<Int>;
+   
+   property IS_WELLDEFINED : Bool; 
+   
+   property COHOMOLOGIES : Array<Matrix>;
+   
+   property ZERO_POS : Integer; 
+   
+   property DIFFERENTIALS : Array<Matrix>;
+   
+   rule COHOMOLOGIES : INTERNAL_COMPLEX.HOMOLOGIES {
+      my $prev = $this->INTERNAL_COMPLEX->HOMOLOGIES;
+      my $result = new Array<Matrix>($prev->size);
+      for(my $i=0; $i<$prev->size; $i++){
+         $result->[$i] = $prev->[$prev->size - $i-1];
+      }
+      $this->COHOMOLOGIES = $result;
+   }
+
+   rule BETTI_NUMBERS : INTERNAL_COMPLEX.BETTI_NUMBERS {
+      my $prev = $this->INTERNAL_COMPLEX->BETTI_NUMBERS;
+      my $result = new Vector<Int>($prev->dim);
+      for(my $i=0; $i<$prev->dim; $i++){
+         $result->[$i] = $prev->[$prev->dim - $i-1];
+      }
+      $this->BETTI_NUMBERS = $result;
+   }
+
+   rule IS_WELLDEFINED : INTERNAL_COMPLEX.IS_WELLDEFINED {
+      $this->IS_WELLDEFINED = $this->INTERNAL_COMPLEX->IS_WELLDEFINED;
+   }
+	 
+	rule DIFFERENTIALS, ZERO_POS : INTERNAL_COMPLEX.DIFFERENTIALS {
+		$this->DIFFERENTIALS = $this->INTERNAL_COMPLEX->DIFFERENTIALS;
+      $this->ZERO_POS = $this->INTERNAL_COMPLEX->ZERO_POS;
+	}
+
+	user_method print(){
+      my($this) = @_;
+      if($this->IS_WELLDEFINED){
+         my @dimensions = map{$_->rows}@{$this->DIFFERENTIALS};
+         push @dimensions, $this->DIFFERENTIALS->[$this->DIFFERENTIALS->size -1]->cols;
+         my @lengths = map(length $_."", @dimensions);
+         my $i = -$this->ZERO_POS;
+         @lengths = map{
+            my $l = $_ + 1;
+            my $indexLen = length $i."";
+            my $result = " ".$i.(" "x($l-$indexLen));
+            $i++;
+            $result
+         } @lengths;
+         @dimensions = reverse map("k^".$_, @dimensions);
+         print join("     ", @lengths),"\n";
+         print join(" --> ",@dimensions),"\n";
+      } else {
+         print "Complex is not well-defined.\n";
+      }
+      my $i = -$this->ZERO_POS;
+      # print "The diagonals / should agree.\n";
+      for my $d (@{$this->DIFFERENTIALS}){
+         #print "d^",$i," rows: ", $d->rows,", cols: ",$d->cols,"\n";
+         $i++;
+      }
+   }
+   
+}
 
 
 user_function build_chain_complex(Map<Set<Set<Int> >, Matrix >, Map<Int, Array<Set<Int>>>, Map<Set<Set<Int> >, Int >, Map<Set<Int>, Matrix >){
@@ -150,12 +210,34 @@ user_function build_chain_complex(Map<Set<Set<Int> >, Matrix >, Map<Int, Array<S
 	  # print $d, " ", $m, "\n";
       my $result = new Array<Matrix>($d);
       for(my $i=$m; $i<$d; $i++){
+         # print "Dim is: ",$i,"\n";
          my $sigmas = $faces->{$d-$i};
          # print $sigmas, "\n";
          my $taus = $faces->{$d-$i-1};
+         # print "Sigmas: ",$sigmas,"\nTaus: ",$taus,"\n";
          $result->[$d-$i-1] = assemble_matrix($sigmas, $taus, $blocks, $orientations, $bases);
       }
       return new ChainComplex(INPUT_DIFFERENTIALS=>$result);
+}
+
+user_function build_cochain_complex(Map<Set<Set<Int> >, Matrix >, Map<Int, Array<Set<Int>>>, Map<Set<Set<Int> >, Int >, Map<Set<Int>, Matrix >){
+	  my ($blocks, $faces, $orientations, $bases) = @_;
+	  # print $faces,"\n";
+	  my @k = keys %$faces;
+	  my $d  = maxwrap(@k);
+	  my $m = minwrap(@k);
+	  # print $d, " ", $m, "\n";
+      my $result = new Array<Matrix>($d);
+      for(my $i=$d; $i>$m; $i--){
+         # print "Dim is: ",$i," ",($d-$i)," ",($d-$i+1),"\n";
+         my $sigmas = $faces->{$d-$i};
+         # print $sigmas, "\n";
+         my $taus = $faces->{$d-$i+1};
+         # print "Sigmas: ",$sigmas,"\nTaus: ",$taus,"\n";
+         $result->[$i-1] = assemble_matrix($sigmas, $taus, $blocks, $orientations, $bases);
+      }
+      my $internal = new ChainComplex(INPUT_DIFFERENTIALS=>$result);
+      return new CoChainComplex(INTERNAL_COMPLEX=>$internal);
 }
 
 sub maxwrap{

@@ -61,3 +61,16 @@ $tls = tropical::linear_space($val_matroid);
 $w1 = $tls->wsheaf(1);
 $ws1 = $tls->usual_chain_complex($w1);
 $ws1->print_debug();
+
+
+###############################################################
+############### Checking print method for cochain complex #####
+###############################################################
+application "fan";
+$pc = new PolyhedralComplex(check_fan_objects(new Cone(cube(4))));
+$w1 = $pc->wsheaf(1);
+$wd1 = $pc->wcosheaf(1);
+$s1 = $pc->usual_cochain_complex($w1);
+$sd1 = $pc->usual_chain_complex($wd1);
+$sd1->print();
+$s1->print();

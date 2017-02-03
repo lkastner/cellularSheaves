@@ -5,28 +5,33 @@ application "fan";
 $pc = new PolyhedralComplex(check_fan_objects(new Cone(cube(3))));
 print $pc->HASSE_DIAGRAM->FACES;
 print $pc->ORIENTATIONS;
-$w1 = $pc->wsheaf(1);
+$w1 = $pc->wcosheaf(1);
 print $w1->BASES;
 print $w1->BLOCKS;
-print $w1->CHAIN_COMPLEX->print();
-print $w1->CHAIN_COMPLEX->BETTI_NUMBERS;
-print $w1->CHAIN_COMPLEX->HOMOLOGIES;
+$cs1 = $pc->borel_moore_complex($w1);
+$cs1->print();
+print $cs1->BETTI_NUMBERS;
+print $cs1->HOMOLOGIES;
 
-$w2 = $pc->wsheaf(2);
+$w2 = $pc->wcosheaf(2);
+$cs2 = $pc->borel_moore_complex($w2);
 print $w2->BASES;
 print $w2->BLOCKS;
-print $w2->CHAIN_COMPLEX->BETTI_NUMBERS;
+print $cs2->BETTI_NUMBERS;
 
-$w3 = $pc->wsheaf(3);
-print $w3->CHAIN_COMPLEX->BETTI_NUMBERS;
+$w3 = $pc->wcosheaf(3);
+$cs3 = $pc->borel_moore_complex($w3);
+print $cs3->BETTI_NUMBERS;
 
-$w0 = $pc->wsheaf(0);
-print $w0->CHAIN_COMPLEX->BETTI_NUMBERS;
+$w0 = $pc->wcosheaf(0);
+$cs0 = $pc->borel_moore_complex($w0);
+print $cs0->BETTI_NUMBERS;
 
 @result = ();
 for(my $i=0; $i<4; $i++){
-   my $w = $pc->wsheaf($i);
-   push @result, $w->CHAIN_COMPLEX->BETTI_NUMBERS;
+   my $w = $pc->wcosheaf($i);
+   my $cs = $pc->borel_moore_complex($w);
+   push @result, $cs->BETTI_NUMBERS;
 }
 print new Matrix(@result);
 
@@ -36,8 +41,9 @@ print $cube->DUAL_H_VECTOR;
 $pc = new PolyhedralComplex(check_fan_objects(new Cone(simplex(5))));
 @result = ();
 for(my $i=0; $i<6; $i++){
-   my $w = $pc->wsheaf($i);
-   push @result, $w->CHAIN_COMPLEX->BETTI_NUMBERS;
+   my $w = $pc->wcosheaf($i);
+   my $cs = $pc->borel_moore_complex($w);
+   push @result, $cs->BETTI_NUMBERS;
 }
 print new Matrix(@result);
 
@@ -54,8 +60,9 @@ print $P->F_VECTOR;
 $pc = new PolyhedralComplex(check_fan_objects(new Cone($P)));
 @result = ();
 for(my $i=0; $i<4; $i++){
-   my $w = $pc->wsheaf($i);
-   push @result, $w->CHAIN_COMPLEX->BETTI_NUMBERS;
+   my $w = $pc->wcosheaf($i);
+   my $cs = $pc->borel_moore_complex($w);
+   push @result, $cs->BETTI_NUMBERS;
    }
 print new Matrix(@result);
 
@@ -220,29 +227,54 @@ $k3 = tropical::divisor( (projective_torus<Max>(3)) , rational_fct_from_affine_n
 application "fan";
 print $k3->BOUNDED_FACES->{0}->size;
 
-$f0 = $k3->fcosheaf(0);
-$f1 = $k3->fcosheaf(1);
-$f2 = $k3->fcosheaf(2);
+# $f0 = $k3->fcosheaf(0);
+# $f1 = $k3->fcosheaf(1);
+# $f2 = $k3->fcosheaf(2);
+# 
+# $us0 = $k3->usual_chain_complex($f0);
+# $us1 = $k3->usual_chain_complex($f1);
+# $us2 = $k3->usual_chain_complex($f2);
+# 
+# $bm0 = $k3->borel_moore_complex($f0);
+# $bm1 = $k3->borel_moore_complex($f1);
+# $bm2 = $k3->borel_moore_complex($f2);
+# 
+# $us0->print();
+# print $us0->BETTI_NUMBERS;
+# $us1->print();
+# print $us1->BETTI_NUMBERS;
+# $us2->print();
+# print $us2->BETTI_NUMBERS;
+# 
+# $bm0->print();
+# print $bm0->BETTI_NUMBERS;
+# $bm1->print();
+# print $bm1->BETTI_NUMBERS;
+# $bm2->print();
+# print $bm2->BETTI_NUMBERS;
 
-$us0 = $k3->usual_chain_complex($f0);
-$us1 = $k3->usual_chain_complex($f1);
-$us2 = $k3->usual_chain_complex($f2);
+### to skip the waiting times in compute the f-cosheaves.
 
-$bm0 = $k3->borel_moore_complex($f0);
-$bm1 = $k3->borel_moore_complex($f1);
-$bm2 = $k3->borel_moore_complex($f2);
+$k3loaded = load("k3.poly");
+$f0 = $k3loaded->COSHEAF->[0];
+$f1 = $k3loaded->COSHEAF->[1];
+$f2 = $k3loaded->COSHEAF->[2];
 
-$us0->print();
-print $us0->BETTI_NUMBERS;
-$us1->print();
-print $us1->BETTI_NUMBERS;
-$us2->print();
-print $us2->BETTI_NUMBERS;
+$us0 = $k3loaded->usual_chain_complex($f0);
+$us1 = $k3loaded->usual_chain_complex($f1);
+$us2 = $k3loaded->usual_chain_complex($f2);
 
-$bm0->print();
-print $bm0->BETTI_NUMBERS;
-$bm1->print();
-print $bm1->BETTI_NUMBERS;
-$bm2->print();
-print $bm2->BETTI_NUMBERS;
+$bm0 = $k3loaded->borel_moore_complex($f0);
+$bm1 = $k3loaded->borel_moore_complex($f1);
+$bm2 = $k3loaded->borel_moore_complex($f2);
 
+@result1 = ();
+push @result1, $us0->BETTI_NUMBERS;
+push @result1, $us1->BETTI_NUMBERS;
+push @result1, $us2->BETTI_NUMBERS;
+@result2 = ();
+push @result2, $bm0->BETTI_NUMBERS;
+push @result2, $bm1->BETTI_NUMBERS;
+push @result2, $bm2->BETTI_NUMBERS;
+print new Matrix(@result1);
+print new Matrix(@result2);

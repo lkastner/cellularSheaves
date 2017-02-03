@@ -42,7 +42,7 @@ sub choose_basis{
    my($A) = @_;
    my $desired = rank($A);
    if($desired == 0){
-      return zero_matrix($A->rows,0);
+      return zero_matrix(0,$A->cols);
    }
    else{
       return choose_basis_cpp($A);

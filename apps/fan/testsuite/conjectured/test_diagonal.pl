@@ -15,7 +15,7 @@ sub test_tls{
    my @result = ();
    for(my $i=0;$i<=$tls->DIM;$i++){
       my $wi = $tls->wsheaf($i);
-      my $si=$tls->usual_chain_complex($wi);
+      my $si=$tls->usual_cochain_complex($wi);
       push @result, $si->BETTI_NUMBERS;
    }
    my $A = new Matrix(@result);
