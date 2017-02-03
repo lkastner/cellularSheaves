@@ -200,9 +200,10 @@ print new Matrix(@result2);
 ###############################################################################
 
 application "fan";
-$d = 2;
+$d = 4;
 $pc = new PolyhedralComplex(check_fan_objects(new Cone(cube($d))));
-$w2 = $pc->wsheaf(2);
+$w2 = $pc->wsheaf(3);
 $c = $pc->usual_cochain_complex($w2);
 $cc = $c->INTERNAL_COMPLEX->INNER;
 print topaz::homology<Integer>($cc,1);
+
