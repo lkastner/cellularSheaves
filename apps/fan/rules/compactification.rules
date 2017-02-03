@@ -1,0 +1,28 @@
+declare object Compactification{
+   
+   property VERTICES : Map<Int,Pair<Set<Int>,Set<Int>>>;
+
+   property FACES : Map<Int,Set<Set<Int>>>;
+
+
+}
+
+object PolyhedralComplex{
+   
+   property COMPACTIFICATION : Compactification;
+   
+   rule COMPACTIFICATION.VERTICES : BOUNDED_FACES, UNBOUNDED_FACES{
+      my $oldVertices = $this->BOUNDED_FACES->{0};
+      my $simpleNewVertices = $this->UNBOUNDED_FACES->{1};
+         
+      my @oldVertices = map((new Pair<Set<Int>,Set<Int>>($_,new Set<Int>())),@$oldVertices);
+      my $result = new Map<Int,Pair<Set<Int>,Set<Int>>>();
+      my $i=0;
+      foreach my $v (@oldVertices){
+         $result->{$i} = $v;
+         $i++;
+      }
+      $this->COMPACTIFICATION->VERTICES = $result;
+   }
+   
+}
