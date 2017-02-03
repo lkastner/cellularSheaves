@@ -74,3 +74,18 @@ $s1 = $pc->usual_cochain_complex($w1);
 $sd1 = $pc->usual_chain_complex($wd1);
 $sd1->print();
 $s1->print();
+
+
+
+###########################################################
+#######Checking Compactification
+
+application "fan";
+$pc = new PolyhedralComplex(VERTICES=>[[1,0,0],[1,0,1],[0,1,0]],MAXIMAL_POLYTOPES=>[[0,1,2]]);
+print $pc->COMPACTIFICATION->VERTICES;
+
+application "fan";
+$pc = new PolyhedralComplex(VERTICES=>[[1,0,0],[0,0,1],[0,1,0]],MAXIMAL_POLYTOPES=>[[0,1,2]]);
+print $pc->COMPACTIFICATION->VERTICES;
+
+

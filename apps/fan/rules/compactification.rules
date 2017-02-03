@@ -1,0 +1,50 @@
+declare object Compactification{
+   
+   property VERTICES : Map<Int,Pair<Set<Int>,Set<Int>>>;
+
+   property FACES : Map<Int,Set<Set<Int>>>;
+
+
+}
+
+object PolyhedralComplex{
+   
+   property COMPACTIFICATION : Compactification;
+   
+   rule COMPACTIFICATION.VERTICES : BOUNDED_FACES, UNBOUNDED_FACES, FAR_VERTICES{
+      my $farVert = $this->FAR_VERTICES;
+      my $oldVertices = $this->BOUNDED_FACES->{0};
+    # my $simpleNewVertices = $this->UNBOUNDED_FACES->{1};
+      my @oldVertices = map((new Pair<Set<Int>,Set<Int>>($_,new Set<Int>())),@$oldVertices);
+      my $result = new Map<Int,Pair<Set<Int>,Set<Int>>>();
+      my $i=0;
+      foreach my $v (@oldVertices){
+         $result->{$i} = $v;
+         $i++;
+      }
+    #  foreach my $v (@$simpleNewVertices){
+    #     my $pair;
+    #     if ($farVert->contains($v->[0])){
+    #        $pair = new Pair<Set<Int>,Set<Int>>([[$v->[1]],[$v->[0]]]);
+    #     }
+    #     else{
+    #        $pair = new Pair<Set<Int>,Set<Int>>([[$v->[0]],[$v->[1]]]);
+    #     }
+    #     $result->{$i} = $pair;
+    #     $i++;
+    #  }
+      foreach my $d (keys %{$this->UNBOUNDED_FACES}){ 
+         foreach my $face (@{$this->UNBOUNDED_FACES->{$d}}){
+            my $boundedPart = $face - $farVert;
+            my $farPart = $face * $farVert;
+            if($farPart->size==$d){
+               my $pair = new Pair<Set<Int>,Set<Int>>([$boundedPart, $farPart]);
+               $result->{$i} = $pair;
+               $i++;
+            }
+         }
+      }
+      $this->COMPACTIFICATION->VERTICES = $result;
+   }
+   
+}
