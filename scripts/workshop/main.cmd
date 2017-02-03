@@ -34,7 +34,20 @@ print new Matrix(@betti);
 $cube = polytope::cube(3);
 print $cube->DUAL_H_VECTOR;
 
-
+; # Orlik-Solomon algebra of a matroid (tropical line)
+$m = matroid::uniform_matroid(2,3);
+$berg = tropical::matroid_fan<Max>($m);
+@betti_usual = ();
+@betti_bm = ();
+for(my $i=0; $i<3; $i++){
+   my $f = $berg->fcosheaf($i);
+   my $s = $berg->usual_chain_complex($f);
+   my $bm = $berg->borel_moore_complex($f);
+   push @betti_usual, $s->BETTI_NUMBERS;
+   push @betti_bm, $bm->BETTI_NUMBERS;
+}
+print new Matrix(@betti_usual);
+print new Matrix(@betti_bm);
 
 ; # Orlik-Solomon algebra of a matroid
 $g = graph::complete(4);
