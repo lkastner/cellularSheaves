@@ -9,6 +9,7 @@ INCLUDE
    functors.rules
    compactification.rules
 
+# Comment that makes pm run
 user_function wedge_matrix_cpp<Element=Rational>(Matrix, $ ) : c++ (include => "polymake/fan/linalg_tools.h");
 
 user_function choose_basis_cpp<Element=Rational>(Matrix) : c++ (include => "polymake/fan/linalg_tools.h");
