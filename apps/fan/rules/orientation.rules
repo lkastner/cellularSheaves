@@ -2,13 +2,21 @@ object PolyhedralFan {
 
    property ORIENTATIONS : Map<Set<Set<Int> >, Int>;
 
-   rule ORIENTATIONS: HASSE_DIAGRAM, FAN_DIM, RAYS, LINEALITY_SPACE{
+   property INTERNAL_BASES : Map<Set<Int>, Matrix>;
+
+   rule INTERNAL_BASES : RAYS, LINEALITY_SPACE, HASSE_DIAGRAM, FAN_DIM {
       my $rays = $this->RAYS;
       my $lineality = $this->LINEALITY_SPACE;
       my $d = $this->FAN_DIM - 1;
+      my $hd = $this->HASSE_DIAGRAM;
+      $this->INTERNAL_BASES = choose_bases_for_cones($rays, $lineality, $hd, $d);
+   }
+
+   rule ORIENTATIONS: HASSE_DIAGRAM, FAN_DIM, INTERNAL_BASES{
+      my $d = $this->FAN_DIM - 1;
       my $result = new Map<Set<Set<Int> >, Int>();
       my $hd = $this->HASSE_DIAGRAM;
-      my $chosenBases = choose_bases_for_cones($rays, $lineality, $hd, $d);
+      my $chosenBases = $this->INTERNAL_BASES;
       for(my $i=0; $i<$d; $i++){
          my $sigmas = $hd->nodes_of_dim($d-$i);
          my $taus = $hd->nodes_of_dim($d-$i-1);

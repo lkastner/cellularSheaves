@@ -1,161 +1,225 @@
 declare object Compactification{
 
-   property VERTEX_INDICES : Set<Int>;
+	property VERTEX_INDICES : Set<Int>;
 
-   property RAY_INDICES : Set<Int>;
-   
-   property VERTICES : Map<Int,Pair<Set<Int>,Set<Int>>>;
+	property RAY_INDICES : Set<Int>;
 
-   property ALL_FACES : Set<Set<Int>>;
+	property VERTICES : Map<Int,Pair<Set<Int>,Set<Int>>>;
 
-   property FACES : Map<Int,Set<Set<Int>>>;
+# This property is the collection of all faces, without filtering by
+# dimension.
+	property ALL_FACES : Set<Set<Int>>;
 
+# This property holds the faces filtered by dimension.
+	property FACES : Map<Int,Set<Set<Int>>>;
+
+	property ORIENTATIONS : Map<Set<Set<Int> >, Int>;
 
 }
+
 
 object PolyhedralComplex{
-   
-   property COMPACTIFICATION : Compactification;
 
-   rule COMPACTIFICATION.RAY_INDICES, COMPACTIFICATION.VERTEX_INDICES : VERTICES {
-      my $vert = $this->VERTICES;
-      my @vertices = grep($vert->[$_]->[0] == 1, 0..($vert->rows()-1));
-      my @rays = grep($vert->[$_]->[0] == 0, 0..(-1+$vert->rows()));
-      $this->COMPACTIFICATION->VERTEX_INDICES = \@vertices;
-      $this->COMPACTIFICATION->RAY_INDICES = \@rays;
-   }
-   
-   rule COMPACTIFICATION.VERTICES : BOUNDED_FACES, UNBOUNDED_FACES, FAR_VERTICES {
-      my $farVert = $this->FAR_VERTICES;
-      my $oldVertices = $this->BOUNDED_FACES->{0};
-      my @oldVertices = map((new Pair<Set<Int>,Set<Int>>($_,new Set<Int>())),@$oldVertices);
-      my $result = new Map<Int,Pair<Set<Int>,Set<Int>>>();
-      my $i=0;
-      foreach my $v (@oldVertices){
-         $result->{$i} = $v;
-         $i++;
-      }
-      foreach my $d (keys %{$this->UNBOUNDED_FACES}){ 
-         foreach my $face (@{$this->UNBOUNDED_FACES->{$d}}){
-            my $boundedPart = $face - $farVert;
-            my $farPart = $face * $farVert;
-            if($farPart->size==$d){
-               my $pair = new Pair<Set<Int>,Set<Int>>([$boundedPart, $farPart]);
-               $result->{$i} = $pair;
-               $i++;
-            }
-         }
-      }
-      $this->COMPACTIFICATION->VERTICES = $result;
-   }
+	property COMPACTIFICATION : Compactification;
 
-   rule COMPACTIFICATION.ALL_FACES : COMPACTIFICATION.VERTICES, HASSE_DIAGRAM, MAXIMAL_POLYTOPES {
-      my $newVert = $this->COMPACTIFICATION->VERTICES;
-      my $size = scalar keys %$newVert;
-      my $hd = $this->HASSE_DIAGRAM;
-      my @mp = @{$this->MAXIMAL_POLYTOPES};
-      @mp = map(new_vertices_from_old_face($_, $newVert), @mp);
-      my @result = ();
-      foreach my $poly (@mp){
-         my $n = scalar @$poly;
-         for(my $i = 1; $i<=$n; $i++){
-            my @subsets = all_subsets_of_k($i, @$poly);
-            foreach my $set (@subsets){
-               if(is_face((new Set<Int>($set)), $newVert, $hd)){
-                  push @result, $set;
-               }
-            }
-         }
-      }
-      $this->COMPACTIFICATION->ALL_FACES = \@result;
-   }
+	rule COMPACTIFICATION.ORIENTATIONS : COMPACTIFICATION.FACES, COMPACTIFICATION.VERTICES, VERTICES, ORIENTATIONS, FAN_DIM, INTERNAL_BASES {
+      print "Entering rule.";
+		my $result = new Map<Set<Set<Int> >, Int>();
+		my $d = $this->FAN_DIM -1;
+		my $hd = $this->COMPACTIFICATION->FACES;
+		my $oldOrientations = $this->ORIENTATIONS;
+		my $chosenBases = $this->INTERNAL_BASES;
+		my $vert = $this->VERTICES;
+		my $vertReal = $this->COMPACTIFICATION->VERTICES;
+      print "Vertreal: $vertReal\n";
+		for(my $i=0; $i<$d; $i++){
+			my $sigmas = $hd->{$d-$i};
+			my $taus = $hd->{$d-$i-1};
+			foreach my $sigma (@$sigmas) {
+				foreach my $tau (@$taus) {
+					my $keySet = new Set<Set<Int> >($sigma, $tau);
+               print "Keyset: $keySet\n";
+					$result->{$keySet} = compute_orientation_t($sigma, $tau, $oldOrientations, $chosenBases, $vert, $vertReal);
+				}
+			}
+		}
+		$this->COMPACTIFICATION->ORIENTATIONS = $result;
+	}
 
-   rule COMPACTIFICATION.FACES : COMPACTIFICATION.ALL_FACES, COMPACTIFICATION.VERTICES, VERTICES, FAN_DIM {
-      my @allFaces = @{$this->COMPACTIFICATION->ALL_FACES};
-      my $result = new Map<Int,Set<Set<Int>>>();
-      my $vertices = $this->VERTICES;
-      my $O = $this->COMPACTIFICATION->VERTICES;
-      for (my $i =0; $i < $this->FAN_DIM; $i++){
-         $result->{$i}= new Set<Set<Int>>();
-      }
-      foreach my $face (@allFaces){
-         my $d = new_dimension($face, $O, $vertices);
-         $result->{$d} += new Set<Int>($face);
-      }
-      $this->COMPACTIFICATION->FACES = $result;
-   }
+
+	rule COMPACTIFICATION.RAY_INDICES, COMPACTIFICATION.VERTEX_INDICES : VERTICES {
+		my $vert = $this->VERTICES;
+		my @vertices = grep($vert->[$_]->[0] == 1, 0..($vert->rows()-1));
+		my @rays = grep($vert->[$_]->[0] == 0, 0..(-1+$vert->rows()));
+		$this->COMPACTIFICATION->VERTEX_INDICES = \@vertices;
+		$this->COMPACTIFICATION->RAY_INDICES = \@rays;
+	}
+
+	rule COMPACTIFICATION.VERTICES : BOUNDED_FACES, UNBOUNDED_FACES, FAR_VERTICES {
+		my $farVert = $this->FAR_VERTICES;
+		my $oldVertices = $this->BOUNDED_FACES->{0};
+		my @oldVertices = map((new Pair<Set<Int>,Set<Int>>($_,new Set<Int>())),@$oldVertices);
+		my $result = new Map<Int,Pair<Set<Int>,Set<Int>>>();
+		my $i=0;
+		foreach my $v (@oldVertices){
+			$result->{$i} = $v;
+			$i++;
+		}
+		foreach my $d (keys %{$this->UNBOUNDED_FACES}){ 
+			foreach my $face (@{$this->UNBOUNDED_FACES->{$d}}){
+				my $boundedPart = $face - $farVert;
+				my $farPart = $face * $farVert;
+				if($farPart->size==$d){
+					my $pair = new Pair<Set<Int>,Set<Int>>([$boundedPart, $farPart]);
+					$result->{$i} = $pair;
+					$i++;
+				}
+			}
+		}
+		$this->COMPACTIFICATION->VERTICES = $result;
+	}
+
+	rule COMPACTIFICATION.ALL_FACES : COMPACTIFICATION.VERTICES, HASSE_DIAGRAM, MAXIMAL_POLYTOPES {
+		my $newVert = $this->COMPACTIFICATION->VERTICES;
+		my $size = scalar keys %$newVert;
+		my $hd = $this->HASSE_DIAGRAM;
+		my @mp = @{$this->MAXIMAL_POLYTOPES};
+		@mp = map(new_vertices_from_old_face($_, $newVert), @mp);
+		my @result = ();
+      # This just walks through all subsets of the new vertices and checks
+      # whether these are faces. 
+      # FIXME Use polymakes closure operator here.
+		foreach my $poly (@mp){
+			my $n = scalar @$poly;
+			for(my $i = 1; $i<=$n; $i++){
+				my @subsets = all_subsets_of_k($i, @$poly);
+				foreach my $set (@subsets){
+					if(is_face_a((new Set<Int>($set)), $newVert, $hd)){
+						push @result, $set;
+					}
+				}
+			}
+		}
+		$this->COMPACTIFICATION->ALL_FACES = \@result;
+	}
+
+	rule COMPACTIFICATION.FACES : COMPACTIFICATION.ALL_FACES, COMPACTIFICATION.VERTICES, VERTICES, FAN_DIM {
+      # Take all faces, filter by dimension.
+		my @allFaces = @{$this->COMPACTIFICATION->ALL_FACES};
+		my $result = new Map<Int,Set<Set<Int>>>();
+		my $vertices = $this->VERTICES;
+		my $O = $this->COMPACTIFICATION->VERTICES;
+		for (my $i =0; $i < $this->FAN_DIM; $i++){
+			$result->{$i}= new Set<Set<Int>>();
+		}
+		foreach my $face (@allFaces){
+			my $d = new_dimension($face, $O, $vertices);
+			$result->{$d} += new Set<Int>($face);
+		}
+		$this->COMPACTIFICATION->FACES = $result;
+	}
 }
 
-sub is_face{
-   my($A, $O, $hd) = @_;
-   my $G = realisation($A, $O);
-   my $F = old_closure($G,$hd);
-   my $R = rays($A,$O);
-   my $F_vert = new_vertices_from_old_face($F,$O);
-   my @good_F_vert = grep(($O->{$_}->second*$R)->size == $R->size,@$F_vert);
-   return @good_F_vert == $A->size;
+sub is_face_a{
+	my($A, $O, $hd) = @_;
+	my $G = realisation($A, $O);
+	my $F = old_closure($G,$hd);
+	my $R = rays($A,$O);
+	my $F_vert = new_vertices_from_old_face($F,$O);
+	my @good_F_vert = grep(($O->{$_}->second*$R)->size == $R->size,@$F_vert);
+	return @good_F_vert == $A->size;
 }
 
 sub new_vertices_from_old_face{
-   my($F,$O) = @_;
-   my @result = ();
-   my @keys = keys %$O;
-   foreach my $key (@keys){
-      my $r = realisation((new Set<Int>([$key])), $O);
-      if(($r * $F)->size == $r->size){
-         push @result, $key;
-      }
-   }
-   return new Set<Int>(\@result);
+	my($F,$O) = @_;
+	my @result = ();
+	my @keys = keys %$O;
+	foreach my $key (@keys){
+		my $r = realisation((new Set<Int>([$key])), $O);
+		if(($r * $F)->size == $r->size){
+			push @result, $key;
+		}
+	}
+	return new Set<Int>(\@result);
 }
 
+# Dimension of a new face.
 sub new_dimension{
-   my($A, $O,  $vertices) = @_;
-   my $F = realisation($A, $O);
-   my $rays = rays($A, $O);
-   my $dim = rank($vertices->minor($F, All))-1;
-   $dim -= rank($vertices->minor($rays, All));
-   return $dim;
+	my($A, $O,  $vertices) = @_;
+	my $F = realisation($A, $O);
+	my $rays = rays($A, $O);
+	my $dim = rank($vertices->minor($F, All))-1;
+	$dim -= rank($vertices->minor($rays, All));
+	return $dim;
 }
 
+# Find minimal old face that gives rise to new face.
 sub realisation{
-   my($A, $O) = @_;
-   my @vert = map($O->{$_}, @$A);
-   @vert = map($_->first + $_->second, @vert);
-   my $union = new Set<Int>(pop @vert);
-   foreach my $v (@vert){
-      $union += $v;
-   }
-   return $union;
+	my($A, $O) = @_;
+	my @vert = map($O->{$_}, @$A);
+	@vert = map($_->first + $_->second, @vert);
+	my $union = new Set<Int>(pop @vert);
+	foreach my $v (@vert){
+		$union += $v;
+	}
+	return $union;
 }
 
 sub min {
-   my @a = @_;
-   my $result = pop @a;
-   foreach my $a (@a){
-      $result = $result <= $a ? $result : $a;
-   }
-   return $result;
+	my @a = @_;
+	my $result = pop @a;
+	foreach my $a (@a){
+		$result = $result <= $a ? $result : $a;
+	}
+	return $result;
 }
 
 sub old_closure{
-   my($r, $hd) =@_;
-   my $n = $r->size;
-   my @faces = @{$hd->FACES};
-   my @good_faces = grep(($_*$r)->size==$n,@faces);
-   my @sizes = map($_->size,@good_faces);
-   my $min = min @sizes;
-   @good_faces = grep($_->size==$min,@good_faces);
-   1==@good_faces or die("something went wrong");
-   return pop @good_faces;
+	my($r, $hd) =@_;
+	my $n = $r->size;
+	my @faces = @{$hd->FACES};
+	my @good_faces = grep(($_*$r)->size==$n,@faces);
+	my @sizes = map($_->size,@good_faces);
+	my $min = min @sizes;
+	@good_faces = grep($_->size==$min,@good_faces);
+	1==@good_faces or die("something went wrong");
+	return pop @good_faces;
 }
 
 sub rays{
-   my($A, $O) = @_;
-   my @rays = map($O->{$_}->second, @$A);
-   my $result = new Set<Int>(pop @rays);
-   foreach my $r (@rays){
-      $result *= $r;
-   }
-   return $result;
+	my($A, $O) = @_;
+	my @rays = map($O->{$_}->second, @$A);
+	my $result = new Set<Int>(pop @rays);
+	foreach my $r (@rays){
+		$result *= $r;
+	}
+	return $result;
 }
+
+sub is_face_t{
+   my($sigma, $tau) = @_;
+   print "Hello.\n";
+   my $test = $sigma * $tau;
+   print "Test $test\n";
+   return $test->size == $tau->size;
+}
+
+sub compute_orientation_t {
+   return 42;
+	my($sigma, $tau, $oldOrientations, $chosenBases, $vertices, $vertReal) = @_;
+   print "Checking orientation for $sigma and $tau\n";
+   print "Vertreal: $vertReal\n";
+	if(is_face_t($sigma, $tau)){
+      print "Isface\n";
+		if(rays($sigma, $vertReal) == rays($tau, $vertReal)){
+			my $parentSigma = old_closure(realisation($sigma, $vertReal));
+			my $parentTau = old_closure(realisation($tau, $vertReal));
+			return $oldOrientations->{new Set<Set<Int>>([$parentSigma, $parentTau])};
+		} else {
+			return -42;
+		}
+	} else {
+		return 0;
+	}
+}
+

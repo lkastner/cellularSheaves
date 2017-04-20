@@ -83,6 +83,7 @@ $s1->print();
 application "fan";
 $pc = new PolyhedralComplex(VERTICES=>[[1,0,0],[1,0,1],[0,1,0]],MAXIMAL_POLYTOPES=>[[0,1,2]]);
 print $pc->COMPACTIFICATION->VERTICES;
+print $pc->COMPACTIFICATION->ORIENTATIONS;
 
 application "fan";
 $pc = new PolyhedralComplex(VERTICES=>[[1,0,0],[0,0,1],[0,1,0]],MAXIMAL_POLYTOPES=>[[0,1,2]]);
