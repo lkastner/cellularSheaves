@@ -54,6 +54,7 @@ namespace polymake { namespace fan{
          CellularDecorator(const Matrix<Rational>& v, const Map<int, Set<int>>& i2v): vertices(v), int2vertices(i2v){}
 
          CellularDecoration compute_initial_decoration(const Set<int>& face) const {
+            vertices.rows();
             return CellularDecoration(face, 0, realisation(face));
          }
 

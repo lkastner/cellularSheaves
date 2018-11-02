@@ -39,7 +39,6 @@ namespace polymake { namespace fan{
    
    class SedentarityDecorator {
       private:
-         const Matrix<Rational>& vertices;
          const Map<int, Set<int>>& int2vertices;
          const Set<int>& farVertices;
 
@@ -64,7 +63,7 @@ namespace polymake { namespace fan{
       
       public:
          typedef SedentarityDecoration DecorationType;
-         SedentarityDecorator(const CellularData& cd): vertices(cd.vertices), int2vertices(cd.int2vertices), farVertices(cd.farVertices){}
+         SedentarityDecorator(const CellularData& cd): int2vertices(cd.int2vertices), farVertices(cd.farVertices){}
 
          SedentarityDecoration compute_initial_decoration(const Set<int>& face) const {
             return SedentarityDecoration(face, 0, realisation(face), sedentarity(face));
