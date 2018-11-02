@@ -1,0 +1,77 @@
+/* Copyright (c) 2016-2018
+   Lars Kastner (TU Berlin)
+   Kristin Shaw (University of Oslo)
+   Anna-Lena Winz (FU Berlin)
+
+   This program is free software; you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by the
+   Free Software Foundation; either version 2, or (at your option) any
+   later version: http://www.gnu.org/licenses/gpl.txt.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+--------------------------------------------------------------------------------
+*/
+
+#ifndef CELLULAR_DATA
+#define CELLULAR_DATA
+
+#include "polymake/client.h"
+#include "polymake/graph/Decoration.h"
+#include "polymake/graph/Lattice.h"
+#include "polymake/graph/BasicLatticeTypes.h"
+#include "polymake/graph/lattice_builder.h"
+#include "polymake/graph/LatticePermutation.h"
+#include "polymake/fan/hasse_diagram.h"
+#include "polymake/GenericMatrix.h"
+#include "polymake/Map.h"
+#include "polymake/Set.h"
+#include "polymake/Integer.h"
+#include "polymake/Rational.h"
+#include "polymake/linalg.h"
+namespace polymake { namespace fan{
+   
+   using graph::Lattice;
+   using namespace graph::lattice;
+   using namespace fan::lattice;
+
+   class CellularData {
+      public:
+         Map<int, Set<int>> int2vertices;
+         Map<Set<int>, int> vertices2int;
+         int nVertices;
+         Set<int> farVertices;
+         Matrix<Rational> vertices;
+
+      public:
+         CellularData(perl::Object pc){
+            pc.give("FAR_VERTICES") >> farVertices;
+            pc.give("VERTICES") >> vertices;
+            nVertices = vertices.rows();
+            Set<int> topNode; topNode += -1;
+            // cout << oldHasseDiagram << endl;
+            int i = 0;
+            // Build new vertices
+            const Lattice<BasicDecoration, Nonsequential>& oldHasseDiagram(pc.give("HASSE_DIAGRAM"));
+            for(const auto& f : oldHasseDiagram.decoration()){
+               if(f.face != topNode) { 
+                  int faceDim = f.rank-1;
+                  int tailDim = rank(vertices.minor(f.face * farVertices, All));
+                  if(faceDim == tailDim){
+                     int2vertices[i] = f.face;
+                     vertices2int[f.face] = i;
+                     i++;
+                  } else {
+                  }
+               }
+            }
+         }
+
+   };
+
+} // namespace fan
+} // namespace polymake
+
+#endif

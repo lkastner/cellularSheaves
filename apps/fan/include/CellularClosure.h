@@ -25,6 +25,7 @@
 #include "polymake/graph/LatticePermutation.h"
 #include "polymake/fan/hasse_diagram.h"
 #include "polymake/fan/CellularDecoration.h"
+#include "polymake/fan/CellularData.h"
 
 namespace polymake { namespace fan{
 	
@@ -53,7 +54,7 @@ namespace polymake { namespace fan{
       }
    };
 
-   
+   template<typename DecorationType>
    class CellularClosureOperator {
       private:
          FaceMap<> face_index_map;
@@ -87,8 +88,8 @@ namespace polymake { namespace fan{
       public:
          typedef Set<int> ClosureData;
 
-         CellularClosureOperator(const Map<int, Set<int>>& i2v, const Map<Set<int>, int>& v2i, const int& nv, const Set<int>& fv, perl::Object pc):
-            int2vertices(i2v), vertices2int(v2i), nVertices(nv), farVertices(fv), oldClosureOperator(construct_old_closure_operator(pc)){
+         CellularClosureOperator(const CellularData& cd, perl::Object pc):
+            int2vertices(cd.int2vertices), vertices2int(cd.vertices2int), nVertices(cd.nVertices), farVertices(cd.farVertices), oldClosureOperator(construct_old_closure_operator(pc)){
             }
          
          Set<int> old_closure(const Set<int>& a) const {
@@ -137,7 +138,7 @@ namespace polymake { namespace fan{
             return FaceIndexingData(fi, fi == -1, fi == -2);
          }
 
-         Set<int> compute_closure_data(const CellularDecoration& bd) const {
+         Set<int> compute_closure_data(const DecorationType& bd) const {
             return bd.face;
          }
 

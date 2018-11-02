@@ -23,81 +23,37 @@
 #include "polymake/Integer.h"
 #include "polymake/Rational.h"
 #include "polymake/linalg.h"
+#include "polymake/fan/CellularData.h"
 #include "polymake/fan/CellularClosure.h"
 #include "polymake/fan/CellularDecoration.h"
+#include "polymake/fan/SedentarityDecoration.h"
+#include "polymake/fan/AugmentedHasseDiagram.h"
 
 namespace polymake { namespace fan{
-   
+  
  
-   class AugmentedHasseDiagram {
-
-      private:
-         Map<int, Set<int>> int2vertices;
-         Map<Set<int>, int> vertices2int;
-         int nVertices;
-         Set<int> farVertices;
-         CellularClosureOperator tco;
-         Matrix<Rational> vertices;
-         Lattice<CellularDecoration, lattice::Nonsequential> hasseDiagram;
-
-         void compute_hasse_diagram() {
-            CellularDecorator decorator(vertices, int2vertices);
-            hasseDiagram = graph::lattice_builder::compute_lattice_from_closure<CellularDecoration>(tco, TrivialCut<CellularDecoration>(), decorator, true, std::false_type());
-         }
-
-      public:
-         AugmentedHasseDiagram(perl::Object pc) : tco(int2vertices, vertices2int, nVertices, farVertices, pc) {
-            pc.give("FAR_VERTICES") >> farVertices;
-            pc.give("VERTICES") >> vertices;
-            nVertices = vertices.rows();
-            const Lattice<BasicDecoration, Nonsequential>& oldHasseDiagram(pc.give("HASSE_DIAGRAM"));
-            Set<int> topNode; topNode += -1;
-            // cout << oldHasseDiagram << endl;
-            int i = 0;
-            for(const auto& f : oldHasseDiagram.decoration()){
-               if(f.face != topNode) { 
-                  int faceDim = f.rank-1;
-                  int tailDim = rank(vertices.minor(f.face * farVertices, All));
-                  if(faceDim == tailDim){
-                     int2vertices[i] = f.face;
-                     vertices2int[f.face] = i;
-                     i++;
-                  } else {
-                  }
-               }
-            }
-            compute_hasse_diagram();
-         }
-
-         void print() const {
-            cout << "Vertices:" << endl;
-            for(const auto& v:int2vertices){
-               cout << v.first << ": " << v.second << endl;
-            }
-         }
-
-         const CellularClosureOperator& get_ClosureOperator(){
-            return tco;
-         }
-
-         const Lattice<CellularDecoration, lattice::Nonsequential>& get_HasseDiagram() const {
-            return hasseDiagram;
-         }
-
-   };
 
 
 
    // perl::Object
    void tropcomp(perl::Object pc){
-      AugmentedHasseDiagram AHD(pc);
+      CellularData cd(pc);
+      CellularDecorator decorator(cd.vertices, cd.int2vertices);
+      AugmentedHasseDiagram<CellularDecorator> AHD(cd, decorator, pc);
       AHD.print();
+
+      // Use a different decorator:
+      cout << endl << "-------------------------------" << endl;
+      cout << "Using SedentarityDecorator: " << endl;
+      SedentarityDecorator sd(cd);
+      AugmentedHasseDiagram<SedentarityDecorator> AHDSD(cd, sd, pc);
+      AHDSD.print();
     
-      const Lattice<CellularDecoration, lattice::Nonsequential>& HD(AHD.get_HasseDiagram());
-      cout << "Graph: " << endl;
-      cout << HD.graph() << endl;
-      cout << "Node decoration: " << endl;
-      cout << HD.decoration() << endl;
+      // const Lattice<CellularDecoration, lattice::Nonsequential>& HD(AHD.get_HasseDiagram());
+      // cout << "Graph: " << endl;
+      // cout << HD.graph() << endl;
+      // cout << "Node decoration: " << endl;
+      // cout << HD.decoration() << endl;
       // return HD.makeObject();
       
      //  template <typename Decoration, typename ClosureOperator, typename CrossCut, typename Decorator, bool dual, typename SeqType = lattice::Nonsequential >

@@ -11,3 +11,17 @@ tropcomp($pc);
 application "fan";
 $pc = new PolyhedralComplex(INPUT_RAYS=>[[1,0,0,0],[0,1,0,0],[0,1,1,0],[0,1,1,1],[0,1,0,1]], INPUT_CONES=>[[0,1,2,3,4]]);
 $hd = tropcomp($pc);
+
+application "fan";
+# Positive 2-dim orthant
+$pc = new PolyhedralComplex(INPUT_RAYS=>[[1,0,0],[0,1,0],[0,0,1]], INPUT_CONES=>[[0,1,2]]);
+$hd = tropcomp($pc);
+# Positive 2-dim orthant without interior
+$pc = new PolyhedralComplex(INPUT_RAYS=>[[1,0,0],[0,1,0],[0,0,1]], INPUT_CONES=>[[0,1],[0,2]]);
+$hd = tropcomp($pc);
+# Thickened x-axis
+$pc = new PolyhedralComplex(INPUT_RAYS=>[[1,0,0],[1,0,1],[0,1,0]], INPUT_CONES=>[[0,1,2]]);
+$hd = tropcomp($pc);
+# Thickened x-axis without interior
+$pc = new PolyhedralComplex(INPUT_RAYS=>[[1,0,0],[1,0,1],[0,1,0]], INPUT_CONES=>[[0,1],[0,2],[1,2]]);
+$hd = tropcomp($pc);
