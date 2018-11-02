@@ -37,12 +37,18 @@ namespace polymake { namespace fan{
          int nVertices;
          Set<int> farVertices;
          CellularClosureOperator tco;
+         Matrix<Rational> vertices;
          Lattice<CellularDecoration, lattice::Nonsequential> hasseDiagram;
+
+         void compute_hasse_diagram() {
+            CellularDecorator decorator(vertices, int2vertices);
+            hasseDiagram = graph::lattice_builder::compute_lattice_from_closure<CellularDecoration>(tco, TrivialCut<CellularDecoration>(), decorator, true, std::false_type());
+         }
 
       public:
          AugmentedHasseDiagram(perl::Object pc) : tco(int2vertices, vertices2int, nVertices, farVertices, pc) {
             pc.give("FAR_VERTICES") >> farVertices;
-            const Matrix<Rational>& vertices = pc.give("VERTICES");
+            pc.give("VERTICES") >> vertices;
             nVertices = vertices.rows();
             const Lattice<BasicDecoration, Nonsequential>& oldHasseDiagram(pc.give("HASSE_DIAGRAM"));
             Set<int> topNode; topNode += -1;
@@ -60,6 +66,7 @@ namespace polymake { namespace fan{
                   }
                }
             }
+            compute_hasse_diagram();
          }
 
          void print() const {
@@ -71,11 +78,6 @@ namespace polymake { namespace fan{
 
          const CellularClosureOperator& get_ClosureOperator(){
             return tco;
-         }
-
-         void compute_hasse_diagram() {
-            CustomDecorator decorator;
-            hasseDiagram = graph::lattice_builder::compute_lattice_from_closure<CellularDecoration>(tco, TrivialCut<CellularDecoration>(), decorator, true, std::false_type());
          }
 
          const Lattice<CellularDecoration, lattice::Nonsequential>& get_HasseDiagram() const {
@@ -90,7 +92,6 @@ namespace polymake { namespace fan{
    void tropcomp(perl::Object pc){
       AugmentedHasseDiagram AHD(pc);
       AHD.print();
-      AHD.compute_hasse_diagram();
     
       const Lattice<CellularDecoration, lattice::Nonsequential>& HD(AHD.get_HasseDiagram());
       cout << "Graph: " << endl;
