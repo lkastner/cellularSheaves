@@ -15,8 +15,8 @@
 --------------------------------------------------------------------------------
 */
 
-#ifndef CELLULAR_DATA
-#define CELLULAR_DATA
+#ifndef COMPACTIFICATION_DATA
+#define COMPACTIFICATION_DATA
 
 #include "polymake/client.h"
 #include "polymake/graph/Decoration.h"
@@ -37,7 +37,7 @@ namespace polymake { namespace fan{
    using namespace graph::lattice;
    using namespace fan::lattice;
 
-   class CellularData {
+   class CompactificationData {
       public:
          Map<int, Set<int>> int2vertices;
          Map<Set<int>, int> vertices2int;
@@ -46,7 +46,7 @@ namespace polymake { namespace fan{
          Matrix<Rational> vertices;
 
       public:
-         CellularData(perl::Object pc){
+         CompactificationData(perl::Object pc){
             pc.give("FAR_VERTICES") >> farVertices;
             pc.give("VERTICES") >> vertices;
             nVertices = vertices.rows();

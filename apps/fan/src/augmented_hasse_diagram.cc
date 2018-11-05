@@ -23,7 +23,7 @@
 #include "polymake/Integer.h"
 #include "polymake/Rational.h"
 #include "polymake/linalg.h"
-#include "polymake/fan/CellularData.h"
+#include "polymake/fan/CompactificationData.h"
 #include "polymake/fan/CellularClosure.h"
 #include "polymake/fan/CellularDecoration.h"
 #include "polymake/fan/SedentarityDecoration.h"
@@ -37,8 +37,8 @@ namespace polymake { namespace fan{
 
    // perl::Object
    void tropcomp(perl::Object pc){
-      CellularData cd(pc);
-      CellularDecorator decorator(cd.vertices, cd.int2vertices);
+      CompactificationData cd(pc);
+      CellularDecorator decorator(cd);
       AugmentedHasseDiagram<CellularDecorator> AHD(cd, decorator, pc);
       AHD.print();
 

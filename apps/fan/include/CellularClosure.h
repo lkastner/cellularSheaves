@@ -25,7 +25,7 @@
 #include "polymake/graph/LatticePermutation.h"
 #include "polymake/fan/hasse_diagram.h"
 #include "polymake/fan/CellularDecoration.h"
-#include "polymake/fan/CellularData.h"
+#include "polymake/fan/CompactificationData.h"
 
 namespace polymake { namespace fan{
 	
@@ -88,7 +88,7 @@ namespace polymake { namespace fan{
       public:
          typedef Set<int> ClosureData;
 
-         CellularClosureOperator(const CellularData& cd, perl::Object pc):
+         CellularClosureOperator(const CompactificationData& cd, perl::Object pc):
             int2vertices(cd.int2vertices), vertices2int(cd.vertices2int), nVertices(cd.nVertices), farVertices(cd.farVertices), oldClosureOperator(construct_old_closure_operator(pc)){
             }
          

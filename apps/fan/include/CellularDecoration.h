@@ -24,6 +24,7 @@
 #include "polymake/graph/lattice_builder.h"
 #include "polymake/graph/LatticePermutation.h"
 #include "polymake/fan/hasse_diagram.h"
+#include "polymake/fan/CompactificationData.h"
 
 namespace polymake { namespace fan{
 
@@ -51,7 +52,7 @@ namespace polymake { namespace fan{
       
       public:
          typedef CellularDecoration DecorationType;
-         CellularDecorator(const Matrix<Rational>& v, const Map<int, Set<int>>& i2v): vertices(v), int2vertices(i2v){}
+         CellularDecorator(const CompactificationData& cd): vertices(cd.vertices), int2vertices(cd.int2vertices){}
 
          CellularDecoration compute_initial_decoration(const Set<int>& face) const {
             vertices.rows();

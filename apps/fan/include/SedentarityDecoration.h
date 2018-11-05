@@ -24,6 +24,7 @@
 #include "polymake/graph/lattice_builder.h"
 #include "polymake/graph/LatticePermutation.h"
 #include "polymake/fan/hasse_diagram.h"
+#include "polymake/fan/CompactificationData.h"
 
 namespace polymake { namespace fan{
 
@@ -63,7 +64,7 @@ namespace polymake { namespace fan{
       
       public:
          typedef SedentarityDecoration DecorationType;
-         SedentarityDecorator(const CellularData& cd): int2vertices(cd.int2vertices), farVertices(cd.farVertices){}
+         SedentarityDecorator(const CompactificationData& cd): int2vertices(cd.int2vertices), farVertices(cd.farVertices){}
 
          SedentarityDecoration compute_initial_decoration(const Set<int>& face) const {
             return SedentarityDecoration(face, 0, realisation(face), sedentarity(face));

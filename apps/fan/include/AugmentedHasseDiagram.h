@@ -25,7 +25,7 @@
 #include "polymake/Integer.h"
 #include "polymake/Rational.h"
 #include "polymake/linalg.h"
-#include "polymake/fan/CellularData.h"
+#include "polymake/fan/CompactificationData.h"
 #include "polymake/fan/CellularClosure.h"
 #include "polymake/fan/CellularDecoration.h"
 
@@ -35,7 +35,7 @@ namespace polymake { namespace fan{
    class AugmentedHasseDiagram {
 
       private:
-         const CellularData& cd;
+         const CompactificationData& cd;
          const DecoratorType& decorator;
          using DecorationType=typename DecoratorType::DecorationType;
          CellularClosureOperator<DecorationType> tco;
@@ -46,7 +46,7 @@ namespace polymake { namespace fan{
          }
 
       public:
-         AugmentedHasseDiagram(const CellularData& cd_in, DecoratorType& decorator_in, perl::Object pc) : cd(cd_in), decorator(decorator_in), tco(cd, pc) {
+         AugmentedHasseDiagram(const CompactificationData& cd_in, DecoratorType& decorator_in, perl::Object pc) : cd(cd_in), decorator(decorator_in), tco(cd, pc) {
             compute_hasse_diagram();
          }
 
