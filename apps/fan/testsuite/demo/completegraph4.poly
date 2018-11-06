@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?pm chk="586f904a"?>
+<?pm chk="5be1924c"?>
 
-<object name="t" type="fan::PolyhedralComplex&lt;Rational&gt;" version="3.0.7" xmlns="http://www.math.tu-berlin.de/polymake/#3">
+<object name="t" type="fan::PolyhedralComplex&lt;Rational&gt;" version="3.2" xmlns="http://www.math.tu-berlin.de/polymake/#3">
   <credit product="cdd"><![CDATA[
 Copyright by Komei Fukuda.
 http://www.ifor.math.ethz.ch/~fukuda/cdd_home/cdd.html
@@ -214,7 +214,7 @@ http://www.ifor.math.ethz.ch/~fukuda/cdd_home/cdd.html
   <property name="HASSE_DIAGRAM">
     <object>
       <property name="ADJACENCY">
-        <m cols="53">
+        <m>
           <v />
           <v>0</v>
           <v>0</v>
