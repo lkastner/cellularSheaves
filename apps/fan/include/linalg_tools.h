@@ -62,14 +62,14 @@ Matrix<E>
 choose_basis_cpp(const Matrix<E>& input){
 	int desired = rank(input), current = 0, test;
 	Matrix<E> result(0, input.cols());
-	for(auto rowit = entire(rows(input)); !rowit.at_end(); ++rowit){
+	for(const auto& rowit : rows(input)){
 		if(desired == rank(result)){
 			return result;
 		}
-		test = rank(result / *rowit);
+		test = rank(result / rowit);
 		if(test > current){
 			current = test;
-			result /= *rowit;
+			result /= rowit;
 		}
 	}
    return result;
@@ -127,8 +127,8 @@ Matrix<E>
 build_matrix_cpp(const Matrix<E>& bigger, const Matrix<E>& smaller){
   Matrix<E> result(0, bigger.cols()+1),test,image;
   E lastVal;
-   for(typename Entire<Rows<Matrix<E> > >::const_iterator rowit = entire(rows(smaller)); !rowit.at_end(); ++rowit){
-      test = bigger / *rowit;
+   for(const auto& rowit : rows(smaller)){
+      test = bigger / rowit;
       image = null_space(T(test));
       if (image.rows() != 1){
          cout << "Something is going wrong. There are " << image.rows() << " solutions for this vector." << endl;
