@@ -122,6 +122,7 @@ assemble_matrix_cpp(const Array<Set<int>> sigmas,
    
 }
 
+
 template <typename E> inline
 Matrix<E>
 build_matrix_cpp(const Matrix<E>& bigger, const Matrix<E>& smaller){

@@ -7,6 +7,9 @@ object PolyhedralComplex {
 		my $blocks = $cosheaf->BLOCKS;
 		my $boundedFaces = $pc->BOUNDED_FACES; 
 		my $orientations = $pc->ORIENTATIONS;
+
+      check_complex($pc, $cosheaf, true);
+
 		my $usualChain = build_chain_complex($blocks, $boundedFaces, $orientations, $bases);
 		return $usualChain;
 	 }
@@ -17,7 +20,10 @@ object PolyhedralComplex {
 		my $blocks = $cosheaf->BLOCKS;
 		my $nonFarFaces = $pc->NON_FAR_FACES; 
 		my $orientations = $pc->ORIENTATIONS;
-		my $borelMooreChain = build_chain_complex($blocks, $nonFarFaces, $orientations, $bases);
+      
+      check_complex($pc, $cosheaf, true);
+		
+      my $borelMooreChain = build_chain_complex($blocks, $nonFarFaces, $orientations, $bases);
 		return $borelMooreChain;
 	 } 
 
@@ -27,7 +33,10 @@ object PolyhedralComplex {
 		my $blocks = $sheaf->BLOCKS;
 		my $boundedFaces = $pc->BOUNDED_FACES; 
 		my $orientations = $pc->ORIENTATIONS;
-		my $usualChain = build_cochain_complex($blocks, $boundedFaces, $orientations, $bases);
+      
+      check_complex($pc, $sheaf, false);
+		
+      my $usualChain = build_cochain_complex($blocks, $boundedFaces, $orientations, $bases);
 		return $usualChain;
 	 }
 	
@@ -37,7 +46,10 @@ object PolyhedralComplex {
 		my $blocks = $sheaf->BLOCKS;
 		my $nonFarFaces = $pc->NON_FAR_FACES; 
 		my $orientations = $pc->ORIENTATIONS;
-		my $borelMooreChain = build_cochain_complex($blocks, $nonFarFaces, $orientations, $bases);
+      
+      check_complex($pc, $sheaf, false);
+		
+      my $borelMooreChain = build_cochain_complex($blocks, $nonFarFaces, $orientations, $bases);
 		return $borelMooreChain;
 	 } 
 
