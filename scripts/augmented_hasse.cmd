@@ -32,6 +32,7 @@ $pc = new PolyhedralComplex(INPUT_RAYS=>[[1,0,0],[0,1,0],[0,0,1]], INPUT_CONES=>
 $hd = tropcomp($pc);
 $f1 = $pc->fcosheaf(1);
 $cp = $pc->usual_chain_complex($f1);
+print $cp->DIFFERENTIALS;
 
 application "fan";
 $v = [0,0,3,1,2,1,0,1,0,2,2,0,3,0,4,1,2,2,0,0];
