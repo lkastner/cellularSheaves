@@ -31,6 +31,19 @@ namespace polymake { namespace fan{
          }
    };
    
+   class NonFarSelector {
+      private:
+         Set<int> farFace;
+      public:
+         NonFarSelector(perl::Object pc){
+            pc.give("FAR_VERTICES") >> farFace;
+         }
+
+         bool isValid(const Set<int>& face) const{
+            return !(face - farFace).empty();
+         }
+   };
+   
    class BoundedSelector {
       private:
          Set<int> farFace;
@@ -136,7 +149,7 @@ namespace polymake { namespace fan{
          // cout << "Taus: " << taus << endl;
          Matrix<Rational> A = assemble_matrix_cpp(sigmas, taus, blocks, orientations);
          Matrix<Rational> B = SD.assemble_ith_matrix(i);
-         cout << A << endl;
+         cout << B << endl;
          cout << A.rows() << " " << A.cols() << endl;
          cout << B.rows() << " " << B.cols() << endl;
          cout << "Check: " << (A==B) << endl;
@@ -145,10 +158,33 @@ namespace polymake { namespace fan{
       }
       
    }
+   
+   Array<Matrix<Rational>> build_nonfar_chain(perl::Object pc, perl::Object cosheaf){
+      // if(!cochain){ return; }
+      NonFarSelector bs(pc);
+      // ChainComplexBuilder<TrivialSelector> SD(pc, cosheaf, ts);
+      Array<Matrix<Rational>> result(build_chain_complex_from_hasse(pc, cosheaf, bs));
+      cout << "Returning" << endl;
+      return result;
+   }
+
+   
+   Array<Matrix<Rational>> build_bounded_chain(perl::Object pc, perl::Object cosheaf){
+      // if(!cochain){ return; }
+      BoundedSelector bs(pc);
+      // ChainComplexBuilder<TrivialSelector> SD(pc, cosheaf, ts);
+      Array<Matrix<Rational>> result(build_chain_complex_from_hasse(pc, cosheaf, bs));
+      cout << "Returning" << endl;
+      return result;
+   }
 
    Function4perl(&tropcomp, "tropcomp( $ )");
    
    Function4perl(&check_complex, "check_complex( $ , $ , $ )");
+   
+   Function4perl(&build_bounded_chain, "build_bounded_chain( $ , $ )");
+   
+   Function4perl(&build_nonfar_chain, "build_nonfar_chain( $ , $ )");
 
 } // namespace fan
 } // namespace polymake

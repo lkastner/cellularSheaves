@@ -8,10 +8,14 @@ object PolyhedralComplex {
 		my $boundedFaces = $pc->BOUNDED_FACES; 
 		my $orientations = $pc->ORIENTATIONS;
 
-      check_complex($pc, $cosheaf, true);
-
+      my $diff = build_bounded_chain($pc, $cosheaf);
 		my $usualChain = build_chain_complex($blocks, $boundedFaces, $orientations, $bases);
-		return $usualChain;
+      if($diff != $usualChain->INPUT_DIFFERENTIALS){
+         print "Something went very wrong.\n";
+         return 0;
+      }
+
+		return new ChainComplex(INPUT_DIFFERENTIALS=>$diff);
 	 }
 	
 	user_method borel_moore_complex( CoSheaf ){
@@ -21,9 +25,13 @@ object PolyhedralComplex {
 		my $nonFarFaces = $pc->NON_FAR_FACES; 
 		my $orientations = $pc->ORIENTATIONS;
       
-      check_complex($pc, $cosheaf, true);
-		
+      my $diff = build_nonfar_chain($pc, $cosheaf);
       my $borelMooreChain = build_chain_complex($blocks, $nonFarFaces, $orientations, $bases);
+      if($diff != $borelMooreChain->INPUT_DIFFERENTIALS){
+         print "Something went very wrong.\n";
+         return 0;
+      }
+
 		return $borelMooreChain;
 	 } 
 
@@ -34,10 +42,15 @@ object PolyhedralComplex {
 		my $boundedFaces = $pc->BOUNDED_FACES; 
 		my $orientations = $pc->ORIENTATIONS;
       
-      check_complex($pc, $sheaf, false);
-		
+      my $diff = build_bounded_chain($pc, $sheaf);
       my $usualChain = build_cochain_complex($blocks, $boundedFaces, $orientations, $bases);
-		return $usualChain;
+      if($diff != $usualChain->INTERNAL_COMPLEX->INPUT_DIFFERENTIALS){
+         print "Something went very wrong.\n";
+         return 0;
+      }
+
+      my $internal = new ChainComplex(INPUT_DIFFERENTIALS=>$diff);
+		return new CoChainComplex(INTERNAL_COMPLEX=>$internal);
 	 }
 	
 	user_method compact_support_complex( Sheaf ){
@@ -47,10 +60,15 @@ object PolyhedralComplex {
 		my $nonFarFaces = $pc->NON_FAR_FACES; 
 		my $orientations = $pc->ORIENTATIONS;
       
-      check_complex($pc, $sheaf, false);
-		
+      my $diff = build_nonfar_chain($pc, $sheaf);
       my $borelMooreChain = build_cochain_complex($blocks, $nonFarFaces, $orientations, $bases);
-		return $borelMooreChain;
+      if($diff != $borelMooreChain->INTERNAL_COMPLEX->INPUT_DIFFERENTIALS){
+         print "Something went very wrong.\n";
+         return 0;
+      }
+
+      my $internal = new ChainComplex(INPUT_DIFFERENTIALS=>$diff);
+		return new CoChainComplex(INTERNAL_COMPLEX=>$internal);
 	 } 
 
 }

@@ -127,6 +127,22 @@ namespace polymake { namespace fan{
             return result;
          }
    };
+
+   template<typename SelectorType>
+   Array<Matrix<Rational>> build_chain_complex_from_hasse(perl::Object pc, perl::Object cosheaf, const SelectorType& selector){
+      ChainComplexBuilder<SelectorType> SD(pc, cosheaf, selector);
+      int dim = pc.give("FAN_DIM");
+      Array<Matrix<Rational>> result(dim-1);
+      for(int i=1; i<dim; i++){
+         Matrix<Rational> B = SD.assemble_ith_matrix(i);
+         // if(cochain){
+         //    result[(dim-1) - (i-1)] = B;
+         // } else {
+            result[i-1] = B;
+         //}
+      }
+      return result;
+   }
 } // end namespace fan
 } // end namespace polymake
 
