@@ -159,22 +159,22 @@ namespace polymake { namespace fan{
       
    }
    
-   Array<Matrix<Rational>> build_nonfar_chain(perl::Object pc, perl::Object cosheaf){
+   Array<Matrix<Rational>> build_nonfar_chain(perl::Object pc, perl::Object cosheaf, bool cochain){
       // if(!cochain){ return; }
       NonFarSelector bs(pc);
       // ChainComplexBuilder<TrivialSelector> SD(pc, cosheaf, ts);
-      Array<Matrix<Rational>> result(build_chain_complex_from_hasse(pc, cosheaf, bs));
-      cout << "Returning" << endl;
+      Array<Matrix<Rational>> result(build_chain_complex_from_hasse(pc, cosheaf, bs, cochain));
+      // cout << "Returning" << endl;
       return result;
    }
 
    
-   Array<Matrix<Rational>> build_bounded_chain(perl::Object pc, perl::Object cosheaf){
+   Array<Matrix<Rational>> build_bounded_chain(perl::Object pc, perl::Object cosheaf, bool cochain){
       // if(!cochain){ return; }
       BoundedSelector bs(pc);
       // ChainComplexBuilder<TrivialSelector> SD(pc, cosheaf, ts);
-      Array<Matrix<Rational>> result(build_chain_complex_from_hasse(pc, cosheaf, bs));
-      cout << "Returning" << endl;
+      Array<Matrix<Rational>> result(build_chain_complex_from_hasse(pc, cosheaf, bs, cochain));
+      // cout << "Returning" << endl;
       return result;
    }
 
@@ -182,9 +182,9 @@ namespace polymake { namespace fan{
    
    Function4perl(&check_complex, "check_complex( $ , $ , $ )");
    
-   Function4perl(&build_bounded_chain, "build_bounded_chain( $ , $ )");
+   Function4perl(&build_bounded_chain, "build_bounded_chain( $ , $ , $ )");
    
-   Function4perl(&build_nonfar_chain, "build_nonfar_chain( $ , $ )");
+   Function4perl(&build_nonfar_chain, "build_nonfar_chain( $ , $ , $ )");
 
 } // namespace fan
 } // namespace polymake
