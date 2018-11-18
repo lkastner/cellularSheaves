@@ -77,7 +77,7 @@ sub build_blocks_f{
             } else {
                $map = zero_matrix($fpSigmaBasis->rows, $fpTauBasis->rows);
             }
-            $newBlocks->{$keySet} = transpose($map);
+            $newBlocks->{$keySet} = new Matrix(transpose($map));
          }   
 		}
 	}

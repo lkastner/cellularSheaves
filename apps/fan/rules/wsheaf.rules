@@ -39,10 +39,10 @@ object PolyhedralComplex {
          }
       } else{ 
          foreach my $key (keys %$simpleBlocks){
-            $newblocks->{$key} = transpose(wedge_matrix($simpleBlocks->{$key}, $p));
+            $newblocks->{$key} = new Matrix(transpose(wedge_matrix($simpleBlocks->{$key}, $p)));
          }
          foreach my $basekey (keys %$chosenBases){
-            $newbases->{$basekey} = wedge_matrix($chosenBases->{$basekey}, $p);
+            $newbases->{$basekey} = new Matrix(wedge_matrix($chosenBases->{$basekey}, $p));
          }
       }
       my $cosheaf = $pc->add("SHEAF", BLOCKS=>$newblocks, BASES=>$newbases);

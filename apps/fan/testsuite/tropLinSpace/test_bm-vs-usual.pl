@@ -10,8 +10,8 @@ sub compare_bm_usual{
       push @result1, $si->BETTI_NUMBERS;
       push @result2, $bmi->BETTI_NUMBERS;
    }
-   my $A = new Matrix(@result1);
-   my $B = new Matrix(@result2);
+   my $A = new Matrix<Int>(@result1);
+   my $B = new Matrix<Int>(@result2);
    for(my $i=0; $i<3; $i++){
       for(my $j=0; $j<3; $j++){
          compare_values($tls->name."(".$i.",".$j.")", $A->elem($i, $j), $B->elem(2-$i, 2-$j));

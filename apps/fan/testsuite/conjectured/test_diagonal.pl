@@ -18,7 +18,7 @@ sub test_tls{
       my $si=$tls->usual_cochain_complex($wi);
       push @result, $si->BETTI_NUMBERS;
    }
-   my $A = new Matrix(@result);
+   my $A = new Matrix<Int>(@result);
    my $test = is_diagonal_matrix($A);
    compare_values($tls->name,$test,1);
 }

@@ -10,6 +10,6 @@ push @result, $us0->BETTI_NUMBERS;
 push @result, $us1->BETTI_NUMBERS;
 push @result, $bm0->BETTI_NUMBERS;
 push @result, $bm1->BETTI_NUMBERS;
-my $computed = new Matrix(@result);
-my $desired = new Matrix([1,3],[14,0],[0,14],[3,1]);
+my $computed = new Matrix<Int>(@result);
+my $desired = new Matrix<Int>([1,3],[14,0],[0,14],[3,1]);
 compare_values("gen3",$desired,$computed);

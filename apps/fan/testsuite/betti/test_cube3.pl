@@ -5,6 +5,6 @@ for(my $i=0; $i<4; $i++){
    my $cs = $pc->borel_moore_complex($w);
    push @result, $cs->BETTI_NUMBERS;
 }
-my $computed = new Matrix(@result);
-my $desired = new Matrix([[1,0,0,0],[0,3,0,0],[0,0,3,0],[0,0,0,1]]);
+my $computed = new Matrix<Int>(@result);
+my $desired = new Matrix<Int>([[1,0,0,0],[0,3,0,0],[0,0,3,0],[0,0,0,1]]);
 compare_values("cube3",$desired, $computed);
