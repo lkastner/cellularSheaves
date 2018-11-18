@@ -50,14 +50,14 @@ namespace polymake { namespace fan{
             pc.give("HASSE_DIAGRAM") >> hd;
             const auto& decoration = hd.decoration();
             Map<Set<Set<int>>, Matrix<Rational>> blocks;
-            Map<Set<Set<int>>, int> orientations;
+            // Map<Set<Set<int>>, int> orientations;
             Map<Set<int>, Matrix<Rational>> bases;
             cosheaf.give("BLOCKS") >> blocks;
             cosheaf.give("BASES") >> bases;
-            pc.give("ORIENTATIONS") >> orientations;
+            pc.give("ORIENTATIONS") >> orientationsEM;
             G = hd.graph();
             blocksEM = EdgeMap<Directed, Matrix<Rational>>(G);
-            orientationsEM = EdgeMap<Directed, int>(G);
+            // orientationsEM = EdgeMap<Directed, int>(G);
             nodeDimsNM = NodeMap<Directed, int>(G);
             // cout << "Edges: " << edges(G) << endl;
             for(const auto& node:nodes(G)){
@@ -74,10 +74,10 @@ namespace polymake { namespace fan{
                blocksKey += target;
                // cout << blocks[blocksKey] << endl;
                blocksEM[*edge] = blocks[blocksKey];
-               if(orientations.exists(blocksKey)){
-                  // cout << "Has orientation: " << orientations[blocksKey] << endl;
-                  orientationsEM[*edge] = orientations[blocksKey];
-               }
+               // if(orientations.exists(blocksKey)){
+               //    // cout << "Has orientation: " << orientations[blocksKey] << endl;
+               //    orientationsEM[*edge] = orientations[blocksKey];
+               // }
                if(nodeDimsNM[edge.from_node()] == blocks[blocksKey].rows()){
                   // cout << "rows";
                }

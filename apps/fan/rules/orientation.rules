@@ -1,6 +1,7 @@
 object PolyhedralFan {
 
-   property ORIENTATIONS : Map<Set<Set<Int> >, Int>;
+   # property ORIENTATIONS : Map<Set<Set<Int> >, Int>;
+   property ORIENTATIONS : EdgeMap<Directed, Int>;
 
    property INTERNAL_BASES : Map<Set<Int>, Matrix>;
 
@@ -12,23 +13,34 @@ object PolyhedralFan {
       $this->INTERNAL_BASES = choose_bases_for_cones($rays, $lineality, $hd, $d);
    }
 
-   rule ORIENTATIONS: HASSE_DIAGRAM, FAN_DIM, INTERNAL_BASES{
-      my $d = $this->FAN_DIM - 1;
-      my $result = new Map<Set<Set<Int> >, Int>();
-      my $hd = $this->HASSE_DIAGRAM;
+   rule ORIENTATIONS: HASSE_DIAGRAM.ADJACENCY, HASSE_DIAGRAM.DECORATION, FAN_DIM, INTERNAL_BASES{
+      my $G = $this->HASSE_DIAGRAM->ADJACENCY;
+      my $decoration = $this->HASSE_DIAGRAM->DECORATION;
+      my $result = new EdgeMap<Directed, Int>($G);
       my $chosenBases = $this->INTERNAL_BASES;
-      for(my $i=0; $i<$d; $i++){
-         my $sigmas = $hd->nodes_of_dim($d-$i);
-         my $taus = $hd->nodes_of_dim($d-$i-1);
-         foreach my $sigma (@$sigmas) {
-            my $honestSigma = $hd->FACES->[$sigma];
-            foreach my $tau (@$taus) {
-               my $honestTau = $hd->FACES->[$tau];
-               my $keySet = new Set<Set<Int> >($honestSigma, $honestTau);
-               $result->{$keySet} = compute_orientation($honestSigma, $honestTau, $chosenBases);
-            }
-         } 
+      for (my $e=entire(edges($G)); $e; ++$e) {
+         # print $decoration->[$e->from_node], " ", $decoration->[$e->to_node], "\n";
+         my $tau = $decoration->[$e->from_node]->face;
+         my $sigma = $decoration->[$e->to_node]->face;
+         $result->[$$e] = compute_orientation($sigma, $tau, $chosenBases);
       }
+
+      # my $d = $this->FAN_DIM - 1;
+      # my $result = new Map<Set<Set<Int> >, Int>();
+      # my $hd = $this->HASSE_DIAGRAM;
+      # my $chosenBases = $this->INTERNAL_BASES;
+      # for(my $i=0; $i<$d; $i++){
+      #    my $sigmas = $hd->nodes_of_dim($d-$i);
+      #    my $taus = $hd->nodes_of_dim($d-$i-1);
+      #    foreach my $sigma (@$sigmas) {
+      #       my $honestSigma = $hd->FACES->[$sigma];
+      #       foreach my $tau (@$taus) {
+      #          my $honestTau = $hd->FACES->[$tau];
+      #          my $keySet = new Set<Set<Int> >($honestSigma, $honestTau);
+      #          $result->{$keySet} = compute_orientation($honestSigma, $honestTau, $chosenBases);
+      #       }
+      #    } 
+      # }
       $this->ORIENTATIONS = $result;
    }
 
@@ -48,14 +60,23 @@ sub choose_bases_for_cones{
 
 sub compute_orientation{
    my($sigma, $tau, $chosenBases) = @_;
-   if(is_face($sigma, $tau)){
+   # print "sigma: $sigma, tau: $tau\n";
+   if($sigma == new Set<Int>(-1)){
+      # sigma is top node
+      return 0;
+   }
+   if($tau->size == 0){
+      # tau is empty
+      return 0;
+   }
+   # if(is_face($sigma, $tau)){
       # print "Sigma: ",$sigma," Tau: ",$tau,"\n";
       my $sigmaBasis = $chosenBases->{$sigma};
       my $tauBasis = $chosenBases->{$tau};
       return compute_orientation_for_face($sigmaBasis, $tauBasis);
-   } else { 
-      return 0;
-   }
+   # } else { 
+   #    return 0;
+   # }
 }
 
 

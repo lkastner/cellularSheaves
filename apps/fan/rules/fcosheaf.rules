@@ -123,9 +123,10 @@ sub build_blocks_constant{
          foreach my $tau (@$taus) {
             my $honestTau = $hd->FACES->[$tau];
             my $keySet = new Set<Set<Int> >($honestSigma, $honestTau);
-            my $entry = $orientations->{$keySet};
-            my $block = new Matrix ( [[$entry*$entry]] );
-            $newBlocks->{$keySet} = $block;
+            # my $entry = $orientations->{$keySet};
+            # my $block = new Matrix ( [[$entry*$entry]] );
+            # $newBlocks->{$keySet} = $block;
+            $newBlocks->{$keySet} = new Matrix([[1]]);
 			}
 		}
 	}
