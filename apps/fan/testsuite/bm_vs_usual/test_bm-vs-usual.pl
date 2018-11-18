@@ -12,15 +12,9 @@ sub compare_bm_usual{
    }
    my $A = new Matrix<Int>(@result1);
    my $B = new Matrix<Int>(@result2);
-   my $test = 1;
-   for(my $i=0; $i<3; $i++){
-      for(my $j=0; $j<3; $j++){
-         if($A->elem($i, $j) != $B->elem(2-$i, 2-$j)){
-            $test = 0;
-         }
-      }
-   }
-   compare_values($tls->name, $test, 1);
+   # With the saved matrices we verify that $A->elem($i, $j) == $B->elem(2-$i, 2-$j)
+   compare_data($tls->name."_usual", $A);
+   compare_data($tls->name."_borelMoore", $B);
 }
 
 my $files = `ls .`;

@@ -1,15 +1,3 @@
-sub is_diagonal_matrix{
-   my ($A)= @_;
-   for (my $r = 0; $r<$A->rows;$r++){
-      for (my $c = 0; $c<$A->cols;$c++){
-         if($r!=$c && $A->elem($r,$c)!=0){
-            return 0;
-         }
-      }
-   }
-   return 1;
-}
-
 sub test_tls{
    my ($tls) = @_;
    my @result = ();
@@ -19,8 +7,7 @@ sub test_tls{
       push @result, $si->BETTI_NUMBERS;
    }
    my $A = new Matrix<Int>(@result);
-   my $test = is_diagonal_matrix($A);
-   compare_values($tls->name,$test,1);
+   compare_data($tls->name, $A);
 }
 
 ## build the tropical space in polymake and save it.

@@ -12,11 +12,9 @@ sub compare_bm_usual{
    }
    my $A = new Matrix<Int>(@result1);
    my $B = new Matrix<Int>(@result2);
-   for(my $i=0; $i<3; $i++){
-      for(my $j=0; $j<3; $j++){
-         compare_values($tls->name."(".$i.",".$j.")", $A->elem($i, $j), $B->elem(2-$i, 2-$j));
-      }
-   }
+   # With the saved values, this checks whether $A($i,$j)==$B(2-$i, 2-$j).
+   compare_data($tls->name."_usual", $A);
+   compare_data($tls->name."_borelMoore", $B);
 }
 
 my @tlss = ("00100010000000101000.poly",  "10200100001110200100.poly",  
