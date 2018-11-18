@@ -9,12 +9,6 @@ object PolyhedralComplex {
 		my $orientations = $pc->ORIENTATIONS;
 
       my $diff = build_bounded_chain($pc, $cosheaf, false);
-		my $usualChain = build_chain_complex($blocks, $boundedFaces, $orientations, $bases);
-      if($diff != $usualChain->INPUT_DIFFERENTIALS){
-         print "Something went very wrong.\n";
-         return 0;
-      }
-
 		return new ChainComplex(INPUT_DIFFERENTIALS=>$diff);
 	 }
 	
@@ -26,13 +20,7 @@ object PolyhedralComplex {
 		my $orientations = $pc->ORIENTATIONS;
       
       my $diff = build_nonfar_chain($pc, $cosheaf, false);
-      my $borelMooreChain = build_chain_complex($blocks, $nonFarFaces, $orientations, $bases);
-      if($diff != $borelMooreChain->INPUT_DIFFERENTIALS){
-         print "Something went very wrong.\n";
-         return 0;
-      }
-
-		return $borelMooreChain;
+		return new ChainComplex(INPUT_DIFFERENTIALS=>$diff);
 	 } 
 
   user_method usual_cochain_complex( Sheaf ){
@@ -43,15 +31,8 @@ object PolyhedralComplex {
 		my $orientations = $pc->ORIENTATIONS;
       
       my $diff = build_bounded_chain($pc, $sheaf, true);
-      my $usualChain = build_cochain_complex($blocks, $boundedFaces, $orientations, $bases);
-      if($diff != $usualChain->INTERNAL_COMPLEX->INPUT_DIFFERENTIALS){
-         print "Something went very wrong.\n";
-         return $usualChain;
-      }
-
       my $internal = new ChainComplex(INPUT_DIFFERENTIALS=>$diff);
 		return new CoChainComplex(INTERNAL_COMPLEX=>$internal);
-      # return $usualChain;
 	 }
 	
 	user_method compact_support_complex( Sheaf ){
@@ -62,15 +43,8 @@ object PolyhedralComplex {
 		my $orientations = $pc->ORIENTATIONS;
       
       my $diff = build_nonfar_chain($pc, $sheaf, true);
-      my $borelMooreChain = build_cochain_complex($blocks, $nonFarFaces, $orientations, $bases);
-      if($diff != $borelMooreChain->INTERNAL_COMPLEX->INPUT_DIFFERENTIALS){
-         print "Something went very wrong.\n";
-         return 0;
-      }
-
       my $internal = new ChainComplex(INPUT_DIFFERENTIALS=>$diff);
 		return new CoChainComplex(INTERNAL_COMPLEX=>$internal);
-      # return $borelMooreChain;
 	 } 
 
 }
