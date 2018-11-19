@@ -3,15 +3,14 @@ object PolyhedralComplex {
 
    user_method fcosheaf( $ ){
       my($pc, $p) = @_;
-      my $G = $pc->HASSE_DIAGRAM->ADJACENCY;
-      my $newblocks = new EdgeMap<Directed, Matrix>($G);
-      my $newbases = new Map<Set<Int> , Matrix >();
+      my $newblocks;
+      my $newbases;
       if ($p == 0){
-         $newblocks = build_blocks_constant($pc);
          $newbases = build_bases_f($pc, 0);
+         $newblocks = build_blocks_constant($pc);
       } else{ 
-         $newblocks = build_blocks_f($pc, $p); 
          $newbases = build_bases_f($pc, $p);
+         $newblocks = build_blocks_f($pc, $p, $newbases); 
       }
       my $sheaf = $pc->add("COSHEAF", BLOCKS=>$newblocks, BASES=>$newbases);
       return $sheaf;
@@ -58,16 +57,18 @@ sub build_matrix_f{
 
 
 sub build_blocks_f{ 
-   my($pc, $p) =@_;
+   my($pc, $p, $bases) =@_;
    my $d = $pc->FAN_DIM - 1;
    my $G = $pc->HASSE_DIAGRAM->ADJACENCY;
    my $faces = $pc->HASSE_DIAGRAM->FACES;
    my $newBlocks = new EdgeMap<Directed, Matrix>($G);
    for (my $e=entire(edges($G)); $e; ++$e) {
-      my $honestTau = $faces->[$e->from_node];
-      my $honestSigma = $faces->[$e->to_node];
-      my $fpSigmaBasis = new Matrix (build_matrix_f($honestSigma, $pc, $p));
-      my $fpTauBasis = new Matrix (build_matrix_f($honestTau, $pc, $p));
+      # my $honestTau = $faces->[$e->from_node];
+      # my $honestSigma = $faces->[$e->to_node];
+      # my $fpSigmaBasis = new Matrix (build_matrix_f($honestSigma, $pc, $p));
+      # my $fpTauBasis = new Matrix (build_matrix_f($honestTau, $pc, $p));
+      my $fpSigmaBasis = $bases->[$e->to_node];
+      my $fpTauBasis = $bases->[$e->from_node];
 
       my $map = build_matrix($fpTauBasis, $fpSigmaBasis);
       $newBlocks->[$$e] = new Matrix(transpose($map));
