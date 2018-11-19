@@ -1,22 +1,3 @@
-application "fan";
-$f = new PolyhedralFan(RAYS=>[[1,0,0],[1,1,0],[1,0,1],[1,1,1]], MAXIMAL_CONES=>[[0,1,2],[1,2,3]]);
-$pc = new PolyhedralComplex($f);
-print keys %{$pc->CHOSEN_BASES};
-
-$s = new Set<Int>(1,2,3);
-print $pc->CHOSEN_BASES->{$s};
-
-$h = new Set<Int>([0]);
-print $pc->CHOSEN_BASES->{$h}->type->full_name;
-
-
-$t = new Set<Int>(2,3);
-$pst = new Pair<Set<Int>, Set<Int> >($s, $t);
-print $pc->SIMPLE_BLOCKS->{$pst};
-print $pc->CHOSEN_BASES->{$s};
-print $pc->CHOSEN_BASES->{$t};
-
-
 #############################################
 application "fan";
 $pc = new PolyhedralComplex(check_fan_objects(new Cone(cube(4))));
@@ -26,14 +7,14 @@ print choose_basis($A)->rows;
 print choose_basis($A)->cols;
 
 
-$A = new Matrix([[2, 1/2, 0],[1,0,0]]);
-print dense(to_lattice_basis($A));
 
 
+#############################################
 application "fan";
 $A = new Matrix([[1,2,3,4],[3,4,5,6],[7,8,9,0]]);
 print wedge_matrix($A, 2);
 
+#############################################
 application "fan";
 $pc = new PolyhedralComplex(check_fan_objects(new Cone(cube(3))));
 @result = ();
@@ -44,17 +25,11 @@ for(my $i=0; $i<4; $i++){
 }
 print new Matrix(@result);
 
+#############################################
 application "fan";
 $d = 4;
 $pc = new PolyhedralComplex(check_fan_objects(new Cone(cube($d))));
 $w2 = $pc->wsheaf(2);
-$s = new Set<Int>(12,13,14,15);
-$t = new Set<Int>(14,15);
-$p = new Pair<Set<Int>, Set<Int> >($s, $t);
-print $w2->BLOCKS->{$p};
-print wedge_matrix($pc->SIMPLE_BLOCKS->{$p},2)->cols;
-
-
 for(my $i = 1; $i<$d; $i++){
    my $wi = $pc->wcosheaf($i);
    my $cs = $pc->borel_moore_complex($wi);
@@ -69,27 +44,6 @@ $m = new Matrix([[1,2,3,4],[3,4,5,6],[5,6,7,8]]);
 print wedge_matrix($m, 1);
 print choose_basis($m);
 
-application "fan";
-$d = 4;
-$pc = new PolyhedralComplex(check_fan_objects(new Cone(cube($d))));
-$s = $pc->HASSE_DIAGRAM->nodes_of_dim(3);
-@s = map($pc->HASSE_DIAGRAM->FACES->[$_], @$s);
-$sigmas = new Array<Set<Int> >(\@s);
-$t = $pc->HASSE_DIAGRAM->nodes_of_dim(2);
-@t = map($pc->HASSE_DIAGRAM->FACES->[$_], @$t);
-$taus = new Array<Set<Int> >(\@t);
-$orientations = $pc->ORIENTATIONS;
-$blocks = $pc->SIMPLE_BLOCKS;
-print assemble_matrix($sigmas, $taus, $blocks, $orientations);
-
-
-###########################################################
-
-#Testing f blocks
-
-borel_moore_complex($f1);
-
-print build_generator_matrix_f($tau, $pc, 1); 
 
 ###########################################################
 
@@ -104,8 +58,6 @@ application "fan";
 print $t->RAYS;
 $pcFan = new PolyhedralComplex($t);
 $f1 = $pcFan->fcosheaf(1);
-$boundedChain = build_chain_complex($f1->BLOCKS, $pcFan->BOUNDED_FACES, $pcFan->ORIENTATIONS);
-
 
 
 ###############################################################################
@@ -166,15 +118,6 @@ print $div->ORIENTATIONS;
 $f1 = $div->fcosheaf(1);
 
 
-###############################################################################
-application "fan"; 
-$pc = new PolyhedralComplex(check_fan_objects(new Cone(cube(3))));
-print $pc->ORIENTATIONS->{new Set<Set<Int> >([[2,3],[3]])};
-print $pc->ORIENTATIONS->{new Set<Set<Int> >([[2,3],[2]])};
-$w0 = $pc->wsheaf(0);
-$w1 = $pc->wsheaf(1);
-$w2 = $pc->wsheaf(2);
-$w3 = $pc->wsheaf(3);
 
 ###############################################################################
 application "fan";
@@ -210,25 +153,6 @@ print topaz::homology<Integer>($cc,1);
 
 
 #######################
-# Compactification
-application "fan";
-$pc = new PolyhedralComplex(POINTS=>[[1,0,0],[0,1,0],[0,0,1]],INPUT_POLYTOPES=>[[0,1,2]]);
-print $pc->COMPACTIFICATION->ALL_FACES;
-print $pc->COMPACTIFICATION->VERTICES;
-$O = $pc->COMPACTIFICATION->VERTICES;
-$A = new Set<Int>([2,3]);
-print rays($A, $O);
-$hd = $pc->HASSE_DIAGRAM;
-$R = realisation($A, $O);
-print old_closure($R, $hd);
-print is_face($A,$O,$hd);
-
-
-application "fan";
-$m = matroid::uniform_matroid(3,4);
-$t = tropical::matroid_fan<Max>($m);
-print $t->COMPACTIFICATION->ALL_FACES;
-print $t->COMPACTIFICATION->VERTICES;
 
 application "graph";
 $g = complete(4);
