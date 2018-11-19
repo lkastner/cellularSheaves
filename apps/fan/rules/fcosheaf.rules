@@ -29,15 +29,16 @@ object PolyhedralComplex {
 
 sub find_max_containing{
    my($honestTau, $pc) = @_;
-   my $max_cones = $pc->MAXIMAL_CONES;
+   my $max_cones = $pc->HASSE_DIAGRAM->nodes_of_dim($pc->DIM);
    my @result = ();
    foreach my $sigma (@$max_cones) {
-   		my $test = $sigma*$honestTau;
-        if($test->size == $honestTau->size){
-        	push @result, $sigma;
-        }
-    }
-	return @result;
+      my $honestSigma = $pc->HASSE_DIAGRAM->FACES->[$sigma];
+      my $test = $honestSigma*$honestTau;
+      if($test->size == $honestTau->size){
+         push @result, $sigma;
+      }
+   }
+   return @result;
 }
 
 
@@ -49,7 +50,7 @@ sub build_matrix_f{
 	my $generators  = zero_matrix(1, $cols);
 	my $chosenBases = $pc->CHOSEN_BASES;  #this is really unnecessary, only need CHOSEN_BASES top cones.
 	foreach my $sigma (@max_cones_tau) {
-		my $wedged_basis = new Matrix wedge_matrix($chosenBases->{$sigma}, $p);	
+		my $wedged_basis = new Matrix wedge_matrix($chosenBases->[$sigma], $p);	
 		$generators = new Matrix( $generators / $wedged_basis);
 	}	
 	return choose_basis($generators);
@@ -79,21 +80,30 @@ sub build_bases_f{
 	my($pc, $p) =@_;
 	my $d = $pc->FAN_DIM - 1;
 	my $hd = $pc->HASSE_DIAGRAM;
-	my $newBases = new Map<Set<Int> , Matrix >();
-	for(my $i=0; $i<$d+1; $i++){
-      my $sigmas = $hd->nodes_of_dim($d-$i);
-      foreach my $sigma (@$sigmas) {
-         my $honestSigma = $hd->FACES->[$sigma];
-         my $keySet = new Set<Int> ($honestSigma);
-         my $fpSigmaBasis = new Matrix([[1]]);
-         if ($p ==0) {
-         	  $fpSigmaBasis = new Matrix([[1]]);
-         } else {
-         		$fpSigmaBasis = new Matrix (build_matrix_f($honestSigma, $pc, $p));
-         	}
-         $newBases->{$keySet} = $fpSigmaBasis;
-       }   
-	}
+   my $G = $pc->HASSE_DIAGRAM->ADJACENCY;
+	my $newBases = new NodeMap<Directed , Matrix >($G);
+   for(my $node = entire(nodes($G)); $node; ++$node){
+      if($p == 0){
+         $newBases->[$$node] = new Matrix([[1]]);
+      } else {
+         my $honestSigma = $hd->FACES->[$$node];
+         $newBases->[$$node] = build_matrix_f($honestSigma, $pc, $p);
+      }
+   }
+	# for(my $i=0; $i<$d+1; $i++){
+   #    my $sigmas = $hd->nodes_of_dim($d-$i);
+   #    foreach my $sigma (@$sigmas) {
+   #       my $honestSigma = $hd->FACES->[$sigma];
+   #       my $keySet = new Set<Int> ($honestSigma);
+   #       my $fpSigmaBasis = new Matrix([[1]]);
+   #       if ($p ==0) {
+   #       	  $fpSigmaBasis = new Matrix([[1]]);
+   #       } else {
+   #       		$fpSigmaBasis = new Matrix (build_matrix_f($honestSigma, $pc, $p));
+   #       	}
+   #       $newBases->{$keySet} = $fpSigmaBasis;
+   #     }   
+	# }
 	return $newBases; 
 }
 

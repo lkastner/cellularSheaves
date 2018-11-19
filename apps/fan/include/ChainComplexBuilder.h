@@ -48,15 +48,14 @@ namespace polymake { namespace fan{
             nodeSelector(nose)
          {
             pc.give("HASSE_DIAGRAM") >> hd;
-            const auto& decoration = hd.decoration();
-            Map<Set<int>, Matrix<Rational>> bases;
+            NodeMap<Directed, Matrix<Rational>> bases;
             cosheaf.give("BLOCKS") >> blocksEM;
             cosheaf.give("BASES") >> bases;
             pc.give("ORIENTATIONS") >> orientationsEM;
             G = hd.graph();
             nodeDimsNM = NodeMap<Directed, int>(G);
             for(const auto& node:nodes(G)){
-               nodeDimsNM[node] = bases[decoration[node].face].rows();
+               nodeDimsNM[node] = bases[node].rows();
             }
          }
 

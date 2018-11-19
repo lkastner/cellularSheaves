@@ -3,16 +3,16 @@ object PolyhedralComplex {
 
    property SIMPLE_BLOCKS : EdgeMap<Directed, Matrix>;
 
-   property CHOSEN_BASES : Map<Set<Int>, Matrix>;
+   property CHOSEN_BASES : NodeMap<Directed, Matrix>;
 
 
    rule CHOSEN_BASES : VERTICES, HASSE_DIAGRAM.ADJACENCY, HASSE_DIAGRAM.FACES, FAN_DIM, LINEALITY_SPACE {
-      my $result = new Map<Set<Int>, Matrix>();
       my $lin = $this->LINEALITY_SPACE;
       my $d = $this->FAN_DIM - 1;
       my $vertices = $this->VERTICES;
       my $faces = $this->HASSE_DIAGRAM->FACES;
       my $G = $this->HASSE_DIAGRAM->ADJACENCY;
+      my $result = new NodeMap<Directed, Matrix>($G);
       for(my $node = entire(nodes($G)); $node; ++$node){
          my $honestSigma = $faces->[$$node];
          if($honestSigma != new Set<Int>([-1])){
@@ -21,12 +21,12 @@ object PolyhedralComplex {
             if($p->FEASIBLE){
                my $aff = $p->AFFINE_HULL;
                $aff = $aff->minor(All, ~[0]);
-               $result->{$honestSigma} = null_space($aff);
+               $result->[$$node] = null_space($aff);
             } else {
-               $result->{$honestSigma} = new Matrix(0, $d);
+               $result->[$$node] = new Matrix(0, $d);
             }
          } else {
-            $result->{$honestSigma} = new Matrix(0, $d);
+            $result->[$$node] = new Matrix(0, $d);
          }
       }
       $this->CHOSEN_BASES = $result;
@@ -42,10 +42,8 @@ object PolyhedralComplex {
       my $decoration = $hd->DECORATION;
 
       for (my $e=entire(edges($G)); $e; ++$e) {
-         my $honestTau = $decoration->[$e->from_node]->face;
-         my $honestSigma = $decoration->[$e->to_node]->face;
-         my $sigmaBasis = $chosenBases->{$honestSigma};
-         my $tauBasis = $chosenBases->{$honestTau};
+         my $sigmaBasis = $chosenBases->[$e->to_node];
+         my $tauBasis = $chosenBases->[$e->from_node];
          $result->[$$e] = build_matrix($sigmaBasis, $tauBasis);
       }
       $this->SIMPLE_BLOCKS = $result;
