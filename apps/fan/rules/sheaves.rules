@@ -2,8 +2,7 @@ declare object Sheaf {
    
    property BASES : Map<Set<Int>, Matrix>;
    
-   property BLOCKS : Map<Set<Set<Int> >, Matrix >;
-
+   property BLOCKS : EdgeMap<Directed, Matrix>;
 
 }
 
@@ -11,7 +10,7 @@ declare object CoSheaf {
    
    property BASES : Map<Set<Int>, Matrix>;
    
-   property BLOCKS : Map<Set<Set<Int> >, Matrix >;
+   property BLOCKS : EdgeMap<Directed, Matrix>;
    
 }
 

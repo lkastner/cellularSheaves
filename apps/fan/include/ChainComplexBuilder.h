@@ -49,43 +49,15 @@ namespace polymake { namespace fan{
          {
             pc.give("HASSE_DIAGRAM") >> hd;
             const auto& decoration = hd.decoration();
-            Map<Set<Set<int>>, Matrix<Rational>> blocks;
-            // Map<Set<Set<int>>, int> orientations;
             Map<Set<int>, Matrix<Rational>> bases;
-            cosheaf.give("BLOCKS") >> blocks;
+            cosheaf.give("BLOCKS") >> blocksEM;
             cosheaf.give("BASES") >> bases;
             pc.give("ORIENTATIONS") >> orientationsEM;
             G = hd.graph();
-            blocksEM = EdgeMap<Directed, Matrix<Rational>>(G);
-            // orientationsEM = EdgeMap<Directed, int>(G);
             nodeDimsNM = NodeMap<Directed, int>(G);
-            // cout << "Edges: " << edges(G) << endl;
             for(const auto& node:nodes(G)){
                nodeDimsNM[node] = bases[decoration[node].face].rows();
             }
-            Set<int> source, target;
-            Set<Set<int>> blocksKey;
-            for(auto edge=entire(edges(G)); !edge.at_end(); ++edge){
-               // cout << "E:" << *edge << ": " << decoration[edge.from_node()] << " - " << decoration[edge.to_node()] << endl;
-               source = decoration[edge.from_node()].face;
-               target = decoration[edge.to_node()].face;
-               blocksKey.clear();
-               blocksKey += source;
-               blocksKey += target;
-               // cout << blocks[blocksKey] << endl;
-               blocksEM[*edge] = blocks[blocksKey];
-               // if(orientations.exists(blocksKey)){
-               //    // cout << "Has orientation: " << orientations[blocksKey] << endl;
-               //    orientationsEM[*edge] = orientations[blocksKey];
-               // }
-               if(nodeDimsNM[edge.from_node()] == blocks[blocksKey].rows()){
-                  // cout << "rows";
-               }
-               if(nodeDimsNM[edge.from_node()] == blocks[blocksKey].cols()){
-                  // cout << "cols";
-               }
-            }
-            // cout << nodeDimsNM << endl;
          }
 
          bool node_is_valid(int node) const {
@@ -98,15 +70,12 @@ namespace polymake { namespace fan{
             for(const auto& node:hd.nodes_of_rank(i+1)){
                if(node_is_valid(node)){
                   colRanges[node] = pm::range(ncols, ncols+nodeDimsNM[node]-1);
-                  // cout << node << ": " << nodeDimsNM[node] << " - " << colRanges[node] << endl;
                   ncols += nodeDimsNM[node];
                }
             }
-            // cout << "cols done." << endl;
             for(const auto& node:hd.nodes_of_rank(i)){
                if(node_is_valid(node)){
                   rowRanges[node] = pm::range(nrows, nrows+nodeDimsNM[node]-1);
-                  // cout << node << ": " << nodeDimsNM[node] << " - " << rowRanges[node] << endl;
                   nrows += nodeDimsNM[node];
                }
             }
@@ -116,11 +85,7 @@ namespace polymake { namespace fan{
                for(auto edge = entire(G.in_edges(source)); !edge.at_end(); ++edge){
                   target = edge.from_node();
                   if(node_is_valid(source) && node_is_valid(target)){
-                     // cout << target << " - " << source << endl;
-                     // cout << rowRanges[target] << " - " << colRanges[source] << endl;
-                     // cout << "Insert block: " << endl << blocksEM[*edge] << endl;
                      result.minor(rowRanges[target], colRanges[source]) = orientationsEM[*edge] * blocksEM[*edge];
-                     // result.minor(rowRanges[target], colRanges[source]) = blocksEM[*edge];
                   }
                }
             }

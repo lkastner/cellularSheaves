@@ -203,43 +203,31 @@ declare object CoChainComplex {
 
 user_function build_chain_complex(Map<Set<Set<Int> >, Matrix >, Map<Int, Array<Set<Int>>>, Map<Set<Set<Int> >, Int >, Map<Set<Int>, Matrix >){
 	  my ($blocks, $faces, $orientations, $bases) = @_;
-	  # print keys %$faces,"\n";
 	  my @k = keys %$faces;
 	  my $d  = maxwrap(@k);
 	  my $m = minwrap(@k);
-	  # print $d, " ", $m, "\n";
       my $result = new Array<Matrix>($d);
       for(my $i=$m; $i<$d; $i++){
-         # print "Dim is: ",$i,"\n";
-         # print "Calling for ",$d-$i-1," ",$d-$i,"\n";
          my $sigmas = $faces->{$d-$i};
-         # print $sigmas, "\n";
          my $taus = $faces->{$d-$i-1};
-         # print "Sigmas: ",$sigmas,"\nTaus: ",$taus,"\n";
          $result->[$d-$i-1] = assemble_matrix($sigmas, $taus, $blocks, $orientations, $bases);
       }
       return new ChainComplex(INPUT_DIFFERENTIALS=>$result);
 }
 
 user_function build_cochain_complex(Map<Set<Set<Int> >, Matrix >, Map<Int, Array<Set<Int>>>, Map<Set<Set<Int> >, Int >, Map<Set<Int>, Matrix >){
-	  my ($blocks, $faces, $orientations, $bases) = @_;
-	  # print $faces,"\n";
-	  my @k = keys %$faces;
-	  my $d  = maxwrap(@k);
-	  my $m = minwrap(@k);
-	  # print $d, " ", $m, "\n";
-      my $result = new Array<Matrix>($d);
-      for(my $i=$d; $i>$m; $i--){
-         # print "Dim is: ",$i," ",($d-$i)," ",($d-$i+1),"\n";
-         # print "Calling for ",$d-$i+1," ",$d-$i,"\n";
-         my $sigmas = $faces->{$d-$i};
-         # print $sigmas, "\n";
-         my $taus = $faces->{$d-$i+1};
-         # print "Sigmas: ",$sigmas,"\nTaus: ",$taus,"\n";
-         $result->[$i-1] = assemble_matrix($sigmas, $taus, $blocks, $orientations, $bases);
-      }
-      my $internal = new ChainComplex(INPUT_DIFFERENTIALS=>$result);
-      return new CoChainComplex(INTERNAL_COMPLEX=>$internal);
+   my ($blocks, $faces, $orientations, $bases) = @_;
+   my @k = keys %$faces;
+   my $d  = maxwrap(@k);
+   my $m = minwrap(@k);
+   my $result = new Array<Matrix>($d);
+   for(my $i=$d; $i>$m; $i--){
+      my $sigmas = $faces->{$d-$i};
+      my $taus = $faces->{$d-$i+1};
+      $result->[$i-1] = assemble_matrix($sigmas, $taus, $blocks, $orientations, $bases);
+   }
+   my $internal = new ChainComplex(INPUT_DIFFERENTIALS=>$result);
+   return new CoChainComplex(INTERNAL_COMPLEX=>$internal);
 }
 
 sub maxwrap{

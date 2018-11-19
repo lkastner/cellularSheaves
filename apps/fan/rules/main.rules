@@ -51,9 +51,15 @@ sub choose_basis{
    }
 }
 
-
+# Builds a
+# ($smaller->rows, $bigger->rows)-Matrix
+# that shows how to represent the basis elements of the smaller basis in the
+# bigger basis.
 sub build_matrix{
    my($bigger, $smaller) = @_;
+   if($bigger->rows == 0){
+      return zero_matrix($smaller->rows, $bigger->rows);
+   }
    my $nrows = $smaller->rows;
    if ($nrows == 0){
       return zero_matrix(0,$bigger->rows);

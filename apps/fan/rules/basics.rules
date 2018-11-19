@@ -1,23 +1,21 @@
 
 object PolyhedralComplex {
 
-   property SIMPLE_BLOCKS : Map<Set<Set<Int> >, Matrix >;
+   property SIMPLE_BLOCKS : EdgeMap<Directed, Matrix>;
 
    property CHOSEN_BASES : Map<Set<Int>, Matrix>;
 
 
-   rule CHOSEN_BASES : VERTICES, HASSE_DIAGRAM, FAN_DIM, LINEALITY_SPACE {
+   rule CHOSEN_BASES : VERTICES, HASSE_DIAGRAM.ADJACENCY, HASSE_DIAGRAM.FACES, FAN_DIM, LINEALITY_SPACE {
       my $result = new Map<Set<Int>, Matrix>();
       my $lin = $this->LINEALITY_SPACE;
       my $d = $this->FAN_DIM - 1;
       my $vertices = $this->VERTICES;
-      my $hd = $this->HASSE_DIAGRAM;
-      for(my $i=0; $i<=$d; $i++){
-         my $sigmaDim = $d - $i;
-         # print "Looking at dim ",$sigmaDim,"\n";
-         my $sigmas = $hd->nodes_of_dim($sigmaDim);
-         foreach my $sigma (@$sigmas) {
-            my $honestSigma = $hd->FACES->[$sigma];
+      my $faces = $this->HASSE_DIAGRAM->FACES;
+      my $G = $this->HASSE_DIAGRAM->ADJACENCY;
+      for(my $node = entire(nodes($G)); $node; ++$node){
+         my $honestSigma = $faces->[$$node];
+         if($honestSigma != new Set<Int>([-1])){
             my $vertSigma = $vertices->minor($honestSigma, All);
             my $p = new Polytope(POINTS=>$vertSigma, INPUT_LINEALITY=>$lin);
             if($p->FEASIBLE){
@@ -27,56 +25,33 @@ object PolyhedralComplex {
             } else {
                $result->{$honestSigma} = new Matrix(0, $d);
             }
+         } else {
+            $result->{$honestSigma} = new Matrix(0, $d);
          }
       }
       $this->CHOSEN_BASES = $result;
    }
 
    
-   rule SIMPLE_BLOCKS : HASSE_DIAGRAM, FAN_DIM, CHOSEN_BASES {
-      my $result = new Map<Set<Set<Int> >, Matrix>();
+   rule SIMPLE_BLOCKS : HASSE_DIAGRAM.ADJACENCY, HASSE_DIAGRAM.DECORATION, FAN_DIM, CHOSEN_BASES {
       my $d = $this->FAN_DIM - 1;
       my $chosenBases = $this->CHOSEN_BASES;
       my $hd = $this->HASSE_DIAGRAM;
-      # print $d,"\n";
-      for(my $i=0; $i<$d; $i++){
-         my $sigmas = $hd->nodes_of_dim($d-$i);
-         my $taus = $hd->nodes_of_dim($d-$i-1);
-         foreach my $sigma (@$sigmas) {
-            my $honestSigma = $hd->FACES->[$sigma];
-            foreach my $tau (@$taus) {
-               my $honestTau = $hd->FACES->[$tau];
-               # print $honestSigma," ",$honestTau,"\n";
-               my $keySet = new Set<Set<Int> >($honestSigma, $honestTau);
-               my $sigmaBasis = $chosenBases->{$honestSigma};
-               my $tauBasis = $chosenBases->{$honestTau};
-               my $map;
-               my $test = $honestSigma*$honestTau;
-               if($test->size == $honestTau->size){
-                  $map = build_matrix($sigmaBasis, $tauBasis);
-               } else {
-                  $map = zero_matrix($tauBasis->rows, $sigmaBasis->rows);
-               }
-               $result->{$keySet} = $map;
-               # print $result->{$keySet}->rows()," ",$result->{$keySet}->cols(),"\n";
-            }
-         }
+      my $G = $hd->ADJACENCY;
+      my $result = new EdgeMap<Directed, Matrix>($G);
+      my $decoration = $hd->DECORATION;
+
+      for (my $e=entire(edges($G)); $e; ++$e) {
+         my $honestTau = $decoration->[$e->from_node]->face;
+         my $honestSigma = $decoration->[$e->to_node]->face;
+         my $sigmaBasis = $chosenBases->{$honestSigma};
+         my $tauBasis = $chosenBases->{$honestTau};
+         $result->[$$e] = build_matrix($sigmaBasis, $tauBasis);
       }
       $this->SIMPLE_BLOCKS = $result;
    }
    
-    	
- 	# rule ORIENTATIONS : HASSE_DIAGRAM, FAN_DIM, SIMPLE_BLOCKS, VERTICES, CHOSEN_BASES {
-   #    # returns either 0, +1, -1 depending on the compatibility of thechosen ordered bases
-   # }
-
 }
-
-
-
-
-
-
 
 
 sub to_lattice_basis{
@@ -85,5 +60,3 @@ sub to_lattice_basis{
    my ($D, $L, $R) = @{smith_normal_form($Aint)};
    return $R->minor([0..$A->rows()-1],All);
 }
-
-
