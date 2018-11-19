@@ -63,10 +63,6 @@ sub build_blocks_f{
    my $faces = $pc->HASSE_DIAGRAM->FACES;
    my $newBlocks = new EdgeMap<Directed, Matrix>($G);
    for (my $e=entire(edges($G)); $e; ++$e) {
-      # my $honestTau = $faces->[$e->from_node];
-      # my $honestSigma = $faces->[$e->to_node];
-      # my $fpSigmaBasis = new Matrix (build_matrix_f($honestSigma, $pc, $p));
-      # my $fpTauBasis = new Matrix (build_matrix_f($honestTau, $pc, $p));
       my $fpSigmaBasis = $bases->[$e->to_node];
       my $fpTauBasis = $bases->[$e->from_node];
 
