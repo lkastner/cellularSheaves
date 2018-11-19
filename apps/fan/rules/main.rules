@@ -1,13 +1,11 @@
 INCLUDE
    orientation.rules
    basics.rules
-   faces.rules
    complex.rules
    sheaves.rules
    wsheaf.rules
    fcosheaf.rules
    functors.rules
-   compactification.rules
 
 # Comment that makes pm run
 user_function wedge_matrix_cpp<Element=Rational>(Matrix, $ ) : c++ (include => "polymake/fan/linalg_tools.h");

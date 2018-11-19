@@ -5,7 +5,6 @@ object PolyhedralComplex {
  		my($pc, $cosheaf) = @_;
 		my $bases = $cosheaf->BASES;
 		my $blocks = $cosheaf->BLOCKS;
-		my $boundedFaces = $pc->BOUNDED_FACES; 
 		my $orientations = $pc->ORIENTATIONS;
 
       my $diff = build_bounded_chain($pc, $cosheaf, false);
@@ -16,7 +15,6 @@ object PolyhedralComplex {
  		my($pc, $cosheaf) = @_;
  		my $bases = $cosheaf->BASES;
 		my $blocks = $cosheaf->BLOCKS;
-		my $nonFarFaces = $pc->NON_FAR_FACES; 
 		my $orientations = $pc->ORIENTATIONS;
       
       my $diff = build_nonfar_chain($pc, $cosheaf, false);
@@ -27,7 +25,6 @@ object PolyhedralComplex {
  		my($pc, $sheaf) = @_;
 		my $bases = $sheaf->BASES;
 		my $blocks = $sheaf->BLOCKS;
-		my $boundedFaces = $pc->BOUNDED_FACES; 
 		my $orientations = $pc->ORIENTATIONS;
       
       my $diff = build_bounded_chain($pc, $sheaf, true);
@@ -39,7 +36,6 @@ object PolyhedralComplex {
  		my($pc, $sheaf) = @_;
  		my $bases = $sheaf->BASES;
 		my $blocks = $sheaf->BLOCKS;
-		my $nonFarFaces = $pc->NON_FAR_FACES; 
 		my $orientations = $pc->ORIENTATIONS;
       
       my $diff = build_nonfar_chain($pc, $sheaf, true);
