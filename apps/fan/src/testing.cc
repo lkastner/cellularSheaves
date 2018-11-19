@@ -113,6 +113,7 @@ namespace polymake { namespace fan{
 
 
    void check_complex(perl::Object pc, perl::Object cosheaf, bool cochain){
+      /*
       if(!cochain){ return; }
       TrivialSelector ts;
       BoundedSelector bs(pc);
@@ -156,6 +157,7 @@ namespace polymake { namespace fan{
 
          // cout << assemble_matrix_cpp(sigmas, taus, blocks, orientations) << endl;
       }
+      */
       
    }
    

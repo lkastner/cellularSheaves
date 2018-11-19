@@ -34,30 +34,22 @@
 
 namespace polymake { namespace fan{
    
-   template<typename NodeSelector>
+   template<typename HasseDiagram, typename NodeSelector>
    class ChainComplexBuilder {
       private: 
-         Lattice<BasicDecoration, lattice::Nonsequential> hd;
-         Graph<Directed> G;
-         EdgeMap<Directed, Matrix<Rational>> blocksEM;
-         EdgeMap<Directed, int> orientationsEM;
-         NodeMap<Directed, int> nodeDimsNM;
+         const HasseDiagram& hd;
+         const Graph<Directed>& G;
+         const EdgeMap<Directed, Matrix<Rational>>& orientedBlocks;
+         const NodeMap<Directed, int>& nodeDimsNM;
          const NodeSelector& nodeSelector;
       public:
-         ChainComplexBuilder(perl::Object pc, perl::Object cosheaf, const NodeSelector& nose):
-            nodeSelector(nose)
-         {
-            pc.give("HASSE_DIAGRAM") >> hd;
-            NodeMap<Directed, Matrix<Rational>> bases;
-            cosheaf.give("BLOCKS") >> blocksEM;
-            cosheaf.give("BASES") >> bases;
-            pc.give("ORIENTATIONS") >> orientationsEM;
-            G = hd.graph();
-            nodeDimsNM = NodeMap<Directed, int>(G);
-            for(const auto& node:nodes(G)){
-               nodeDimsNM[node] = bases[node].rows();
-            }
-         }
+         ChainComplexBuilder(const HasseDiagram& hd_in,
+            const Graph<Directed>& G_in,
+            const EdgeMap<Directed, Matrix<Rational>>& ob_in,
+            const NodeMap<Directed, int>& nd_in,
+            const NodeSelector& nose):
+            hd(hd_in), G(G_in), orientedBlocks(ob_in), nodeDimsNM(nd_in), nodeSelector(nose)
+         {}
 
          bool node_is_valid(int node) const {
             return nodeSelector.isValid(hd.decoration()[node].face);
@@ -84,7 +76,7 @@ namespace polymake { namespace fan{
                for(auto edge = entire(G.in_edges(source)); !edge.at_end(); ++edge){
                   target = edge.from_node();
                   if(node_is_valid(source) && node_is_valid(target)){
-                     result.minor(rowRanges[target], colRanges[source]) = orientationsEM[*edge] * blocksEM[*edge];
+                     result.minor(rowRanges[target], colRanges[source]) = orientedBlocks[*edge];
                   }
                }
             }
@@ -94,7 +86,29 @@ namespace polymake { namespace fan{
 
    template<typename SelectorType>
    Array<Matrix<Rational>> build_chain_complex_from_hasse(perl::Object pc, perl::Object cosheaf, const SelectorType& selector, bool cochain){
-      ChainComplexBuilder<SelectorType> SD(pc, cosheaf, selector);
+      typedef Lattice<BasicDecoration, lattice::Nonsequential> HasseDiagramType;
+
+      HasseDiagramType hd;
+      pc.give("HASSE_DIAGRAM") >> hd;
+      Graph<Directed>& G(hd.graph());
+
+      EdgeMap<Directed, Matrix<Rational>> blocks;
+      cosheaf.give("BLOCKS") >> blocks;
+
+      EdgeMap<Directed, int> orientations;
+      pc.give("ORIENTATIONS") >> orientations;
+      for(auto edge=entire(edges(G)); !edge.at_end(); ++edge){
+         blocks[*edge] *= orientations[*edge];
+      }
+
+      NodeMap<Directed, Matrix<Rational>> bases;
+      cosheaf.give("BASES") >> bases;
+      NodeMap<Directed, int> nodeDimsNM(G);
+      for(const auto& node:nodes(G)){
+         nodeDimsNM[node] = bases[node].rows();
+      }
+
+      ChainComplexBuilder<HasseDiagramType, SelectorType> SD(hd, G, blocks, nodeDimsNM, selector);
       int dim = pc.give("FAN_DIM");
       Array<Matrix<Rational>> result(dim-1);
       for(int i=1; i<dim; i++){
