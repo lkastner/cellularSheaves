@@ -147,12 +147,12 @@ namespace polymake { namespace fan{
          }
          // cout << "Sigmas: " << sigmas << endl;
          // cout << "Taus: " << taus << endl;
-         Matrix<Rational> A = assemble_matrix_cpp(sigmas, taus, blocks, orientations);
-         Matrix<Rational> B = SD.assemble_ith_matrix(i);
-         cout << B << endl;
-         cout << A.rows() << " " << A.cols() << endl;
-         cout << B.rows() << " " << B.cols() << endl;
-         cout << "Check: " << (A==B) << endl;
+         // Matrix<Rational> A = assemble_matrix_cpp(sigmas, taus, blocks, orientations);
+         // Matrix<Rational> B = SD.assemble_ith_matrix(i);
+         // cout << B << endl;
+         // cout << A.rows() << " " << A.cols() << endl;
+         // cout << B.rows() << " " << B.cols() << endl;
+         // cout << "Check: " << (A==B) << endl;
 
          // cout << assemble_matrix_cpp(sigmas, taus, blocks, orientations) << endl;
       }

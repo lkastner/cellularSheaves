@@ -75,53 +75,6 @@ choose_basis_cpp(const Matrix<E>& input){
    return result;
 }
 
-template <typename E> inline
-Matrix<E>
-assemble_matrix_cpp(const Array<Set<int>> sigmas, 
-               const Array<Set<int>> taus, 
-               const Map<Set<Set<int> >, Matrix<E>> blocks, 
-               const Map<Set<Set<int> >, int> orientations){
-   int nrows = 0, ncols = 0, blockRow=0, blockCol, currentRow, currentCol;
-   Matrix<E> currentBlock;
-   Set<Set<int> > currentPair;
-   for(auto tau = entire(taus); !tau.at_end(); ++tau){
-      currentPair = Set<Set<int> >(*tau);
-      currentPair += Set<Set<int> >(sigmas[0]);
-      nrows += blocks[currentPair].rows();
-   }
-   for(auto sigma = entire(sigmas); !sigma.at_end(); ++sigma){
-      currentPair = Set<Set<int> >(*sigma);
-      currentPair += Set<Set<int> >(taus[0]);
-      ncols += blocks[currentPair].cols();
-   }
-   //cout << "AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH" << endl;
-   if((nrows == 0) || (ncols == 0)){
-      return zero_matrix<E>(nrows, ncols);
-   }
-   Matrix<E> result(nrows, ncols);
-   currentRow = 0;
-   for(auto tau = entire(taus); !tau.at_end(); ++tau){
-      currentCol = 0;
-      for(auto sigma = entire(sigmas); !sigma.at_end(); ++sigma){
-         currentPair = Set<Set<int> >(*sigma);
-         currentPair += Set<Set<int> >(*tau);
-         currentBlock = blocks[currentPair];
-         blockRow = currentBlock.rows();
-         blockCol = currentBlock.cols();
-         // cout << "CurrentRow: " << currentRow << " CurrentCol: " << currentCol << endl;
-         // cout << "Hello." << endl;
-         // cout << result << endl;
-         // cout << blocks[currentPair] << endl;
-         // cout << sequence(3,5) << endl;
-         result.minor(sequence(currentRow, blockRow), sequence(currentCol, blockCol)) = orientations[currentPair] * currentBlock;
-         currentCol += blocks[currentPair].cols();
-      }
-      currentRow += blockRow;
-   }
-   return result;
-   
-}
-
 
 template <typename E> inline
 Matrix<E>
