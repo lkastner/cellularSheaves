@@ -1,6 +1,7 @@
-/* Copyright (c) 1997-2014
-   Ewgenij Gawrilow, Michael Joswig (Technische Universitaet Berlin, Germany)
-   http://www.polymake.org
+/* Copyright (c) 2016-2018
+   Lars Kastner (TU Berlin)
+   Kristin Shaw (University of Oslo)
+   Anna-Lena Winz (FU Berlin)
 
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
