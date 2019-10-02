@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?pm chk="5be1b32b"?>
+<?pm chk="5d947c09"?>
 
-<object name="P88_101_31310434314610313104434361471034367" type="tropical::Cycle&lt;Min&gt;" version="3.2" xmlns="http://www.math.tu-berlin.de/polymake/#3">
+<object name="P88_101_31310434314610313104434361471034367" type="tropical::Cycle&lt;Min&gt;" version="3.5" xmlns="http://www.math.tu-berlin.de/polymake/#3">
   <property name="PROJECTIVE_VERTICES">
     <m>
       <v>1 -2 1 -2 -1 1 -1 -2</v>
