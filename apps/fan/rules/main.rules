@@ -15,6 +15,7 @@
 #-------------------------------------------------------------------------------
 
 INCLUDE
+   new_orientation.rules
    orientation.rules
    basics.rules
    complex.rules

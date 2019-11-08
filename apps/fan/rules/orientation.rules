@@ -29,16 +29,18 @@ object PolyhedralFan {
    }
 
    rule ORIENTATIONS: HASSE_DIAGRAM.ADJACENCY, HASSE_DIAGRAM.DECORATION, FAN_DIM, INTERNAL_BASES{
-      my $G = $this->HASSE_DIAGRAM->ADJACENCY;
-      my $decoration = $this->HASSE_DIAGRAM->DECORATION;
-      my $result = new EdgeMap<Directed, Int>($G);
-      my $chosenBases = $this->INTERNAL_BASES;
-      for (my $e=entire(edges($G)); $e; ++$e) {
-         my $tau = $decoration->[$e->from_node]->face;
-         my $sigma = $decoration->[$e->to_node]->face;
-         $result->[$$e] = compute_orientation($sigma, $tau, $chosenBases);
-      }
-      $this->ORIENTATIONS = $result;
+      $this->ORIENTATIONS = new_orientation($this->HASSE_DIAGRAM);
+      # my $G = $this->HASSE_DIAGRAM->ADJACENCY;
+      # my $decoration = $this->HASSE_DIAGRAM->DECORATION;
+      # my $result = new EdgeMap<Directed, Int>($G);
+      # my $chosenBases = $this->INTERNAL_BASES;
+      # for (my $e=entire(edges($G)); $e; ++$e) {
+      #    my $tau = $decoration->[$e->from_node]->face;
+      #    my $sigma = $decoration->[$e->to_node]->face;
+      #    print $$e,"\n";
+      #    $result->[$$e] = compute_orientation($sigma, $tau, $chosenBases);
+      # }
+      # $this->ORIENTATIONS = $result;
    }
 
 }
