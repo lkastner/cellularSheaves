@@ -89,16 +89,15 @@ namespace polymake { namespace fan{
 
       const Graph<Directed>& G(hd.graph());
       EdgeMap<Directed, Matrix<Rational>> blocks;
+      NodeMap<Directed, int> nodeDimsNM(G);
       cosheaf.give("BLOCKS") >> blocks;
       for(auto edge=entire(edges(G)); !edge.at_end(); ++edge){
          blocks[*edge] *= orientations[*edge];
-      }
-
-      NodeMap<Directed, Matrix<Rational>> bases;
-      cosheaf.give("BASES") >> bases;
-      NodeMap<Directed, int> nodeDimsNM(G);
-      for(const auto& node:nodes(G)){
-         nodeDimsNM[node] = bases[node].rows();
+         if(!cochain){
+            nodeDimsNM[edge.from_node()] = blocks[*edge].rows();
+         } else {
+            nodeDimsNM[edge.from_node()] = blocks[*edge].cols();
+         }
       }
 
       ChainComplexBuilder<HasseDiagramType, SelectorType> SD(hd, G, blocks, nodeDimsNM, selector);

@@ -124,7 +124,6 @@ namespace polymake { namespace fan{
       Map<Set<Set<int>>, int> orientations;
       Map<Set<int>, Matrix<Rational>> bases;
       cosheaf.give("BLOCKS") >> blocks;
-      cosheaf.give("BASES") >> bases;
       pc.give("ORIENTATIONS") >> orientations;
       // cout << "Blocks: " << blocks << endl;
       // cout << "Orientations: " << orientations << endl;

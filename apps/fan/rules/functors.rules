@@ -19,7 +19,6 @@ object PolyhedralComplex {
   
   user_method usual_chain_complex( CoSheaf ){
  		my($pc, $cosheaf) = @_;
-		my $bases = $cosheaf->BASES;
 		my $blocks = $cosheaf->BLOCKS;
 		my $orientations = $pc->ORIENTATIONS;
 
@@ -29,7 +28,6 @@ object PolyhedralComplex {
 	
 	user_method borel_moore_complex( CoSheaf ){
  		my($pc, $cosheaf) = @_;
- 		my $bases = $cosheaf->BASES;
 		my $blocks = $cosheaf->BLOCKS;
 		my $orientations = $pc->ORIENTATIONS;
       
@@ -39,7 +37,6 @@ object PolyhedralComplex {
 
   user_method usual_cochain_complex( Sheaf ){
  		my($pc, $sheaf) = @_;
-		my $bases = $sheaf->BASES;
 		my $blocks = $sheaf->BLOCKS;
 		my $orientations = $pc->ORIENTATIONS;
       
@@ -50,7 +47,6 @@ object PolyhedralComplex {
 	
 	user_method compact_support_complex( Sheaf ){
  		my($pc, $sheaf) = @_;
- 		my $bases = $sheaf->BASES;
 		my $blocks = $sheaf->BLOCKS;
 		my $orientations = $pc->ORIENTATIONS;
       

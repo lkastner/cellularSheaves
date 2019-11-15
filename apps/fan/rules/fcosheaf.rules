@@ -19,24 +19,24 @@ object PolyhedralComplex {
 
    user_method fcosheaf( $ ){
       my($pc, $p) = @_;
-      my $newblocks;
+      my $blocks;
       my $newbases;
       if ($p == 0){
          $newbases = build_bases_f($pc, 0);
-         $newblocks = build_blocks_constant($pc);
+         $blocks = build_blocks_constant($pc->HASSE_DIAGRAM);
       } else{ 
          $newbases = build_bases_f($pc, $p);
-         $newblocks = build_blocks_f($pc, $p, $newbases); 
+         $blocks = build_blocks_f($pc, $p, $newbases); 
       }
-      my $sheaf = $pc->add("COSHEAF", BLOCKS=>$newblocks, BASES=>$newbases);
+      my $sheaf = $pc->add("COSHEAF", BLOCKS=>$blocks);
       return $sheaf;
    }
 
 
 	user_method constant_sheaf( ){
 		my($pc) = @_;
-		my $newblocks = build_blocks_constant($pc);
-		my $const_sheaf = $pc->add("COSHEAF", BLOCKS => $newblocks);
+		my $blocks = build_blocks_constant($pc->HASSE_DIAGRAM);
+		my $const_sheaf = $pc->add("COSHEAF", BLOCKS => $blocks);
 		return $const_sheaf;
 	}
 
@@ -123,9 +123,9 @@ sub build_bases_f{
 
 
 sub build_blocks_constant{
-	my($pc) = @_;
-	my $d = $pc->FAN_DIM - 1;
-   my $G = $pc->HASSE_DIAGRAM->ADJACENCY;
+	my($hd) = @_;
+	my $d = $hd->rank() - 2;
+   my $G = $hd->ADJACENCY;
    my $newBlocks = new EdgeMap<Directed, Matrix>($G);
    for (my $e=entire(edges($G)); $e; ++$e) {
       $newBlocks->[$$e] = new Matrix([[1]]);

@@ -16,9 +16,10 @@
 
 object PolyhedralComplex {
 
-   property SIMPLE_BLOCKS : EdgeMap<Directed, Matrix>;
 
    property HASSE_DIAGRAM {
+   
+      property SIMPLE_BLOCKS : EdgeMap<Directed, Matrix>;
 
       property CHOSEN_BASES : NodeMap<Directed, Matrix>;
 
@@ -52,7 +53,7 @@ object PolyhedralComplex {
    }
 
    
-   rule SIMPLE_BLOCKS : HASSE_DIAGRAM.ADJACENCY, HASSE_DIAGRAM.DECORATION, FAN_DIM, HASSE_DIAGRAM.CHOSEN_BASES {
+   rule HASSE_DIAGRAM.SIMPLE_BLOCKS : HASSE_DIAGRAM.ADJACENCY, HASSE_DIAGRAM.DECORATION, FAN_DIM, HASSE_DIAGRAM.CHOSEN_BASES {
       my $d = $this->FAN_DIM - 1;
       my $chosenBases = $this->HASSE_DIAGRAM->CHOSEN_BASES;
       my $hd = $this->HASSE_DIAGRAM;
@@ -65,7 +66,7 @@ object PolyhedralComplex {
          my $tauBasis = $chosenBases->[$e->from_node];
          $result->[$$e] = build_matrix($sigmaBasis, $tauBasis);
       }
-      $this->SIMPLE_BLOCKS = $result;
+      $this->HASSE_DIAGRAM->SIMPLE_BLOCKS = $result;
    }
    
 }

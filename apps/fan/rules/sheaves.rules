@@ -16,15 +16,11 @@
 
 declare object Sheaf {
    
-   property BASES : NodeMap<Directed, Matrix>;
-   
    property BLOCKS : EdgeMap<Directed, Matrix>;
 
 }
 
 declare object CoSheaf {
-   
-   property BASES : NodeMap<Directed, Matrix>;
    
    property BLOCKS : EdgeMap<Directed, Matrix>;
    
