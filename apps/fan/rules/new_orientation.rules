@@ -6,7 +6,7 @@ sub new_orientation {
    foreach my $neighbor (@{$graph->out_adjacent_nodes($bottom)}){
       $orientation->edge($bottom, $neighbor) = 1;
    }
-   for(my $i=2; $i<=$hd->dim; $i++){
+   for(my $i=2; $i<$hd->rank; $i++){
       print "Level: $i\n";
       solve_level($hd, $i, $orientation);
    }
@@ -46,7 +46,7 @@ sub solve_level {
 
    my $firstSquare = new Array<Int>($squares->[0]);
    $squares -= $firstSquare;
-   # print $firstSquare,"\n";
+   print "First: ",$firstSquare,"\n";
    my ($u, $v0, $v1, $w) = @$firstSquare;
 # print $graph->edge_exists($u, $v0),"\n";
 # print $graph->edge_exists($u, $v1),"\n";
@@ -67,15 +67,15 @@ sub solve_level {
       #    print "Squares left: ",$squares->size(),"\n";
       foreach my $square (@$squares){
          if(is_solvable($square, $orientation)){
-            # print "Found: $square\n";
+            print "Found: $square\n";
             $currentSquare = new Array<Int>($square);
             $found = 1;
             last;
          }
       }
       if($found == 0){
-         # print "Found none, Squares left: ",$squares->size(),"\n";
          $currentSquare = new Array<Int>($squares->[0]);
+         print "Found none, Squares left: ",$squares->size(),", choosing $currentSquare\n";
          $orientation->edge($currentSquare->[1], $currentSquare->[3]) = 1;
       } 
       $squares -= $currentSquare;
@@ -148,6 +148,9 @@ sub get_all_squares {
             # print "Children of $source: ",$graph->out_adjacent_nodes($source),"\n";
             my $other = $prev * $graph->out_adjacent_nodes($source);
             if($other->size() != 2){
+               print "Other: $other\n";
+               print "Target: $target\n";
+               print "Source: $source\n";
                die "Something went wrong.\n";
             } else {
                my $square = new Array<Int>(4);
@@ -164,36 +167,4 @@ sub get_all_squares {
    return $result;
 }
 
-# for (my $e=entire(edges($graph)); $e; ++$e) {
-#    print $$e,": ",$e->from_node," ",$e->to_node,"\n";
-#    my $key = new Pair<Int, Int>($e->from_node, $e->to_node);
-#    $indexMap->{$key} = $$e;
-# }
-# 
-# foreach my $vertex (@{$hd->nodes_of_rank(1)}){
-#    foreach my $edge (@{$hd->nodes_of_rank(2)}){
-#       if($graph->edge_exists($vertex, $edge)){
-#          foreach my $twoFace (@{$hd->nodes_of_rank(3)}){
-#             if($graph->edge_exists($edge, $twoFace)){
-#                $relevant += new Pair<Int, Int>($vertex, $twoFace);
-#             }
-#          }
-#       }
-#    }
-# }
 
-sub get_eqn_for_pair {
-   my($hd, $pair) = @_;
-   my $graph = new props::Graph<Directed>($hd->ADJACENCY);
-   my $vertex = $pair->first;
-   my $twoFace = $pair->second;
-   my $result = new Vector($graph->edges());
-   foreach my $edge (@{$hd->nodes_of_rank(2)}){
-      if($graph->edge_exists($vertex, $edge) && $graph->edge_exists($edge, $twoFace)){
-         # print "Edge: $edge, 2face: $twoFace -- ";
-         # print $graph->edge($edge, $twoFace),"\n";
-         $result->[$graph->edge($edge, $twoFace)] = 1;
-      }
-   }
-   return $result;
-}
