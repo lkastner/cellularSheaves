@@ -63,7 +63,7 @@ sub build_matrix_f{
 	my @max_cones_tau = find_max_containing($honestTau, $pc);
 	my $cols = new Int(binomial($n, $p));
 	my $generators  = zero_matrix(1, $cols);
-	my $chosenBases = $pc->CHOSEN_BASES;  #this is really unnecessary, only need CHOSEN_BASES top cones.
+	my $chosenBases = $pc->HASSE_DIAGRAM->CHOSEN_BASES;  #this is really unnecessary, only need CHOSEN_BASES top cones.
 	foreach my $sigma (@max_cones_tau) {
 		my $wedged_basis = new Matrix wedge_matrix($chosenBases->[$sigma], $p);	
 		$generators = new Matrix( $generators / $wedged_basis);

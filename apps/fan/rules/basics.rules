@@ -18,10 +18,14 @@ object PolyhedralComplex {
 
    property SIMPLE_BLOCKS : EdgeMap<Directed, Matrix>;
 
-   property CHOSEN_BASES : NodeMap<Directed, Matrix>;
+   property HASSE_DIAGRAM {
+
+      property CHOSEN_BASES : NodeMap<Directed, Matrix>;
+
+   }
 
 
-   rule CHOSEN_BASES : VERTICES, HASSE_DIAGRAM.ADJACENCY, HASSE_DIAGRAM.FACES, FAN_DIM, LINEALITY_SPACE {
+   rule HASSE_DIAGRAM.CHOSEN_BASES : VERTICES, HASSE_DIAGRAM.ADJACENCY, HASSE_DIAGRAM.FACES, FAN_DIM, LINEALITY_SPACE {
       my $lin = $this->LINEALITY_SPACE;
       my $d = $this->FAN_DIM - 1;
       my $vertices = $this->VERTICES;
@@ -44,13 +48,13 @@ object PolyhedralComplex {
             $result->[$$node] = new Matrix(0, $d);
          }
       }
-      $this->CHOSEN_BASES = $result;
+      $this->HASSE_DIAGRAM->CHOSEN_BASES = $result;
    }
 
    
-   rule SIMPLE_BLOCKS : HASSE_DIAGRAM.ADJACENCY, HASSE_DIAGRAM.DECORATION, FAN_DIM, CHOSEN_BASES {
+   rule SIMPLE_BLOCKS : HASSE_DIAGRAM.ADJACENCY, HASSE_DIAGRAM.DECORATION, FAN_DIM, HASSE_DIAGRAM.CHOSEN_BASES {
       my $d = $this->FAN_DIM - 1;
-      my $chosenBases = $this->CHOSEN_BASES;
+      my $chosenBases = $this->HASSE_DIAGRAM->CHOSEN_BASES;
       my $hd = $this->HASSE_DIAGRAM;
       my $G = $hd->ADJACENCY;
       my $result = new EdgeMap<Directed, Matrix>($G);

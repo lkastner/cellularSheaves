@@ -36,4 +36,8 @@ object PolyhedralComplex {
    
    property COSHEAF : CoSheaf : multiple;
 
+   property COMPACT_SHEAF : Sheaf : multiple;
+
+   property COMPACT_COSHEAF : CoSheaf : multiple;
+
 }

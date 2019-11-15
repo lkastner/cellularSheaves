@@ -21,7 +21,7 @@ object PolyhedralComplex {
       my $G = $pc->HASSE_DIAGRAM->ADJACENCY;
       my $newblocks = new EdgeMap<Directed, Matrix>($G);
       my $newbases = new NodeMap<Directed, Matrix >($G);
-      my $chosenBases = $pc->CHOSEN_BASES;
+      my $chosenBases = $pc->HASSE_DIAGRAM->CHOSEN_BASES;
       if ($p == 0){
          $newblocks = build_blocks_constant($pc);
          for(my $node = entire(nodes($G)); $node; ++$node){
@@ -47,7 +47,7 @@ object PolyhedralComplex {
       my $G = $pc->HASSE_DIAGRAM->ADJACENCY;
       my $newblocks = new EdgeMap<Directed, Matrix>($G);
       my $newbases = new NodeMap<Directed, Matrix >($G);
-      my $chosenBases = $pc->CHOSEN_BASES;
+      my $chosenBases = $pc->HASSE_DIAGRAM->CHOSEN_BASES;
       if ($p == 0){
          $newblocks = build_blocks_constant($pc);
          for(my $node = entire(nodes($G)); $node; ++$node){
@@ -66,5 +66,22 @@ object PolyhedralComplex {
       return $cosheaf;
    }
    
- 
+   
+   user_method compact_wsheaf( $ ){
+      my($pc, $p) = @_;
+      my $compactHD = $pc->COMPACTIFICATION;
+      my $G = $compactHD->ADJACENCY;
+      my $newblocks = new EdgeMap<Directed, Matrix>($G);
+      my $newbases = new NodeMap<Directed, Matrix >($G);
+      my $chosenBases = $pc->HASSE_DIAGRAM->CHOSEN_BASES;
+      if ($p == 0){
+         $newblocks = build_blocks_constant($pc);
+         for(my $node = entire(nodes($G)); $node; ++$node){
+            $newbases->[$$node] = new Matrix([[1]]);
+         }
+      } else{ 
+      }
+      my $cosheaf = $pc->add("COMPACT_SHEAF", BLOCKS=>$newblocks, BASES=>$newbases);
+      return $cosheaf;
+   }
 }

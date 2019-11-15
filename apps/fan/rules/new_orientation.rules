@@ -1,3 +1,18 @@
+object PolyhedralComplex {
+
+   property COMPACTIFICATION {
+      
+      property ORIENTATIONS : EdgeMap<Directed, Int>;
+
+   }
+
+   rule COMPACTIFICATION.ORIENTATIONS : COMPACTIFICATION.ADJACENCY, COMPACTIFICATION.BOTTOM_NODE, COMPACTIFICATION.TOP_NODE, COMPACTIFICATION.DECORATION, COMPACTIFICATION.INVERSE_RANK_MAP {
+      my $hd = $this->COMPACTIFICATION;
+      $this->COMPACTIFICATION->ORIENTATIONS = new_orientation($hd);
+   }
+}
+
+
 sub new_orientation {
    my($hd) = @_;
    my $graph = $hd->ADJACENCY;
@@ -7,7 +22,7 @@ sub new_orientation {
       $orientation->edge($bottom, $neighbor) = 1;
    }
    for(my $i=2; $i<$hd->rank; $i++){
-      print "Level: $i\n";
+      # print "Level: $i\n";
       solve_level($hd, $i, $orientation);
    }
    return $orientation;
@@ -46,7 +61,7 @@ sub solve_level {
 
    my $firstSquare = new Array<Int>($squares->[0]);
    $squares -= $firstSquare;
-   print "First: ",$firstSquare,"\n";
+   # print "First: ",$firstSquare,"\n";
    my ($u, $v0, $v1, $w) = @$firstSquare;
 # print $graph->edge_exists($u, $v0),"\n";
 # print $graph->edge_exists($u, $v1),"\n";
@@ -67,7 +82,7 @@ sub solve_level {
       #    print "Squares left: ",$squares->size(),"\n";
       foreach my $square (@$squares){
          if(is_solvable($square, $orientation)){
-            print "Found: $square\n";
+            # print "Found: $square\n";
             $currentSquare = new Array<Int>($square);
             $found = 1;
             last;
@@ -75,7 +90,7 @@ sub solve_level {
       }
       if($found == 0){
          $currentSquare = new Array<Int>($squares->[0]);
-         print "Found none, Squares left: ",$squares->size(),", choosing $currentSquare\n";
+         # print "Found none, Squares left: ",$squares->size(),", choosing $currentSquare\n";
          $orientation->edge($currentSquare->[1], $currentSquare->[3]) = 1;
       } 
       $squares -= $currentSquare;

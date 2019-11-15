@@ -83,20 +83,13 @@ namespace polymake { namespace fan{
             return result;
          }
    };
+   
+   template<typename SelectorType, typename HasseDiagramType>
+   Array<Matrix<Rational>> build_chain_complex_from_hasse(const HasseDiagramType& hd, const EdgeMap<Directed, int> orientations, perl::Object cosheaf, const SelectorType& selector, bool cochain){
 
-   template<typename SelectorType>
-   Array<Matrix<Rational>> build_chain_complex_from_hasse(perl::Object pc, perl::Object cosheaf, const SelectorType& selector, bool cochain){
-      typedef Lattice<BasicDecoration, lattice::Nonsequential> HasseDiagramType;
-
-      HasseDiagramType hd;
-      pc.give("HASSE_DIAGRAM") >> hd;
-      Graph<Directed>& G(hd.graph());
-
+      const Graph<Directed>& G(hd.graph());
       EdgeMap<Directed, Matrix<Rational>> blocks;
       cosheaf.give("BLOCKS") >> blocks;
-
-      EdgeMap<Directed, int> orientations;
-      pc.give("ORIENTATIONS") >> orientations;
       for(auto edge=entire(edges(G)); !edge.at_end(); ++edge){
          blocks[*edge] *= orientations[*edge];
       }
@@ -109,7 +102,7 @@ namespace polymake { namespace fan{
       }
 
       ChainComplexBuilder<HasseDiagramType, SelectorType> SD(hd, G, blocks, nodeDimsNM, selector);
-      int dim = pc.give("FAN_DIM");
+      int dim = hd.rank() - 1;
       Array<Matrix<Rational>> result(dim-1);
       for(int i=1; i<dim; i++){
          Matrix<Rational> B = SD.assemble_ith_matrix(i);
@@ -120,6 +113,18 @@ namespace polymake { namespace fan{
          }
       }
       return result;
+   }
+
+   template<typename SelectorType>
+   Array<Matrix<Rational>> build_chain_complex_from_hasse(perl::Object pc, perl::Object cosheaf, const SelectorType& selector, bool cochain){
+      typedef Lattice<BasicDecoration, lattice::Nonsequential> HasseDiagramType;
+
+      HasseDiagramType hd;
+      pc.give("HASSE_DIAGRAM") >> hd;
+      EdgeMap<Directed, int> orientations;
+      pc.give("ORIENTATIONS") >> orientations;
+      
+      return build_chain_complex_from_hasse(hd, orientations, cosheaf, selector, cochain);
    }
 } // end namespace fan
 } // end namespace polymake
