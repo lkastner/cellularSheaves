@@ -1,0 +1,6 @@
+{"app": "fan",
+ "inst": [
+  {"args": ["Rational", "perl::Canned<const Matrix<Rational>&>"], "func": "choose_basis_cpp", "include": ["polymake/IncidenceMatrix.h", "polymake/Matrix.h", "polymake/Rational.h", "polymake/fan/linalg_tools.h"], "sig": "choose_basis_cpp:T1.X", "tp": "1"},
+  {"args": ["Rational", "perl::Canned<const pm::BlockMatrix<mlist<pm::MatrixMinor<pm::Matrix<pm::Rational> const&, pm::Set<int, pm::operations::cmp> const&, pm::all_selector const&> const&, pm::Matrix<pm::Rational> const&>, std::integral_constant<bool, true> >&>"], "func": "choose_basis_cpp", "include": ["polymake/IncidenceMatrix.h", "polymake/Matrix.h", "polymake/Rational.h", "polymake/Set.h", "polymake/fan/linalg_tools.h"], "sig": "choose_basis_cpp:T1.X", "tp": "1"},
+ null ],
+"version": 3}
