@@ -23,7 +23,7 @@ object PolyhedralFan {
    }
 
    rule HASSE_DIAGRAM.ORIENTATIONS : HASSE_DIAGRAM.ADJACENCY, HASSE_DIAGRAM.BOTTOM_NODE, HASSE_DIAGRAM.TOP_NODE, HASSE_DIAGRAM.DECORATION, HASSE_DIAGRAM.INVERSE_RANK_MAP {
-      $this->HASSE_DIAGRAM->ORIENTATIONS = new_orientation($this->HASSE_DIAGRAM);
+      $this->HASSE_DIAGRAM->ORIENTATIONS = orientations_from_hasse($this->HASSE_DIAGRAM);
    }
 
 }
@@ -38,12 +38,12 @@ object PolyhedralComplex {
 
    rule COMPACTIFICATION.ORIENTATIONS : COMPACTIFICATION.ADJACENCY, COMPACTIFICATION.BOTTOM_NODE, COMPACTIFICATION.TOP_NODE, COMPACTIFICATION.DECORATION, COMPACTIFICATION.INVERSE_RANK_MAP {
       my $hd = $this->COMPACTIFICATION;
-      $this->COMPACTIFICATION->ORIENTATIONS = new_orientation($hd);
+      $this->COMPACTIFICATION->ORIENTATIONS = orientations_from_hasse($hd);
    }
 
 }
 
-sub new_orientation {
+sub orientations_from_hasse {
    my($hd) = @_;
    my $graph = $hd->ADJACENCY;
    my $orientation = new EdgeMap<Directed, Int>($graph);
