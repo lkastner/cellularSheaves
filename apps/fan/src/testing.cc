@@ -20,42 +20,6 @@
 
 
 namespace polymake { namespace fan{
- 
-   typedef Lattice<BasicDecoration, lattice::Nonsequential> HasseDiagramType;
-
-   class TrivialSelector {
-      public:
-         TrivialSelector(){}
-
-         bool isValid(const Set<int>& face) const{
-            return true;
-         }
-   };
-   
-   class NonFarSelector {
-      private:
-         Set<int> farFace;
-      public:
-         NonFarSelector(const Set<int>& ff) : farFace(ff) {}
-
-         bool isValid(const Set<int>& face) const{
-            return !(face - farFace).empty();
-         }
-   };
-   
-   class BoundedSelector {
-      private:
-         Set<int> farFace;
-      public:
-         BoundedSelector(const Set<int>& ff) : farFace(ff) {}
-
-         bool isValid(const Set<int>& face) const{
-            return (face * farFace).empty();
-         }
-   };
-
-
-
 
    void check_complex(perl::Object pc, perl::Object cosheaf, bool cochain){
       /*
@@ -105,25 +69,7 @@ namespace polymake { namespace fan{
       
    }
    
-   Array<Matrix<Rational>> build_nonfar_chain(const HasseDiagramType& hd, const EdgeMap<Directed, int>& orientations, const Set<int>& ff, perl::Object cosheaf, bool cochain){
-      NonFarSelector bs(ff);
-      Array<Matrix<Rational>> result(build_chain_complex_from_hasse(hd, orientations, cosheaf, bs, cochain));
-      return result;
-   }
-
-   
-   Array<Matrix<Rational>> build_bounded_chain(const HasseDiagramType& hd, const EdgeMap<Directed, int>& orientations, const Set<int>& ff, perl::Object cosheaf, bool cochain){
-      BoundedSelector bs(ff);
-      Array<Matrix<Rational>> result(build_chain_complex_from_hasse(hd, orientations, cosheaf, bs, cochain));
-      return result;
-   }
-
-   
    Function4perl(&check_complex, "check_complex( $ , $ , $ )");
-   
-   Function4perl(&build_bounded_chain, "build_bounded_chain( $ , $ , $ , $ , $ )");
-   
-   Function4perl(&build_nonfar_chain, "build_nonfar_chain( $ , $ , $ , $ , $ )");
 
 } // namespace fan
 } // namespace polymake
