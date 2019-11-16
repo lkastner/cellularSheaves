@@ -16,92 +16,143 @@
 
 object PolyhedralFan {
 
-   property ORIENTATIONS : EdgeMap<Directed, Int>;
+   property HASSE_DIAGRAM {
 
-   property INTERNAL_BASES : Map<Set<Int>, Matrix>;
+      property ORIENTATIONS : EdgeMap<Directed, Int>;
 
-   rule INTERNAL_BASES : RAYS, LINEALITY_SPACE, HASSE_DIAGRAM, FAN_DIM {
-      my $rays = $this->RAYS;
-      my $lineality = $this->LINEALITY_SPACE;
-      my $d = $this->FAN_DIM - 1;
-      my $hd = $this->HASSE_DIAGRAM;
-      $this->INTERNAL_BASES = choose_bases_for_cones($rays, $lineality, $hd, $d);
    }
 
-   rule ORIENTATIONS: HASSE_DIAGRAM.ADJACENCY, HASSE_DIAGRAM.DECORATION, FAN_DIM, INTERNAL_BASES{
-      $this->ORIENTATIONS = new_orientation($this->HASSE_DIAGRAM);
-      # my $G = $this->HASSE_DIAGRAM->ADJACENCY;
-      # my $decoration = $this->HASSE_DIAGRAM->DECORATION;
-      # my $result = new EdgeMap<Directed, Int>($G);
-      # my $chosenBases = $this->INTERNAL_BASES;
-      # for (my $e=entire(edges($G)); $e; ++$e) {
-      #    my $tau = $decoration->[$e->from_node]->face;
-      #    my $sigma = $decoration->[$e->to_node]->face;
-      #    print $$e,"\n";
-      #    $result->[$$e] = compute_orientation($sigma, $tau, $chosenBases);
-      # }
-      # $this->ORIENTATIONS = $result;
+   rule HASSE_DIAGRAM.ORIENTATIONS : HASSE_DIAGRAM.ADJACENCY, HASSE_DIAGRAM.BOTTOM_NODE, HASSE_DIAGRAM.TOP_NODE, HASSE_DIAGRAM.DECORATION, HASSE_DIAGRAM.INVERSE_RANK_MAP {
+      $this->HASSE_DIAGRAM->ORIENTATIONS = new_orientation($this->HASSE_DIAGRAM);
    }
 
 }
 
-sub choose_bases_for_cones{
-   my($rays, $lineality, $hd, $d) = @_;
-   my $result = new Map<Set<Int>, Matrix>();
-   for my $key (@{$hd->nodes_of_dim_range(0,$d)}){
-      my $face = $hd->FACES->[$key];
-      my $Crays = $rays->minor($face, All);
-      $result->{$face} = choose_basis($Crays/$lineality);
+object PolyhedralComplex {
+
+   property COMPACTIFICATION {
+      
+      property ORIENTATIONS : EdgeMap<Directed, Int>;
+
+   }
+
+   rule COMPACTIFICATION.ORIENTATIONS : COMPACTIFICATION.ADJACENCY, COMPACTIFICATION.BOTTOM_NODE, COMPACTIFICATION.TOP_NODE, COMPACTIFICATION.DECORATION, COMPACTIFICATION.INVERSE_RANK_MAP {
+      my $hd = $this->COMPACTIFICATION;
+      $this->COMPACTIFICATION->ORIENTATIONS = new_orientation($hd);
+   }
+
+}
+
+sub new_orientation {
+   my($hd) = @_;
+   my $graph = $hd->ADJACENCY;
+   my $orientation = new EdgeMap<Directed, Int>($graph);
+   my $bottom = $hd->BOTTOM_NODE;
+   foreach my $neighbor (@{$graph->out_adjacent_nodes($bottom)}){
+      $orientation->edge($bottom, $neighbor) = 1;
+   }
+   for(my $i=2; $i<$hd->rank; $i++){
+      solve_level($hd, $i, $orientation);
+   }
+   return $orientation;
+}
+
+
+sub solve_level {
+   my($hd, $targetLevel, $orientation) = @_;
+   my $squares = get_all_squares($hd, $targetLevel);
+
+   my $firstSquare = new Array<Int>($squares->[0]);
+   $squares -= $firstSquare;
+   my ($u, $v0, $v1, $w) = @$firstSquare;
+   $orientation->edge($v0, $w) = 1;
+   solve_square($firstSquare, $orientation);
+   solve_square($firstSquare, $orientation);
+
+   while($squares->size() > 0){
+      my $currentSquare;
+      my $found = 0;
+      foreach my $square (@$squares){
+         if(is_solvable($square, $orientation)){
+            $currentSquare = new Array<Int>($square);
+            $found = 1;
+            last;
+         }
+      }
+      if($found == 0){
+         $currentSquare = new Array<Int>($squares->[0]);
+         $orientation->edge($currentSquare->[1], $currentSquare->[3]) = 1;
+      } 
+      $squares -= $currentSquare;
+      solve_square($currentSquare, $orientation);
+   }
+}
+
+sub is_solvable {
+   my($square, $or) = @_;
+   my ($u, $v0, $v1, $w) = decompose_square($square);
+   return !($or->edge($v0,$w) == 0 && $or->edge($v1,$w) == 0);
+}
+
+sub decompose_square {
+   my($square) = @_;
+   return ($square->[0], $square->[1], $square->[2], $square->[3]);
+}
+
+sub solve_square {
+   my($square, $or) = @_;
+   if(!is_solvable($square, $or)){
+      die "Square cannot be solved";
+   } else {
+      my ($u, $v0, $v1, $w) = decompose_square($square);
+      if($or->edge($v0,$w) != 0 && $or->edge($v1,$w) != 0){
+         my $check = $or->edge($u, $v0) * $or->edge($v0, $w);
+         $check += $or->edge($u, $v1) * $or->edge($v1, $w);
+         if($check != 0){
+            die "Square defect: $square";
+         }
+      } else {
+         if($or->edge($v0, $w) == 0){
+            my $tmp = $v1;
+            $v1 = $v0;
+            $v0 = $tmp;
+         }
+         my $sign = $or->edge($u, $v1) == 1 ? -1 : 1;
+         $or->edge($v1, $w) = $sign * $or->edge($u, $v0) * $or->edge($v0, $w);
+      }
+   }
+}
+
+
+
+sub get_all_squares {
+   my($hd, $targetLevel) = @_;
+   my $graph = $hd->ADJACENCY;
+   my $sourceLevel = $targetLevel -2;
+   my $midLevel = $targetLevel -1;
+   my $result = new Set<Array<Int>>();
+   foreach my $target (@{$hd->nodes_of_rank($targetLevel)}){
+      my $prev = $graph->in_adjacent_nodes($target);
+      foreach my $parent (@$prev){
+         foreach my $source (@{$graph->in_adjacent_nodes($parent)}){
+            my $other = $prev * $graph->out_adjacent_nodes($source);
+            if($other->size() != 2){
+               print "Other: $other\n";
+               print "Target: $target\n";
+               print "Source: $source\n";
+               die "Something went wrong.\n";
+            } else {
+               my $square = new Array<Int>(4);
+               $square->[0] = $source;
+               $square->[1] = $other->[0];
+               $square->[2] = $other->[1];
+               $square->[3] = $target;
+               $result += $square;
+            }
+         }
+      }
    }
    return $result;
 }
 
 
-sub compute_orientation{
-   my($sigma, $tau, $chosenBases) = @_;
-   if($sigma == new Set<Int>(-1)){
-      # sigma is top node
-      return 0;
-   }
-   if($tau->size == 0){
-      # tau is empty
-      return 0;
-   }
-   my $sigmaBasis = $chosenBases->{$sigma};
-   my $tauBasis = $chosenBases->{$tau};
-   return compute_orientation_for_face($sigmaBasis, $tauBasis);
-}
-
-
-sub is_face{
-   my($sigma, $tau) = @_;
-   my $test = $sigma * $tau;
-   return $test->size == $tau->size;
-}
-
-
-sub compute_orientation_for_face{
-   my($sigmaBasis, $tauBasis) = @_;
-   my $genVector = get_genVector($sigmaBasis, $tauBasis);
-   my $relativeRow = new Matrix(build_matrix($sigmaBasis,  new Matrix($genVector)));
-   my $dxdMinus1 = build_matrix($sigmaBasis, $tauBasis);
-   my $baseChangeMatrix = new Matrix($relativeRow / $dxdMinus1);   
-   if (det($baseChangeMatrix) >= 0){
-      return 1;
-   } else {
-      return -1;
-   }
-}
-
-
-sub get_genVector{
-   my($sigmaBasis, $tauBasis) = @_;
-   my $tauRank = rank($tauBasis);
-   for my $s (@$sigmaBasis){
-      my $test = rank($tauBasis/$s);
-      if($test > $tauRank){
-         return $s;
-      }
-   }
-   die "No good vector found.";
-}

@@ -114,17 +114,6 @@ namespace polymake { namespace fan{
       return result;
    }
 
-   template<typename SelectorType>
-   Array<Matrix<Rational>> build_chain_complex_from_hasse(perl::Object pc, perl::Object cosheaf, const SelectorType& selector, bool cochain){
-      typedef Lattice<BasicDecoration, lattice::Nonsequential> HasseDiagramType;
-
-      HasseDiagramType hd;
-      pc.give("HASSE_DIAGRAM") >> hd;
-      EdgeMap<Directed, int> orientations;
-      pc.give("ORIENTATIONS") >> orientations;
-      
-      return build_chain_complex_from_hasse(hd, orientations, cosheaf, selector, cochain);
-   }
 } // end namespace fan
 } // end namespace polymake
 

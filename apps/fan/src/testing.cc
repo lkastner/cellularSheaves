@@ -21,6 +21,7 @@
 
 namespace polymake { namespace fan{
  
+   typedef Lattice<BasicDecoration, lattice::Nonsequential> HasseDiagramType;
 
    class TrivialSelector {
       public:
@@ -35,9 +36,7 @@ namespace polymake { namespace fan{
       private:
          Set<int> farFace;
       public:
-         NonFarSelector(perl::Object pc){
-            pc.give("FAR_VERTICES") >> farFace;
-         }
+         NonFarSelector(const Set<int>& ff) : farFace(ff) {}
 
          bool isValid(const Set<int>& face) const{
             return !(face - farFace).empty();
@@ -48,9 +47,7 @@ namespace polymake { namespace fan{
       private:
          Set<int> farFace;
       public:
-         BoundedSelector(perl::Object pc){
-            pc.give("FAR_VERTICES") >> farFace;
-         }
+         BoundedSelector(const Set<int>& ff) : farFace(ff) {}
 
          bool isValid(const Set<int>& face) const{
             return (face * farFace).empty();
@@ -58,58 +55,6 @@ namespace polymake { namespace fan{
    };
 
 
-   // perl::Object
-   void tropcomp(perl::Object pc){
-      CompactificationData cd(pc);
-      CellularDecorator decorator(cd);
-      AugmentedHasseDiagram<CellularDecorator> AHD(cd, decorator, pc);
-      AHD.print();
-
-      Matrix<Rational> O(ones_matrix<Rational>(10,10));
-      cout << O;
-
-      pm::perl::PropertyValue vert(pc.give("VERTICES"));
-      cout << "V:" << endl;
-      
-      //std::cout << vert << endl;
-      std::ostringstream buffer;
-      // vert.put(std::forward<std::ostringstream>(buffer));
-      // vert.parse(buffer);
-      // auto wrapped_buffer = wrap(buffer);
-      // // wrapped_buffer << polymake::legible_typename(typeid(obj)) << pm::endl;
-
-      // wrapped_buffer << O;
-      std::cout << buffer.str();
-
-      // Use a different decorator:
-      cout << endl << "-------------------------------" << endl;
-      cout << "Using SedentarityDecorator: " << endl;
-      SedentarityDecorator sd(cd);
-      AugmentedHasseDiagram<SedentarityDecorator> AHDSD(cd, sd, pc);
-      AHDSD.print();
-    
-      // const Lattice<CellularDecoration, lattice::Nonsequential>& HD(AHD.get_HasseDiagram());
-      // cout << "Graph: " << endl;
-      // cout << HD.graph() << endl;
-      // cout << "Node decoration: " << endl;
-      // cout << HD.decoration() << endl;
-      // return HD.makeObject();
-      
-     //  template <typename Decoration, typename ClosureOperator, typename CrossCut, typename Decorator, bool dual, typename SeqType = lattice::Nonsequential >
-     //  Lattice<Decoration, SeqType> compute_lattice_from_closure(
-     //        ClosureOperator cl,
-     //        const CrossCut& cut,
-     //        const Decorator& decorator,
-     //        bool wants_artificial_top_node,
-     //        bool_constant<dual> built_dually,
-     //        Lattice<Decoration, SeqType> lattice = Lattice<Decoration>(),
-     //        Set<int> queuing_nodes = Set<int>())
-      ListMatrix<Vector<Rational>> A;
-      A /= zero_vector<Rational>(5);
-      A /= zero_vector<Rational>(5);
-      A /= ones_vector<Rational>(5);
-      cout << *(--(rows(A).end())) << endl;
-   }
 
 
    void check_complex(perl::Object pc, perl::Object cosheaf, bool cochain){
@@ -160,32 +105,25 @@ namespace polymake { namespace fan{
       
    }
    
-   Array<Matrix<Rational>> build_nonfar_chain(perl::Object pc, perl::Object cosheaf, bool cochain){
-      // if(!cochain){ return; }
-      NonFarSelector bs(pc);
-      // ChainComplexBuilder<TrivialSelector> SD(pc, cosheaf, ts);
-      Array<Matrix<Rational>> result(build_chain_complex_from_hasse(pc, cosheaf, bs, cochain));
-      // cout << "Returning" << endl;
+   Array<Matrix<Rational>> build_nonfar_chain(const HasseDiagramType& hd, const EdgeMap<Directed, int>& orientations, const Set<int>& ff, perl::Object cosheaf, bool cochain){
+      NonFarSelector bs(ff);
+      Array<Matrix<Rational>> result(build_chain_complex_from_hasse(hd, orientations, cosheaf, bs, cochain));
       return result;
    }
 
    
-   Array<Matrix<Rational>> build_bounded_chain(perl::Object pc, perl::Object cosheaf, bool cochain){
-      // if(!cochain){ return; }
-      BoundedSelector bs(pc);
-      // ChainComplexBuilder<TrivialSelector> SD(pc, cosheaf, ts);
-      Array<Matrix<Rational>> result(build_chain_complex_from_hasse(pc, cosheaf, bs, cochain));
-      // cout << "Returning" << endl;
+   Array<Matrix<Rational>> build_bounded_chain(const HasseDiagramType& hd, const EdgeMap<Directed, int>& orientations, const Set<int>& ff, perl::Object cosheaf, bool cochain){
+      BoundedSelector bs(ff);
+      Array<Matrix<Rational>> result(build_chain_complex_from_hasse(hd, orientations, cosheaf, bs, cochain));
       return result;
    }
 
-   Function4perl(&tropcomp, "tropcomp( $ )");
    
    Function4perl(&check_complex, "check_complex( $ , $ , $ )");
    
-   Function4perl(&build_bounded_chain, "build_bounded_chain( $ , $ , $ )");
+   Function4perl(&build_bounded_chain, "build_bounded_chain( $ , $ , $ , $ , $ )");
    
-   Function4perl(&build_nonfar_chain, "build_nonfar_chain( $ , $ , $ )");
+   Function4perl(&build_nonfar_chain, "build_nonfar_chain( $ , $ , $ , $ , $ )");
 
 } // namespace fan
 } // namespace polymake
