@@ -15,4 +15,5 @@ enum class wedge_matrix_cpp;
 };
 FunctionCaller4perl(wedge_matrix_cpp, free_t);
 FunctionTemplateInstance4perl(0, wedge_matrix_cpp, free_t, wedge_matrix_cpp:T1.X.x, perl::Returns::normal, 1, (Rational, perl::Canned<const Matrix<Rational>&>, void));
+FunctionTemplateInstance4perl(1, wedge_matrix_cpp, free_t, wedge_matrix_cpp:T1.X.x, perl::Returns::normal, 1, (Rational, perl::Canned<const pm::Transposed<pm::Matrix<pm::Rational> >&>, void));
 } } }
