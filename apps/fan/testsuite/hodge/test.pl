@@ -35,3 +35,14 @@ $computed = new Matrix(@rows_cube3);
 $desired = new Matrix([[1,0,0,0],[3,0,0,0],[3,0,0,0],[1,0,0,0]]);
 compare_values("cube3", $computed, $desired);
 
+my $cubicSurface = load("cubicSurface.pcom");
+my @rows_cubicSurface;
+for(my $i=0; $i<3; $i++){
+   my $f = $cubicSurface->compact_fcosheaf($i);
+   my $d = build_full_chain($cubicSurface->COMPACTIFICATION, $cubicSurface->COMPACTIFICATION->ORIENTATIONS, $f, false);
+   my $c = new ChainComplex(INPUT_DIFFERENTIALS=>$d);
+   push @rows_cubicSurface, $c->BETTI_NUMBERS;
+}
+$computed = new Matrix(@rows_cubicSurface);
+$desired = new Matrix([[1,0,0],[0,7,0],[0,0,1]]);
+compare_values("cubicSurface", $computed, $desired);
