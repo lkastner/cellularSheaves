@@ -15,132 +15,43 @@
 #-------------------------------------------------------------------------------
 
 declare object ChainComplex {
-   
+
+   property DIFFERENTIALS : topaz::ChainComplex<Matrix<Rational>>;
+
    property INPUT_DIFFERENTIALS : Array<Matrix>;
 
    property INPUT_ZERO_POS : Integer;
    
-   property DIFFERENTIALS : Array<Matrix>;
-
    property ZERO_POS : Integer;
-
-   property HOMOLOGIES : Array<Matrix>;
 
    property BETTI_NUMBERS : Vector<Int>;
 
-   property IS_WELLDEFINED : Bool; 
-   
    rule DIFFERENTIALS, ZERO_POS : INPUT_DIFFERENTIALS, INPUT_ZERO_POS {
-      my @input = @{$this->INPUT_DIFFERENTIALS};
-      my $n = @input;
-      my $first = zero_matrix(0,$input[0]->rows);
-      my $last = zero_matrix($input[$n-1]->cols,0);
-      unshift @input, $first;
-      push @input, $last;
-      $this->DIFFERENTIALS = new Array<Matrix>(@input);
-      $this->ZERO_POS = $this->INPUT_ZERO_POS + 1;
+      my $diffs = new Array<Matrix<Rational>>($this->INPUT_DIFFERENTIALS->size());
+      for(my $i=0; $i<$diffs->size(); $i++){
+         $diffs->[$i] = transpose($this->INPUT_DIFFERENTIALS->[$i]);
+      }
+      $this->DIFFERENTIALS = new topaz::ChainComplex<Matrix<Rational>>($diffs);
+      $this->ZERO_POS = $this->INPUT_ZERO_POS;
    }
 
    rule INPUT_ZERO_POS : {
       $this->INPUT_ZERO_POS = 0;
    }
 
-   rule HOMOLOGIES : DIFFERENTIALS {
-      my $differentials = $this->DIFFERENTIALS;
-      my $homologies = new Array<Matrix>($differentials->size - 1);
-#      my $homologies = new Array<Matrix>($differentials->size - 1);
-      # print "Hello.\n";
-      for(my $i = 0; $i<$differentials->size-1; $i++){
-         $homologies->[$i] = new Matrix(compute_homology($differentials->[$i+1], $differentials->[$i]));
-         # print "Rows: ",$homologies->[$i]->rows," cols: ",$homologies->[$i]->cols,"\n";
-      }
-      $this->HOMOLOGIES = $homologies;
-   }
 
-   rule BETTI_NUMBERS : HOMOLOGIES {
-      my $homologies = $this->HOMOLOGIES;
-      my $betti_num = new Vector<Int>($homologies->size);
-      for(my $i = 0; $i<$homologies->size; $i++){
-         my $homology = $homologies->[$i];
-         $betti_num->[$i] = $homology->rows()-rank($homology);
-      }
-      $this->BETTI_NUMBERS = $betti_num;
-   }
-
-   rule IS_WELLDEFINED : DIFFERENTIALS {
-      my $differentials = $this->DIFFERENTIALS;
-      for (my $i=0; $i<$differentials->size-1;$i++){
-         if ($differentials->[$i]->cols != $differentials->[$i+1]->rows){
-            $this->IS_WELLDEFINED = 0;
-            print "Dimension mismatch at position ",$i,"\n";
-            return;
-         }
-         else{
-            my $test = $differentials->[$i]*$differentials->[$i+1];
-            if($test != zero_matrix($test->rows,$test->cols)){
-               $this->IS_WELLDEFINED =0;
-               print "Not a differential at position ",$i,"\n";
-               return;
-            }
-         }
-      }
-      $this->IS_WELLDEFINED = 1;
+   rule BETTI_NUMBERS : DIFFERENTIALS {
+      $this->BETTI_NUMBERS = topaz::betti_numbers($this->DIFFERENTIALS);
    }
 
    user_method print(){
       my($this) = @_;
-      if($this->IS_WELLDEFINED){
-         my @dimensions = map{$_->rows}@{$this->DIFFERENTIALS};
-         push @dimensions, $this->DIFFERENTIALS->[$this->DIFFERENTIALS->size -1]->cols;
-         my @lengths = map(length $_."", @dimensions);
-         my $i = -$this->ZERO_POS;
-         @lengths = map{
-            my $l = $_ + 1;
-            my $indexLen = length $i."";
-            my $result = " ".$i.(" "x($l-$indexLen));
-            $i++;
-            $result
-         } @lengths;
-         @dimensions = reverse map("k^".$_, @dimensions);
-         print join("     ", reverse @lengths),"\n";
-         print join(" --> ",@dimensions),"\n";
-      } else {
-         print "Complex is not well-defined.\n";
-      }
-      my $i = -$this->ZERO_POS;
-      # print "The diagonals / should agree.\n";
-      for my $d (@{$this->DIFFERENTIALS}){
-         #print "d^",$i," rows: ", $d->rows,", cols: ",$d->cols,"\n";
-         $i++;
-      }
+      print $this->DIFFERENTIALS;
    }
 
    user_method print_debug(){
       my($this) = @_;
-      if($this->IS_WELLDEFINED){
-         my @dimensions = map{$_->rows}@{$this->DIFFERENTIALS};
-         push @dimensions, $this->DIFFERENTIALS->[$this->DIFFERENTIALS->size -1]->cols;
-         my @lengths = map(length $_."", @dimensions);
-         my $i = -$this->ZERO_POS;
-         @lengths = map{
-            my $l = $_ + 1;
-            my $indexLen = length $i."";
-            my $result = " ".$i.(" "x($l-$indexLen));
-            $i++;
-            $result
-         } @lengths;
-         @dimensions = reverse map("k^".$_, @dimensions);
-         print join("     ", reverse @lengths),"\n";
-         print join(" --> ",@dimensions),"\n";
-      } else {
-         print "Complex is not well-defined.\n";
-      }
-      my $i = -$this->ZERO_POS;
-      print "The diagonals / should agree.\n";
-      for my $d (@{$this->DIFFERENTIALS}){
-      print "d^",$i," rows: ", $d->rows,", cols: ",$d->cols,"\n";
-         $i++;
-      }
+      print $this->DIFFERENTIALS;
    }
 
 }
@@ -151,23 +62,8 @@ declare object CoChainComplex {
 
    property BETTI_NUMBERS : Vector<Int>;
    
-   property IS_WELLDEFINED : Bool; 
-   
-   property COHOMOLOGIES : Array<Matrix>;
-   
    property ZERO_POS : Integer; 
    
-   property DIFFERENTIALS : Array<Matrix>;
-   
-   rule COHOMOLOGIES : INTERNAL_COMPLEX.HOMOLOGIES {
-      my $prev = $this->INTERNAL_COMPLEX->HOMOLOGIES;
-      my $result = new Array<Matrix>($prev->size);
-      for(my $i=0; $i<$prev->size; $i++){
-         $result->[$i] = $prev->[$prev->size - $i-1];
-      }
-      $this->COHOMOLOGIES = $result;
-   }
-
    rule BETTI_NUMBERS : INTERNAL_COMPLEX.BETTI_NUMBERS {
       my $prev = $this->INTERNAL_COMPLEX->BETTI_NUMBERS;
       my $result = new Vector<Int>($prev->dim);
@@ -177,72 +73,12 @@ declare object CoChainComplex {
       $this->BETTI_NUMBERS = $result;
    }
 
-   rule IS_WELLDEFINED : INTERNAL_COMPLEX.IS_WELLDEFINED {
-      $this->IS_WELLDEFINED = $this->INTERNAL_COMPLEX->IS_WELLDEFINED;
-   }
-	 
-	rule DIFFERENTIALS, ZERO_POS : INTERNAL_COMPLEX.DIFFERENTIALS {
-		$this->DIFFERENTIALS = $this->INTERNAL_COMPLEX->DIFFERENTIALS;
-      $this->ZERO_POS = $this->INTERNAL_COMPLEX->ZERO_POS;
-	}
-
 	user_method print(){
       my($this) = @_;
-      if($this->IS_WELLDEFINED){
-         my @dimensions = map{$_->rows}@{$this->DIFFERENTIALS};
-         push @dimensions, $this->DIFFERENTIALS->[$this->DIFFERENTIALS->size -1]->cols;
-         my @lengths = map(length $_."", @dimensions);
-         my $i = -$this->ZERO_POS;
-         @lengths = map{
-            my $l = $_ + 1;
-            my $indexLen = length $i."";
-            my $result = " ".$i.(" "x($l-$indexLen));
-            $i++;
-            $result
-         } @lengths;
-         @dimensions = reverse map("k^".$_, @dimensions);
-         print join("     ", @lengths),"\n";
-         print join(" --> ",@dimensions),"\n";
-      } else {
-         print "Complex is not well-defined.\n";
-      }
-      my $i = -$this->ZERO_POS;
-      # print "The diagonals / should agree.\n";
-      for my $d (@{$this->DIFFERENTIALS}){
-         #print "d^",$i," rows: ", $d->rows,", cols: ",$d->cols,"\n";
-         $i++;
-      }
+      print $this->INTERNAL_COMPLEX->DIFFERENTIALS;
    }
    
 }
 
-sub maxwrap{
-	my @a =@_;
-	if(@a==0) {return 0;}
-	my $result = $a[0];
-	foreach my $v (@a){
-		$result = $result < $v ? $v : $result;
-	}
-	return $result;
-}
 
-sub minwrap{
-	my @a = @_;
-	return -maxwrap(map(-$_, @a));
-}
-
-
-
-sub compute_homology{
-   my($imof,$kerof) = @_;
-   my $ker = null_space($kerof);
-   my $relations = build_matrix($ker,transpose($imof));
-   return transpose($relations);
-}
-
-sub compute_homology_dimension{
-   my($imof, $kerof) = @_;
-   my $homology = compute_homology($imof,$kerof);
-   return $homology->rows()-rank($homology);
-}
 
