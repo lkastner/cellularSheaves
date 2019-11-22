@@ -67,8 +67,8 @@ namespace polymake { namespace fan{
    
    template<typename Decoration, typename SeqType>
    Array<Matrix<Rational>> build_full_chain(const Lattice<Decoration, SeqType>& hd, const EdgeMap<Directed, int>& orientations, perl::Object cosheaf, bool cochain){
-      TrivialSelector ts();
-      return build_chain_complex_from_hasse(hd, orientations, cosheaf, cochain);
+      TrivialSelector ts;
+      return build_chain_complex_from_hasse(hd, orientations, cosheaf, ts, cochain);
    }
    
    Function4perl(&build_bounded_chain, "build_bounded_chain( $ , $ , $ , $ , $ )");

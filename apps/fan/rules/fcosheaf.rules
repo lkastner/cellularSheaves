@@ -20,12 +20,10 @@ object PolyhedralComplex {
    user_method fcosheaf( $ ){
       my($pc, $p) = @_;
       my $blocks;
-      my $newbases;
       if ($p == 0){
-         $newbases = build_bases_f($pc, 0);
          $blocks = build_blocks_constant($pc->HASSE_DIAGRAM);
       } else{ 
-         $newbases = build_bases_f($pc, $p);
+         my $newbases = build_bases_f($pc, $p);
          $blocks = build_blocks_f($pc, $p, $newbases); 
       }
       my $sheaf = $pc->add("COSHEAF", BLOCKS=>$blocks);

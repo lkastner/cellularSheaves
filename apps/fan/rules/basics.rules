@@ -19,9 +19,9 @@ object PolyhedralComplex {
 
    property HASSE_DIAGRAM {
    
-      property SIMPLE_BLOCKS : EdgeMap<Directed, Matrix>;
+      property SIMPLE_BLOCKS : EdgeMap<Directed, Matrix> : construct(ADJACENCY);
 
-      property CHOSEN_BASES : NodeMap<Directed, Matrix>;
+      property CHOSEN_BASES : NodeMap<Directed, Matrix> : construct(ADJACENCY);
 
    }
 
