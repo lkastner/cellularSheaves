@@ -18,7 +18,7 @@ object PolyhedralFan {
 
    property HASSE_DIAGRAM {
 
-      property ORIENTATIONS : EdgeMap<Directed, Int>;
+      property ORIENTATIONS : EdgeMap<Directed, Int> : construct(ADJACENCY);
 
    }
 
@@ -32,7 +32,7 @@ object PolyhedralComplex {
 
    property COMPACTIFICATION {
       
-      property ORIENTATIONS : EdgeMap<Directed, Int>;
+      property ORIENTATIONS : EdgeMap<Directed, Int> : construct(ADJACENCY);
 
    }
 

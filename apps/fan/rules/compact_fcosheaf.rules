@@ -101,7 +101,7 @@ object PolyhedralComplex {
 
 sub build_section {
    my($projection) = @_;
-   my $result = new Matrix($projection->cols, $projection->rows);
+   my $result = new Matrix($projection->rows, $projection->cols);
    my $all = new Set<Int>(sequence(0,$projection->rows));
    foreach my $index (@$all){
       my $row = $projection->[$index];
@@ -111,7 +111,7 @@ sub build_section {
       foreach my $candidate (@$candidates){
          my $check = $row * $candidate;
          if($check != 0){
-            $result->col($index) = 1/$check * $candidate;
+            $result->[$index] = 1/$check * $candidate;
             $found = 1;
             last;
          }
@@ -120,7 +120,7 @@ sub build_section {
          die "Could not build section.";
       }
    }
-   return $result;
+   return transpose($result);
 }
 
 sub build_compact_blocks {
