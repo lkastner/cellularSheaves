@@ -1,10 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
-<?pm chk="5d947410"?>
-
-<data type="common::Matrix&lt;Int, NonSymmetric&gt;" version="3.5" xmlns="http://www.math.tu-berlin.de/polymake/#3">
-  <m>
-    <v>1 0 0</v>
-    <v>5 0 0</v>
-    <v>10 0 0</v>
-  </m>
-</data>
+{
+  "_canonical": true,
+  "_ns": {
+    "polymake": ["https://polymake.org", "3.6"]
+  },
+  "_type": "common::Matrix<Int, NonSymmetric>",
+  "data": [
+    [1, 0, 0],
+    [5, 0, 0],
+    [10, 0, 0]
+  ]
+}
