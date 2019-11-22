@@ -1,0 +1,194 @@
+#  Copyright (c) 2016-2018
+#  Lars Kastner (TU Berlin)
+#  Kristin Shaw (University of Oslo)
+#  Anna-Lena Winz (FU Berlin)
+
+#  This program is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU General Public License as published by the
+#  Free Software Foundation; either version 2, or (at your option) any
+#  later version: http://www.gnu.org/licenses/gpl.txt.
+
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#-------------------------------------------------------------------------------
+
+
+object PolyhedralComplex {
+
+   property COMPACTIFICATION {
+
+      property CHOSEN_BASES : NodeMap<Directed, Matrix> : construct(ADJACENCY);
+
+      property PROJECTIONS : Map<Set<Int>, Pair<Matrix, Matrix>>;
+
+      property SEDENTARITY_SORT : Map<Set<Int>, Set<Int>>;
+
+      rule SEDENTARITY_SORT : DECORATION, TOP_NODE, ADJACENCY {
+         my $result = new Map<Set<Int>, Set<Int>>();
+         my $G = $this->ADJACENCY;
+         my $decoration = $this->DECORATION;
+         for(my $node = entire(nodes($G)); $node; ++$node){
+            if($$node != $this->TOP_NODE){
+               my $sedentarity = $decoration->[$$node]->sedentarity;
+               $result->{$sedentarity} += $$node;
+            }
+         }
+         $this->SEDENTARITY_SORT = $result;
+      }
+
+   }
+   
+   rule COMPACTIFICATION.CHOSEN_BASES : COMPACTIFICATION.PROJECTIONS, COMPACTIFICATION.DECORATION, COMPACTIFICATION.ADJACENCY, VERTICES, COMPACTIFICATION.TOP_NODE, FAR_VERTICES, LINEALITY_SPACE {
+      my $G = $this->COMPACTIFICATION->ADJACENCY;
+      my $decoration = $this->COMPACTIFICATION->DECORATION;
+      my $V = $this->VERTICES;
+      my $L = $this->LINEALITY_SPACE;
+      my $far = $this->FAR_VERTICES;
+      my $non_far = new Set<Int>(sequence(0,$V->rows));
+      $non_far -= $far;
+      my $projections = $this->COMPACTIFICATION->PROJECTIONS;
+      my $result = new NodeMap<Directed, Matrix>($G);
+      for(my $node = entire(nodes($G)); $node; ++$node){
+         if($$node != $this->COMPACTIFICATION->TOP_NODE){
+            # print $node,"\n";
+            my $sedentarity = $decoration->[$$node]->sedentarity;
+            my $realisation = $decoration->[$$node]->realisation;
+            my $vert = $V->minor($realisation * $non_far, ~[0]);
+            $vert = $vert * transpose($projections->{$sedentarity}->first);
+            $vert = ones_vector | $vert;
+            my $rays = $V->minor($realisation * $far - $sedentarity, ~[0]);
+            $rays = $rays * transpose($projections->{$sedentarity}->first);
+            $rays = zero_vector | $rays;
+            my $lineality = $L->minor(All, ~[0]) * transpose($projections->{$sedentarity}->first);
+            $lineality = zero_vector | $lineality;
+            my $P = new Polytope(POINTS=>$vert/$rays, INPUT_LINEALITY=>$lineality);
+            my $aff = $P->AFFINE_HULL->minor(All, ~[0]);
+            $result->[$$node] = null_space($aff);
+         } else {
+            # print "Was top\n";
+         }
+      }
+      $this->COMPACTIFICATION->CHOSEN_BASES = $result;
+   }
+
+   rule COMPACTIFICATION.PROJECTIONS : COMPACTIFICATION.DECORATION, COMPACTIFICATION.ADJACENCY, VERTICES {
+      my $vertices = $this->COMPACTIFICATION->nodes_of_rank(1);
+      my $decoration = $this->COMPACTIFICATION->DECORATION;
+      my $result = new Map<Set<Int>, Pair<Matrix, Matrix>>();
+      foreach my $vertex (@$vertices){
+         # print $vertex," ",$decoration->[$vertex],"\n";
+         my $sedentarity = $decoration->[$vertex]->sedentarity;
+         my $spanning = $this->VERTICES->minor($sedentarity, ~[0]);
+         my $projection = null_space($spanning);
+         my $section = build_section($projection);
+         $result->{$sedentarity} = new Pair<Matrix, Matrix>($projection, $section);
+         # print $projection * $section,"\n";
+      }
+      $this->COMPACTIFICATION->PROJECTIONS = $result;
+   }
+
+   user_method compact_fcosheaf( $ ){
+      my($pc, $p) = @_;
+      my $blocks = build_compact_blocks($pc, $p);
+      # print $blocks;
+      my $sheaf = $pc->add("COSHEAF", BLOCKS=>$blocks);
+      return $sheaf;
+   }
+
+}
+
+sub build_section {
+   my($projection) = @_;
+   my $result = new Matrix($projection->cols, $projection->rows);
+   my $all = new Set<Int>(sequence(0,$projection->rows));
+   foreach my $index (@$all){
+      my $row = $projection->[$index];
+      my $complement = $all - $index;
+      my $candidates = null_space($projection->minor($complement, All));
+      my $found = 0;
+      foreach my $candidate (@$candidates){
+         my $check = $row * $candidate;
+         if($check != 0){
+            $result->col($index) = 1/$check * $candidate;
+            $found = 1;
+            last;
+         }
+      }
+      if($found == 0){
+         die "Could not build section.";
+      }
+   }
+   return $result;
+}
+
+sub build_compact_blocks {
+   my($pc, $p) = @_;
+   my $compactification = $pc->COMPACTIFICATION;
+   my $decoration = $compactification->DECORATION;
+   my $G = $compactification->ADJACENCY;
+   my $bases = build_compact_bases($p, $compactification);
+   my $blocks = new EdgeMap<Directed, Matrix>($G);
+   my $projections = $compactification->PROJECTIONS;
+   for (my $e=entire(edges($G)); $e; ++$e) {
+      if($p == 0){
+         $blocks->[$$e] = ones_matrix(1,1);
+      } else {
+      if($e->to_node != $compactification->TOP_NODE){
+         # print "Will make edge\n";
+         # print $decoration->[$e->to_node]->face,"\n";
+         my $source = $bases->[$e->to_node];
+         my $target = $bases->[$e->from_node];
+         # print "Source\n$source", $source->rows," ",$source->cols,"\n";
+         # print "Target\n$target";
+         # print "1";
+         my $section = $projections->{$decoration->[$e->to_node]->sedentarity}->second;
+         # print $section;
+         # print " 2";
+         my $projection = $projections->{$decoration->[$e->from_node]->sedentarity}->first;
+         # print $projection;
+         # print " 3";
+         $source = $source * wedge_matrix(transpose($projection * $section), $p);
+         # print " 4\n";
+         $blocks->[$$e] = transpose(build_matrix($target, $source));
+      } else {
+         my $target = $bases->[$e->from_node];
+         # print "Rows: ",$target->rows,"\n";
+         $blocks->[$$e] = zero_matrix($target->rows,0);
+      }
+      }
+   }
+   # print "Blocks done.\n";
+   return $blocks;
+}
+
+sub build_compact_bases {
+   my($p, $compactification) = @_;
+   my $G = $compactification->ADJACENCY;
+   my $cb = $compactification->CHOSEN_BASES;
+   my $decoration = $compactification->DECORATION;
+   my $result = new NodeMap<Directed, Matrix>($G);
+   for(my $node = entire(nodes($G)); $node; ++$node){
+      if($$node != $compactification->TOP_NODE){
+         my $sedentarity = $decoration->[$$node]->sedentarity;
+         my @containers = grep(incl($decoration->[$$node]->face, $decoration->[$_]->face) <= 0, @{$compactification->SEDENTARITY_SORT->{$sedentarity}});
+         # print "Cont: ",scalar @containers,"\n";
+         # my $prev = scalar @containers;
+         my $A = wedge_matrix($cb->[$containers[0]], $p);
+         # print $decoration->[$$node]->face," is contained in ",join(",",map($decoration->[$_]->face, @containers)),"\n";
+         @containers = map(@{wedge_matrix($cb->[$_], $p)}, @containers);
+         if(scalar @containers == 0){
+            # print "Dropped in here. $prev\n";
+            $result->[$$node] = zero_matrix(0, $A->cols);
+         } else {
+            $result->[$$node] = choose_basis(new Matrix(@containers));
+         }
+      }
+   }
+   # print $result,"\n";
+   return $result;
+}
+
+
+
