@@ -28,12 +28,12 @@ declare object CoSheaf {
 
 object PolyhedralComplex {
 
-   property SHEAF : Sheaf : multiple;
-   
-   property COSHEAF : CoSheaf : multiple;
+   property HASSE_DIAGRAM {
 
-   property COMPACT_SHEAF : Sheaf : multiple;
+      property SHEAF : Sheaf : multiple;
+      
+      property COSHEAF : CoSheaf : multiple;
 
-   property COMPACT_COSHEAF : CoSheaf : multiple;
+   }
 
 }

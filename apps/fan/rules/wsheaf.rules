@@ -20,26 +20,23 @@ object PolyhedralComplex {
       my($pc, $p) = @_;
       my $hd = $pc->HASSE_DIAGRAM;
       my $blocks = wcosheaf_from_hd($hd, $p);
-      my $sheaf = $pc->add("COSHEAF", BLOCKS=>$blocks);
+      my $sheaf = $hd->add("COSHEAF", BLOCKS=>$blocks);
       return $sheaf;
    }
 
-      
-      
    user_method wsheaf( $ ){
       my($pc, $p) = @_;
       my $hd = $pc->HASSE_DIAGRAM;
       my $blocks = wsheaf_from_hd($hd, $p);
-      my $cosheaf = $pc->add("SHEAF", BLOCKS=>$blocks);
+      my $cosheaf = $hd->add("SHEAF", BLOCKS=>$blocks);
       return $cosheaf;
    }
-   
    
    user_method compact_wsheaf( $ ){
       my($pc, $p) = @_;
       my $hd = $pc->COMPACTIFICATION;
       my $blocks = wsheaf_from_hd($hd, $p);
-      my $cosheaf = $pc->add("COMPACT_SHEAF", BLOCKS=>$blocks);
+      my $cosheaf = $hd->add("SHEAF", BLOCKS=>$blocks);
       return $cosheaf;
    }
 }
