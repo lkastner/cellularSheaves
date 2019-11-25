@@ -7,8 +7,8 @@ sub compare_bm_usual{
       my $fi = $tls->fcosheaf($i);
       my $si=$tls->usual_chain_complex($fi);
       my $bmi=$tls->borel_moore_complex($fi);
-      push @result1, $si->BETTI_NUMBERS;
-      push @result2, $bmi->BETTI_NUMBERS;
+      push @result1, new Vector<Int>(topaz::betti_numbers($si));
+      push @result2, new Vector<Int>(topaz::betti_numbers($bmi));
    }
    my $A = new Matrix<Int>(@result1);
    my $B = new Matrix<Int>(@result2);

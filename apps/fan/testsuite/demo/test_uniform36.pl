@@ -5,8 +5,8 @@ for(my $i=0; $i<6; $i++){
    my $f = $berg->fcosheaf($i);
    my $s = $berg->usual_chain_complex($f);
    my $bm = $berg->borel_moore_complex($f);
-   push @result1, $s->BETTI_NUMBERS;
-   push @result2, $bm->BETTI_NUMBERS;
+   push @result1, new Vector<Int>(topaz::betti_numbers($s));
+   push @result2, new Vector<Int>(topaz::betti_numbers($bm));
 }
 my $computed1 = new Matrix<Int>(@result1);
 my $computed2 = new Matrix<Int>(@result2);

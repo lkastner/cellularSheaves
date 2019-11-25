@@ -4,7 +4,7 @@ sub test_tls{
    for(my $i=0;$i<=$tls->DIM;$i++){
       my $wi = $tls->wsheaf($i);
       my $si=$tls->usual_cochain_complex($wi);
-      push @result, $si->BETTI_NUMBERS;
+      push @result, new Vector<Int>(topaz::betti_numbers($si));
    }
    my $A = new Matrix<Int>(@result);
    compare_data($tls->name, $A);
