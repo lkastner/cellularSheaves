@@ -17,21 +17,21 @@
 object PolyhedralComplex {
 
 
-   user_method usual_chain_complex( Sheaf ){
+   user_method usual_chain_complex( CellularCoSheaf ){
       my($pc, $cosheaf) = @_;
       my $hd = $pc->HASSE_DIAGRAM;
       my $diff = build_bounded_chain($hd, $hd->ORIENTATIONS, $pc->FAR_VERTICES, $cosheaf, false);
       return new ChainComplex(INPUT_DIFFERENTIALS=>$diff);
    }
 
-   user_method borel_moore_complex( Sheaf ){
+   user_method borel_moore_complex( CellularCoSheaf ){
       my($pc, $cosheaf) = @_;
       my $hd = $pc->HASSE_DIAGRAM;
       my $diff = build_nonfar_chain($hd, $hd->ORIENTATIONS, $pc->FAR_VERTICES, $cosheaf, false);
       return new ChainComplex(INPUT_DIFFERENTIALS=>$diff);
    } 
 
-   user_method usual_cochain_complex( Sheaf ){
+   user_method usual_cochain_complex( CellularCoSheaf ){
       my($pc, $sheaf) = @_;
       my $hd = $pc->HASSE_DIAGRAM;
       my $diff = build_bounded_chain($hd, $hd->ORIENTATIONS, $pc->FAR_VERTICES, $sheaf, true);
@@ -39,7 +39,7 @@ object PolyhedralComplex {
       return new CoChainComplex(INTERNAL_COMPLEX=>$internal);
    }
 
-   user_method compact_support_complex( Sheaf ){
+   user_method compact_support_complex( CellularCoSheaf ){
       my($pc, $sheaf) = @_;
       my $hd = $pc->HASSE_DIAGRAM;
       my $diff = build_nonfar_chain($hd, $hd->ORIENTATIONS, $pc->FAR_VERTICES, $sheaf, true);

@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #-------------------------------------------------------------------------------
 
-declare object Sheaf {
+declare object CellularCoSheaf {
 
 
 }
@@ -23,13 +23,13 @@ object PolyhedralComplex {
 
    property HASSE_DIAGRAM {
 
-      property SHEAF : Sheaf : multiple {
+      property SHEAF : CellularCoSheaf : multiple {
 
          property BLOCKS : EdgeMap<Directed, Matrix> : construct(parent.ADJACENCY);
 
       }
 
-      property COSHEAF : Sheaf : multiple {
+      property COSHEAF : CellularCoSheaf : multiple {
 
          property BLOCKS : EdgeMap<Directed, Matrix> : construct(parent.ADJACENCY);
 
@@ -40,13 +40,13 @@ object PolyhedralComplex {
 
    property COMPACTIFICATION {
 
-      property SHEAF : Sheaf : multiple {
+      property SHEAF : CellularCoSheaf : multiple {
 
          property BLOCKS : EdgeMap<Directed, Matrix> : construct(parent.ADJACENCY);
 
       }
 
-      property COSHEAF : Sheaf : multiple {
+      property COSHEAF : CellularCoSheaf : multiple {
 
          property BLOCKS : EdgeMap<Directed, Matrix> : construct(parent.ADJACENCY);
 
