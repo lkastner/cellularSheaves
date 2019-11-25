@@ -17,14 +17,14 @@
 object PolyhedralComplex {
 
 
-   user_method usual_chain_complex( CoSheaf ){
+   user_method usual_chain_complex( Sheaf ){
       my($pc, $cosheaf) = @_;
       my $hd = $pc->HASSE_DIAGRAM;
       my $diff = build_bounded_chain($hd, $hd->ORIENTATIONS, $pc->FAR_VERTICES, $cosheaf, false);
       return new ChainComplex(INPUT_DIFFERENTIALS=>$diff);
    }
 
-   user_method borel_moore_complex( CoSheaf ){
+   user_method borel_moore_complex( Sheaf ){
       my($pc, $cosheaf) = @_;
       my $hd = $pc->HASSE_DIAGRAM;
       my $diff = build_nonfar_chain($hd, $hd->ORIENTATIONS, $pc->FAR_VERTICES, $cosheaf, false);

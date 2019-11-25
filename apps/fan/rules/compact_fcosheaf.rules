@@ -93,8 +93,7 @@ object PolyhedralComplex {
       my($pc, $p) = @_;
       my $blocks = build_compact_blocks($pc, $p);
       # print $blocks;
-      my $sheaf = new CoSheaf(BLOCKS=>$blocks);
-      return $sheaf;
+      $pc->COMPACTIFICATION->add("COSHEAF",BLOCKS=>$blocks);
    }
 
 }

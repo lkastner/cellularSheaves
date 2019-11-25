@@ -1,4 +1,4 @@
-#  Copyright (c) 2016-2018
+#  Copyright (c) 2016-2019
 #  Lars Kastner (TU Berlin)
 #  Kristin Shaw (University of Oslo)
 #  Anna-Lena Winz (FU Berlin)
@@ -15,24 +15,42 @@
 #-------------------------------------------------------------------------------
 
 declare object Sheaf {
-   
-   property BLOCKS : EdgeMap<Directed, Matrix>;
 
-}
 
-declare object CoSheaf {
-   
-   property BLOCKS : EdgeMap<Directed, Matrix>;
-   
 }
 
 object PolyhedralComplex {
 
    property HASSE_DIAGRAM {
 
-      property SHEAF : Sheaf : multiple;
-      
-      property COSHEAF : CoSheaf : multiple;
+      property SHEAF : Sheaf : multiple {
+
+         property BLOCKS : EdgeMap<Directed, Matrix> : construct(parent.ADJACENCY);
+
+      }
+
+      property COSHEAF : Sheaf : multiple {
+
+         property BLOCKS : EdgeMap<Directed, Matrix> : construct(parent.ADJACENCY);
+
+      }
+
+
+   }
+
+   property COMPACTIFICATION {
+
+      property SHEAF : Sheaf : multiple {
+
+         property BLOCKS : EdgeMap<Directed, Matrix> : construct(parent.ADJACENCY);
+
+      }
+
+      property COSHEAF : Sheaf : multiple {
+
+         property BLOCKS : EdgeMap<Directed, Matrix> : construct(parent.ADJACENCY);
+
+      }
 
    }
 
