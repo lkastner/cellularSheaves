@@ -17,7 +17,6 @@
 INCLUDE
    orientation.rules
    basics.rules
-   complex.rules
    sheaves.rules
    wsheaf.rules
    fcosheaf.rules

@@ -52,21 +52,21 @@ namespace polymake { namespace fan{
          }
    };
 
-   Array<Matrix<Rational>> build_nonfar_chain(const HasseDiagramType& hd, const EdgeMap<Directed, int>& orientations, const Set<int>& ff, perl::Object cosheaf, bool cochain){
+   topaz::ChainComplex<Matrix<Rational>> build_nonfar_chain(const HasseDiagramType& hd, const EdgeMap<Directed, int>& orientations, const Set<int>& ff, perl::Object cosheaf, bool cochain){
       NonFarSelector bs(ff);
-      Array<Matrix<Rational>> result(build_chain_complex_from_hasse(hd, orientations, cosheaf, bs, cochain));
+      topaz::ChainComplex<Matrix<Rational>> result(build_chain_complex_from_hasse(hd, orientations, cosheaf, bs, cochain));
       return result;
    }
 
    
-   Array<Matrix<Rational>> build_bounded_chain(const HasseDiagramType& hd, const EdgeMap<Directed, int>& orientations, const Set<int>& ff, perl::Object cosheaf, bool cochain){
+   topaz::ChainComplex<Matrix<Rational>> build_bounded_chain(const HasseDiagramType& hd, const EdgeMap<Directed, int>& orientations, const Set<int>& ff, perl::Object cosheaf, bool cochain){
       BoundedSelector bs(ff);
-      Array<Matrix<Rational>> result(build_chain_complex_from_hasse(hd, orientations, cosheaf, bs, cochain));
+      topaz::ChainComplex<Matrix<Rational>> result(build_chain_complex_from_hasse(hd, orientations, cosheaf, bs, cochain));
       return result;
    }
    
    template<typename Decoration, typename SeqType>
-   Array<Matrix<Rational>> build_full_chain(const Lattice<Decoration, SeqType>& hd, const EdgeMap<Directed, int>& orientations, perl::Object cosheaf, bool cochain){
+   topaz::ChainComplex<Matrix<Rational>> build_full_chain(const Lattice<Decoration, SeqType>& hd, const EdgeMap<Directed, int>& orientations, perl::Object cosheaf, bool cochain){
       TrivialSelector ts;
       return build_chain_complex_from_hasse(hd, orientations, cosheaf, ts, cochain);
    }

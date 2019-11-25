@@ -30,6 +30,7 @@
 #include "polymake/fan/SedentarityDecoration.h"
 #include "polymake/fan/AugmentedHasseDiagram.h"
 #include "polymake/fan/linalg_tools.h"
+#include "polymake/topaz/ChainComplex.h"
 
 
 namespace polymake { namespace fan{
@@ -85,7 +86,7 @@ namespace polymake { namespace fan{
    };
    
    template<typename SelectorType, typename HasseDiagramType>
-   Array<Matrix<Rational>> build_chain_complex_from_hasse(const HasseDiagramType& hd, const EdgeMap<Directed, int> orientations, perl::Object cosheaf, const SelectorType& selector, bool cochain){
+   topaz::ChainComplex<Matrix<Rational>> build_chain_complex_from_hasse(const HasseDiagramType& hd, const EdgeMap<Directed, int> orientations, perl::Object cosheaf, const SelectorType& selector, bool cochain){
 
       const Graph<Directed>& G(hd.graph());
       EdgeMap<Directed, Matrix<Rational>> blocks;
@@ -93,6 +94,8 @@ namespace polymake { namespace fan{
       cosheaf.give("BLOCKS") >> blocks;
       for(auto edge=entire(edges(G)); !edge.at_end(); ++edge){
          blocks[*edge] *= orientations[*edge];
+         // This is probably only necessary, since there are unclean blocks in
+         // the HASSE_DIAGRAM case from the far faces.
          if(!cochain){
             nodeDimsNM[edge.from_node()] = blocks[*edge].rows();
          } else {
@@ -105,13 +108,9 @@ namespace polymake { namespace fan{
       Array<Matrix<Rational>> result(dim-1);
       for(int i=1; i<dim; i++){
          Matrix<Rational> B = SD.assemble_ith_matrix(i);
-         if(cochain){
-            result[(dim-1) - i] = T(B);
-         } else {
-            result[i-1] = B;
-         }
+         result[i-1] = T(B);
       }
-      return result;
+      return topaz::ChainComplex<Matrix<Rational>>(result);
    }
 
 } // end namespace fan

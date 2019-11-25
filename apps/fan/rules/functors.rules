@@ -20,31 +20,25 @@ object PolyhedralComplex {
    user_method usual_chain_complex( CellularCoSheaf ){
       my($pc, $cosheaf) = @_;
       my $hd = $pc->HASSE_DIAGRAM;
-      my $diff = build_bounded_chain($hd, $hd->ORIENTATIONS, $pc->FAR_VERTICES, $cosheaf, false);
-      return new ChainComplex(INPUT_DIFFERENTIALS=>$diff);
+      return build_bounded_chain($hd, $hd->ORIENTATIONS, $pc->FAR_VERTICES, $cosheaf, false);
    }
 
    user_method borel_moore_complex( CellularCoSheaf ){
       my($pc, $cosheaf) = @_;
       my $hd = $pc->HASSE_DIAGRAM;
-      my $diff = build_nonfar_chain($hd, $hd->ORIENTATIONS, $pc->FAR_VERTICES, $cosheaf, false);
-      return new ChainComplex(INPUT_DIFFERENTIALS=>$diff);
+      return build_nonfar_chain($hd, $hd->ORIENTATIONS, $pc->FAR_VERTICES, $cosheaf, false);
    } 
 
    user_method usual_cochain_complex( CellularCoSheaf ){
       my($pc, $sheaf) = @_;
       my $hd = $pc->HASSE_DIAGRAM;
-      my $diff = build_bounded_chain($hd, $hd->ORIENTATIONS, $pc->FAR_VERTICES, $sheaf, true);
-      my $internal = new ChainComplex(INPUT_DIFFERENTIALS=>$diff);
-      return new CoChainComplex(INTERNAL_COMPLEX=>$internal);
+      return build_bounded_chain($hd, $hd->ORIENTATIONS, $pc->FAR_VERTICES, $sheaf, true);
    }
 
    user_method compact_support_complex( CellularCoSheaf ){
       my($pc, $sheaf) = @_;
       my $hd = $pc->HASSE_DIAGRAM;
-      my $diff = build_nonfar_chain($hd, $hd->ORIENTATIONS, $pc->FAR_VERTICES, $sheaf, true);
-      my $internal = new ChainComplex(INPUT_DIFFERENTIALS=>$diff);
-      return new CoChainComplex(INTERNAL_COMPLEX=>$internal);
+      return build_nonfar_chain($hd, $hd->ORIENTATIONS, $pc->FAR_VERTICES, $sheaf, true);
    } 
 
 }
