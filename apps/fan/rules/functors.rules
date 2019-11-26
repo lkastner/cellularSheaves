@@ -20,25 +20,29 @@ object PolyhedralComplex {
    user_method usual_chain_complex( CellularCoSheaf ){
       my($pc, $cosheaf) = @_;
       my $hd = $pc->HASSE_DIAGRAM;
-      return build_bounded_chain($hd, $hd->ORIENTATIONS, $pc->FAR_VERTICES, $cosheaf, false);
+      my $result =  build_bounded_chain($hd, $hd->ORIENTATIONS, $pc->FAR_VERTICES, $cosheaf, false);
+      return new topaz::ChainComplex<Matrix<Rational>>($result);
    }
 
    user_method borel_moore_complex( CellularCoSheaf ){
       my($pc, $cosheaf) = @_;
       my $hd = $pc->HASSE_DIAGRAM;
-      return build_nonfar_chain($hd, $hd->ORIENTATIONS, $pc->FAR_VERTICES, $cosheaf, false);
+      my $result =  build_nonfar_chain($hd, $hd->ORIENTATIONS, $pc->FAR_VERTICES, $cosheaf, false);
+      return new topaz::ChainComplex<Matrix<Rational>>($result);
    } 
 
    user_method usual_cochain_complex( CellularCoSheaf ){
       my($pc, $sheaf) = @_;
       my $hd = $pc->HASSE_DIAGRAM;
-      return build_bounded_chain($hd, $hd->ORIENTATIONS, $pc->FAR_VERTICES, $sheaf, true);
+      my $result =  build_bounded_chain($hd, $hd->ORIENTATIONS, $pc->FAR_VERTICES, $sheaf, true);
+      return new topaz::ChainComplex<Matrix<Rational>>($result);
    }
 
    user_method compact_support_complex( CellularCoSheaf ){
       my($pc, $sheaf) = @_;
       my $hd = $pc->HASSE_DIAGRAM;
-      return build_nonfar_chain($hd, $hd->ORIENTATIONS, $pc->FAR_VERTICES, $sheaf, true);
+      my $result =  build_nonfar_chain($hd, $hd->ORIENTATIONS, $pc->FAR_VERTICES, $sheaf, true);
+      return new topaz::ChainComplex<Matrix<Rational>>($result);
    } 
 
 }

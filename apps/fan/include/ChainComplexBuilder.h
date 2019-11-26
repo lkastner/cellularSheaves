@@ -87,15 +87,12 @@ namespace polymake { namespace fan{
    
    template<typename SelectorType, typename HasseDiagramType>
    topaz::ChainComplex<Matrix<Rational>> build_chain_complex_from_hasse(const HasseDiagramType& hd, const EdgeMap<Directed, int> orientations, perl::Object cosheaf, const SelectorType& selector, bool cochain){
-
       const Graph<Directed>& G(hd.graph());
       EdgeMap<Directed, Matrix<Rational>> blocks;
       NodeMap<Directed, int> nodeDimsNM(G);
       cosheaf.give("BLOCKS") >> blocks;
       for(auto edge=entire(edges(G)); !edge.at_end(); ++edge){
          blocks[*edge] *= orientations[*edge];
-         // This is probably only necessary, since there are unclean blocks in
-         // the HASSE_DIAGRAM case from the far faces.
          if(!cochain){
             nodeDimsNM[edge.from_node()] = blocks[*edge].rows();
          } else {

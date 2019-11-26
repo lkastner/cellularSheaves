@@ -14,7 +14,6 @@
 #  GNU General Public License for more details.
 #-------------------------------------------------------------------------------
 
-
 object PolyhedralComplex {
 
    property COMPACTIFICATION {
@@ -52,7 +51,6 @@ object PolyhedralComplex {
       my $result = new NodeMap<Directed, Matrix>($G);
       for(my $node = entire(nodes($G)); $node; ++$node){
          if($$node != $this->COMPACTIFICATION->TOP_NODE){
-            # print $node,"\n";
             my $sedentarity = $decoration->[$$node]->sedentarity;
             my $realisation = $decoration->[$$node]->realisation;
             my $vert = $V->minor($realisation * $non_far, ~[0]);
@@ -66,8 +64,6 @@ object PolyhedralComplex {
             my $P = new Polytope(POINTS=>$vert/$rays, INPUT_LINEALITY=>$lineality);
             my $aff = $P->AFFINE_HULL->minor(All, ~[0]);
             $result->[$$node] = null_space($aff);
-         } else {
-            # print "Was top\n";
          }
       }
       $this->COMPACTIFICATION->CHOSEN_BASES = $result;
@@ -84,7 +80,6 @@ object PolyhedralComplex {
          my $projection = null_space($spanning);
          my $section = build_section($projection);
          $result->{$sedentarity} = new Pair<Matrix, Matrix>($projection, $section);
-         # print $projection * $section,"\n";
       }
       $this->COMPACTIFICATION->PROJECTIONS = $result;
    }
@@ -92,7 +87,6 @@ object PolyhedralComplex {
    user_method compact_fcosheaf( $ ){
       my($pc, $p) = @_;
       my $blocks = build_compact_blocks($pc, $p);
-      # print $blocks;
       $pc->COMPACTIFICATION->add("COSHEAF",BLOCKS=>$blocks);
    }
 
@@ -134,31 +128,19 @@ sub build_compact_blocks {
       if($p == 0){
          $blocks->[$$e] = ones_matrix(1,1);
       } else {
-      if($e->to_node != $compactification->TOP_NODE){
-         # print "Will make edge\n";
-         # print $decoration->[$e->to_node]->face,"\n";
-         my $source = $bases->[$e->to_node];
-         my $target = $bases->[$e->from_node];
-         # print "Source\n$source", $source->rows," ",$source->cols,"\n";
-         # print "Target\n$target";
-         # print "1";
-         my $section = $projections->{$decoration->[$e->to_node]->sedentarity}->second;
-         # print $section;
-         # print " 2";
-         my $projection = $projections->{$decoration->[$e->from_node]->sedentarity}->first;
-         # print $projection;
-         # print " 3";
-         $source = $source * wedge_matrix(transpose($projection * $section), $p);
-         # print " 4\n";
-         $blocks->[$$e] = transpose(build_matrix($target, $source));
-      } else {
-         my $target = $bases->[$e->from_node];
-         # print "Rows: ",$target->rows,"\n";
-         $blocks->[$$e] = zero_matrix($target->rows,0);
-      }
+         if($e->to_node != $compactification->TOP_NODE){
+            my $source = new Matrix($bases->[$e->to_node]);
+            my $target = $bases->[$e->from_node];
+            my $section = $projections->{$decoration->[$e->to_node]->sedentarity}->second;
+            my $projection = $projections->{$decoration->[$e->from_node]->sedentarity}->first;
+            $source = $source * wedge_matrix(transpose($projection * $section), $p);
+            $blocks->[$$e] = transpose(build_matrix($target, $source));
+         } else {
+            my $target = $bases->[$e->from_node];
+            $blocks->[$$e] = transpose(zero_matrix(0,$target->rows));
+         }
       }
    }
-   # print "Blocks done.\n";
    return $blocks;
 }
 
@@ -172,20 +154,15 @@ sub build_compact_bases {
       if($$node != $compactification->TOP_NODE){
          my $sedentarity = $decoration->[$$node]->sedentarity;
          my @containers = grep(incl($decoration->[$$node]->face, $decoration->[$_]->face) <= 0, @{$compactification->SEDENTARITY_SORT->{$sedentarity}});
-         # print "Cont: ",scalar @containers,"\n";
-         # my $prev = scalar @containers;
          my $A = wedge_matrix($cb->[$containers[0]], $p);
-         # print $decoration->[$$node]->face," is contained in ",join(",",map($decoration->[$_]->face, @containers)),"\n";
          @containers = map(@{wedge_matrix($cb->[$_], $p)}, @containers);
          if(scalar @containers == 0){
-            # print "Dropped in here. $prev\n";
             $result->[$$node] = zero_matrix(0, $A->cols);
          } else {
             $result->[$$node] = choose_basis(new Matrix(@containers));
          }
       }
    }
-   # print $result,"\n";
    return $result;
 }
 

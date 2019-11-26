@@ -70,3 +70,26 @@ sub wedge_matrix{
       return wedge_matrix_cpp($A, $p);
    }
 }
+
+user_function verify_sheaf( $ , $ , $ ){
+   my($E, $G, $cosheaf) = @_;
+   for(my $node = entire(nodes($G)); $node; ++$node){
+      # print $$node,":\n";
+      my $in = $G->in_adjacent_nodes($$node);
+      my $out = $G->out_adjacent_nodes($$node);
+      # print "In: ", join(" ",map($E->edge($_,$$node)->cols(), @$in)), "\n";
+      # print "Out: ", join(" ",map($E->edge($$node,$_)->rows(), @$out)), "\n";
+      my @a;
+      if($cosheaf){
+         @a = (map($E->edge($_,$$node)->rows(), @$in), map($E->edge($$node,$_)->cols(), @$out));
+      } else {
+         @a = (map($E->edge($_,$$node)->cols(), @$in), map($E->edge($$node,$_)->rows(), @$out));
+      }
+      my $check = new Set<Int>(\@a);
+      if($check->size() != 1){
+         die "Something wrong with this sheaf.";
+      }
+
+   }
+}
+

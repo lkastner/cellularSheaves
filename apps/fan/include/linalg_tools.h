@@ -80,17 +80,21 @@ choose_basis_cpp(const Matrix<E>& input){
 template <typename E> inline
 Matrix<E>
 build_matrix_cpp(const Matrix<E>& bigger, const Matrix<E>& smaller){
-  Matrix<E> result(0, bigger.cols()+1),test,image;
+  Matrix<E> result(smaller.rows(), bigger.rows()+1),test,image;
   E lastVal;
+  int j = 0;
    for(const auto& rowit : rows(smaller)){
       test = bigger / rowit;
       image = null_space(T(test));
-      if (image.rows() != 1){
-         cout << "Something is going wrong. There are " << image.rows() << " solutions for this vector." << endl;
+      int i = 0;
+      lastVal = image(i,image.cols()-1);
+      while(lastVal == 0){
+         i++;
+         lastVal = image(i,image.cols()-1);
       }
-      lastVal = image(0,image.cols()-1);
       image = -1/lastVal * image;
-      result /= image;
+      result.row(j) = image.row(i);
+      j++;
    }
    return result.minor(All,~scalar2set(result.cols()-1));
 }
