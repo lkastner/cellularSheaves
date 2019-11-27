@@ -70,12 +70,18 @@ namespace polymake { namespace fan{
       TrivialSelector ts;
       return build_chain_complex_from_hasse(hd, orientations, cosheaf, ts, cochain);
    }
+
+   Array<Matrix<Rational>> convert_cc(const topaz::ChainComplex<Matrix<Rational>>& cc){
+      return cc.bd_matrix;
+   }
    
    Function4perl(&build_bounded_chain, "build_bounded_chain( $ , $ , $ , $ , $ )");
    
    FunctionTemplate4perl("build_full_chain<Decoration, SeqType>( Lattice<Decoration, SeqType> , $ , $ , $ )");
 
    Function4perl(&build_nonfar_chain, "build_nonfar_chain( $ , $ , $ , $ , $ )");
+
+   Function4perl(&convert_cc, "convert_cc( $ )");
 
 } // namespace fan
 } // namespace polymake
