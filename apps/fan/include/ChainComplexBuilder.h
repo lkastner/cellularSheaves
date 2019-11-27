@@ -77,7 +77,16 @@ namespace polymake { namespace fan{
                for(auto edge = entire(G.in_edges(source)); !edge.at_end(); ++edge){
                   target = edge.from_node();
                   if(node_is_valid(source) && node_is_valid(target)){
+                     // cout << "Prev: " << endl << result;
                      result.minor(rowRanges[target], colRanges[source]) = orientedBlocks[*edge];
+                     Matrix<Rational> insert(orientedBlocks[*edge]);
+                     if(rowRanges[target].size() != insert.rows() || colRanges[source].size() != insert.cols()){
+                        throw std::runtime_error("Matrix dimension does not agree with minor dimension.");
+                     }
+                     // cout << "Inserting:" << endl << insert;
+                     // cout << "After: " << endl << result;
+                     // cout << "Rows: " << rowRanges[target] << " Cols: " << colRanges[source] << endl;
+                     // cout << "iRows: " << insert.rows() << " iCols: " << insert.cols() << endl << endl;
                   }
                }
             }
@@ -92,12 +101,19 @@ namespace polymake { namespace fan{
       NodeMap<Directed, int> nodeDimsNM(G);
       cosheaf.give("BLOCKS") >> blocks;
       for(auto edge=entire(edges(G)); !edge.at_end(); ++edge){
-         blocks[*edge] *= orientations[*edge];
-         if(!cochain){
-            nodeDimsNM[edge.from_node()] = blocks[*edge].rows();
-         } else {
-            nodeDimsNM[edge.from_node()] = blocks[*edge].cols();
+         if(cochain){
+            blocks[*edge] = T(blocks[*edge]);
          }
+         nodeDimsNM[edge.from_node()] = blocks[*edge].rows();
+         blocks[*edge] *= orientations[*edge];
+         // if(!cochain){
+         //    nodeDimsNM[edge.from_node()] = blocks[*edge].rows();
+         // } else {
+         //    nodeDimsNM[edge.from_node()] = blocks[*edge].cols();
+         // }
+         // cout << blocks[*edge] << endl;
+         // blocks[*edge] = T(blocks[*edge]);
+         // cout << blocks[*edge] << endl;
       }
 
       ChainComplexBuilder<HasseDiagramType, SelectorType> SD(hd, G, blocks, nodeDimsNM, selector);
@@ -107,7 +123,7 @@ namespace polymake { namespace fan{
          Matrix<Rational> B = SD.assemble_ith_matrix(i);
          result[i-1] = T(B);
       }
-      return topaz::ChainComplex<Matrix<Rational>>(result);
+      return topaz::ChainComplex<Matrix<Rational>>(result, true);
    }
 
 } // end namespace fan
