@@ -134,10 +134,10 @@ sub build_compact_blocks {
             my $section = $projections->{$decoration->[$e->to_node]->sedentarity}->second;
             my $projection = $projections->{$decoration->[$e->from_node]->sedentarity}->first;
             $source = $source * wedge_matrix(transpose($projection * $section), $p);
-            $blocks->[$$e] = transpose(build_matrix($target, $source));
+            $blocks->[$$e] = build_matrix($target, $source);
          } else {
             my $target = $bases->[$e->from_node];
-            $blocks->[$$e] = transpose(zero_matrix(0,$target->rows));
+            $blocks->[$$e] = zero_matrix(0,$target->rows);
          }
       }
    }

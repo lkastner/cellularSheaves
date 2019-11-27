@@ -59,13 +59,13 @@ namespace polymake { namespace fan{
          Matrix<Rational> assemble_ith_matrix(int i) const {
             int nrows=0, ncols=0;
             NodeMap<Directed, Set<int>> colRanges(G), rowRanges(G);
-            for(const auto& node:hd.nodes_of_rank(i+1)){
+            for(const auto& node:hd.nodes_of_rank(i)){
                if(node_is_valid(node)){
                   colRanges[node] = pm::range(ncols, ncols+nodeDimsNM[node]-1);
                   ncols += nodeDimsNM[node];
                }
             }
-            for(const auto& node:hd.nodes_of_rank(i)){
+            for(const auto& node:hd.nodes_of_rank(i+1)){
                if(node_is_valid(node)){
                   rowRanges[node] = pm::range(nrows, nrows+nodeDimsNM[node]-1);
                   nrows += nodeDimsNM[node];
@@ -77,16 +77,13 @@ namespace polymake { namespace fan{
                for(auto edge = entire(G.in_edges(source)); !edge.at_end(); ++edge){
                   target = edge.from_node();
                   if(node_is_valid(source) && node_is_valid(target)){
-                     // cout << "Prev: " << endl << result;
-                     result.minor(rowRanges[target], colRanges[source]) = orientedBlocks[*edge];
+                     result.minor(rowRanges[source], colRanges[target]) = orientedBlocks[*edge];
+#if POLYMAKE_DEBUG
                      Matrix<Rational> insert(orientedBlocks[*edge]);
-                     if(rowRanges[target].size() != insert.rows() || colRanges[source].size() != insert.cols()){
+                     if(rowRanges[source].size() != insert.rows() || colRanges[target].size() != insert.cols()){
                         throw std::runtime_error("Matrix dimension does not agree with minor dimension.");
                      }
-                     // cout << "Inserting:" << endl << insert;
-                     // cout << "After: " << endl << result;
-                     // cout << "Rows: " << rowRanges[target] << " Cols: " << colRanges[source] << endl;
-                     // cout << "iRows: " << insert.rows() << " iCols: " << insert.cols() << endl << endl;
+#endif
                   }
                }
             }
@@ -104,26 +101,21 @@ namespace polymake { namespace fan{
          if(cochain){
             blocks[*edge] = T(blocks[*edge]);
          }
-         nodeDimsNM[edge.from_node()] = blocks[*edge].rows();
+         nodeDimsNM[edge.from_node()] = blocks[*edge].cols();
          blocks[*edge] *= orientations[*edge];
-         // if(!cochain){
-         //    nodeDimsNM[edge.from_node()] = blocks[*edge].rows();
-         // } else {
-         //    nodeDimsNM[edge.from_node()] = blocks[*edge].cols();
-         // }
-         // cout << blocks[*edge] << endl;
-         // blocks[*edge] = T(blocks[*edge]);
-         // cout << blocks[*edge] << endl;
       }
 
       ChainComplexBuilder<HasseDiagramType, SelectorType> SD(hd, G, blocks, nodeDimsNM, selector);
       int dim = hd.rank() - 1;
       Array<Matrix<Rational>> result(dim-1);
       for(int i=1; i<dim; i++){
-         Matrix<Rational> B = SD.assemble_ith_matrix(i);
-         result[i-1] = T(B);
+         result[i-1] = SD.assemble_ith_matrix(i);
       }
+#if POLYMAKE_DEBUG
       return topaz::ChainComplex<Matrix<Rational>>(result, true);
+#else
+      return topaz::ChainComplex<Matrix<Rational>>(result);
+#endif
    }
 
 } // end namespace fan

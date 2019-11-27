@@ -83,7 +83,7 @@ sub build_blocks_f{
       my $fpTauBasis = $bases->[$e->from_node];
 
       my $map = build_matrix($fpTauBasis, $fpSigmaBasis);
-      $newBlocks->[$$e] = new Matrix(transpose($map));
+      $newBlocks->[$$e] = $map;
    }
    return $newBlocks; 
 }
