@@ -10,28 +10,28 @@ print $w1->BASES;
 print $w1->BLOCKS;
 $cs1 = $pc->borel_moore_complex($w1);
 $cs1->print();
-print $cs1->BETTI_NUMBERS;
+print topaz::betti_numbers($cs1);
 print $cs1->HOMOLOGIES;
 
 $w2 = $pc->wcosheaf(2);
 $cs2 = $pc->borel_moore_complex($w2);
 print $w2->BASES;
 print $w2->BLOCKS;
-print $cs2->BETTI_NUMBERS;
+print topaz::betti_numbers($cs2);
 
 $w3 = $pc->wcosheaf(3);
 $cs3 = $pc->borel_moore_complex($w3);
-print $cs3->BETTI_NUMBERS;
+print topaz::betti_numbers($cs3);
 
 $w0 = $pc->wcosheaf(0);
 $cs0 = $pc->borel_moore_complex($w0);
-print $cs0->BETTI_NUMBERS;
+print topaz::betti_numbers($cs0);
 
 @result = ();
 for(my $i=0; $i<4; $i++){
    my $w = $pc->wcosheaf($i);
    my $cs = $pc->borel_moore_complex($w);
-   push @result, $cs->BETTI_NUMBERS;
+   push @result, topaz::betti_numbers($cs);
 }
 print new Matrix(@result);
 
@@ -43,7 +43,7 @@ $pc = new PolyhedralComplex(check_fan_objects(new Cone(simplex(5))));
 for(my $i=0; $i<6; $i++){
    my $w = $pc->wcosheaf($i);
    my $cs = $pc->borel_moore_complex($w);
-   push @result, $cs->BETTI_NUMBERS;
+   push @result, topaz::betti_numbers($cs);
 }
 print new Matrix(@result);
 
@@ -62,7 +62,7 @@ $pc = new PolyhedralComplex(check_fan_objects(new Cone($P)));
 for(my $i=0; $i<4; $i++){
    my $w = $pc->wcosheaf($i);
    my $cs = $pc->borel_moore_complex($w);
-   push @result, $cs->BETTI_NUMBERS;
+   push @result, topaz::betti_numbers($cs);
    }
 print new Matrix(@result);
 
@@ -90,18 +90,18 @@ $s2 = $berg->usual_chain_complex($f2);
 $s0->print();
 $s1->print();
 $s2->print();
-print $s0->BETTI_NUMBERS;
-print $s1->BETTI_NUMBERS;
-print $s2->BETTI_NUMBERS;
+print topaz::betti_numbers($s0);
+print topaz::betti_numbers($s1);
+print topaz::betti_numbers($s2);
 $bm0 = $berg->borel_moore_complex($f0);
 $bm1 = $berg->borel_moore_complex($f1);
 $bm2 = $berg->borel_moore_complex($f2);
 $bm0->print();
 $bm1->print();
 $bm2->print();
-print $bm0->BETTI_NUMBERS;
-print $bm1->BETTI_NUMBERS;
-print $bm2->BETTI_NUMBERS;
+print topaz::betti_numbers($bm0);
+print topaz::betti_numbers($bm1);
+print topaz::betti_numbers($bm2);
 
 application "graph";
 $g = complete(4);
@@ -120,8 +120,8 @@ for(my $i=0; $i<3; $i++){
    my $f = $berg->fcosheaf($i);
    my $s = $berg->usual_chain_complex($f);
    my $bm = $berg->borel_moore_complex($f);
-   push @result1, $s->BETTI_NUMBERS;
-   push @result2, $bm->BETTI_NUMBERS;
+   push @result1, topaz::betti_numbers($s);
+   push @result2, topaz::betti_numbers($bm);
 }
 print new Matrix(@result1);
 print new Matrix(@result2);
@@ -140,8 +140,8 @@ for(my $i=0; $i<6; $i++){
    my $f = $berg->fcosheaf($i);
    my $s = $berg->usual_chain_complex($f);
    my $bm = $berg->borel_moore_complex($f);
-   push @result1, $s->BETTI_NUMBERS;
-   push @result2, $bm->BETTI_NUMBERS;
+   push @result1, topaz::betti_numbers($s);
+   push @result2, topaz::betti_numbers($bm);
 }
 print new Matrix(@result1);
 print new Matrix(@result2);
@@ -160,8 +160,8 @@ for(my $i=0;$i<3;$i++){
    my $fi = $tls->fcosheaf($i);
    my $si=$tls->usual_chain_complex($fi);
    my $bmi=$tls->borel_moore_complex($fi);
-   push @result1, $si->BETTI_NUMBERS;
-   push @result2, $bmi->BETTI_NUMBERS;
+   push @result1, topaz::betti_numbers($si);
+   push @result2, topaz::betti_numbers($bmi);
 }  
 print new Matrix(@result1);
 print new Matrix(@result2);
@@ -183,8 +183,8 @@ for(my $i=0;$i<3;$i++){
    my $fi = $div->fcosheaf($i);
    my $si=$div->usual_chain_complex($fi);
    my $bmi=$div->borel_moore_complex($fi);
-   push @result1, $si->BETTI_NUMBERS;
-   push @result2, $bmi->BETTI_NUMBERS;
+   push @result1, topaz::betti_numbers($si);
+   push @result2, topaz::betti_numbers($bmi);
 } 
 print new Matrix(@result1);
 print new Matrix(@result2);
@@ -208,14 +208,14 @@ $bm1 = $gen3->borel_moore_complex($f1);
 $us0->print();
 $us1->print();
 
-print $us0->BETTI_NUMBERS;
-print $us1->BETTI_NUMBERS;
+print topaz::betti_numbers($us0);
+print topaz::betti_numbers($us1);
 
 $bm0->print();
 $bm1->print();
 
-print $bm0->BETTI_NUMBERS;
-print $bm1->BETTI_NUMBERS;
+print topaz::betti_numbers($bm0);
+print topaz::betti_numbers($bm1);
 
 
 
@@ -225,7 +225,6 @@ $f = toTropicalPolynomial("max(0,x,y,z, 2*x - 2, 2*y-2, 2*z-2, x+y-1, x+z-1, y+z
 $k3 = tropical::divisor( (projective_torus<Max>(3)) , rational_fct_from_affine_numerator($f));
 
 application "fan";
-print $k3->BOUNDED_FACES->{0}->size;
 
 # $f0 = $k3->fcosheaf(0);
 # $f1 = $k3->fcosheaf(1);
@@ -239,19 +238,13 @@ print $k3->BOUNDED_FACES->{0}->size;
 # $bm1 = $k3->borel_moore_complex($f1);
 # $bm2 = $k3->borel_moore_complex($f2);
 # 
-# $us0->print();
-# print $us0->BETTI_NUMBERS;
-# $us1->print();
-# print $us1->BETTI_NUMBERS;
-# $us2->print();
-# print $us2->BETTI_NUMBERS;
+# print topaz::betti_numbers($us0);
+# print topaz::betti_numbers($us1);
+# print topaz::betti_numbers($us2);
 # 
-# $bm0->print();
-# print $bm0->BETTI_NUMBERS;
-# $bm1->print();
-# print $bm1->BETTI_NUMBERS;
-# $bm2->print();
-# print $bm2->BETTI_NUMBERS;
+# print topaz::betti_numbers($bm0);
+# print topaz::betti_numbers($bm1);
+# print topaz::betti_numbers($bm2);
 
 ### to skip the waiting times in compute the f-cosheaves.
 
@@ -269,12 +262,12 @@ $bm1 = $k3loaded->borel_moore_complex($f1);
 $bm2 = $k3loaded->borel_moore_complex($f2);
 
 @result1 = ();
-push @result1, $us0->BETTI_NUMBERS;
-push @result1, $us1->BETTI_NUMBERS;
-push @result1, $us2->BETTI_NUMBERS;
+push @result1, topaz::betti_numbers($us0);
+push @result1, topaz::betti_numbers($us1);
+push @result1, topaz::betti_numbers($us2);
 @result2 = ();
-push @result2, $bm0->BETTI_NUMBERS;
-push @result2, $bm1->BETTI_NUMBERS;
-push @result2, $bm2->BETTI_NUMBERS;
+push @result2, topaz::betti_numbers($bm0);
+push @result2, topaz::betti_numbers($bm1);
+push @result2, topaz::betti_numbers($bm2);
 print new Matrix(@result1);
 print new Matrix(@result2);
