@@ -28,6 +28,7 @@ INCLUDE
 user_function wedge_matrix<Element=Rational>(Matrix, $ ) : c++ (include => "polymake/fan/linalg_tools.h");
 
 # @category Cellular (co-)sheaves
+# Choose a basis for a linear space among a generating set of vectors.
 user_function choose_basis<Element=Rational>(Matrix) : c++ (include => "polymake/fan/linalg_tools.h");
 
 # @category Cellular (co-)sheaves
@@ -37,6 +38,17 @@ user_function choose_basis<Element=Rational>(Matrix) : c++ (include => "polymake
 # bigger basis.
 user_function build_matrix<Element=Rational>(Matrix,Matrix) : c++ (include => "polymake/fan/linalg_tools.h");
 
+# @category Cellular (co-)sheaves
+user_function hodge_numbers(PolyhedralComplex){
+   my($pc) = @_;
+   my @rows;
+   for(my $i=0; $i<=$pc->DIM; $i++){
+      my $f = $pc->compact_fcosheaf($i);
+      my $d = build_full_chain($pc->COMPACTIFICATION, $pc->COMPACTIFICATION->ORIENTATIONS, $f, false);
+      push @rows, new Vector<Int>(topaz::betti_numbers($d));
+   }
+   return new Matrix(\@rows);
+}
 
 # @category Cellular (co-)sheaves
 # Check whether the matrix dimensions of an EdgeMap<Directed,Matrix> agree in
