@@ -85,8 +85,8 @@ template <typename E> inline
 Matrix<E>
 build_matrix(const Matrix<E>& bigger, const Matrix<E>& smaller){
    // If one of the matrices is empty.
-   if(bigger.rows() == 0){
-      return zero_matrix<E>(smaller.rows(), 0);
+   if(bigger.rows() == 0 && rank(smaller) > 0){
+      throw std::runtime_error("No elements in bigger matrix, but smaller matrix is non-zero");
    }
    if(smaller.rows() == 0){
       return zero_matrix<E>(0, bigger.rows());
@@ -101,6 +101,9 @@ build_matrix(const Matrix<E>& bigger, const Matrix<E>& smaller){
       lastVal = image(i,image.cols()-1);
       while(lastVal == 0){
          i++;
+         if(i == image.rows()){
+            throw std::runtime_error("No solution found for representing vector.");
+         }
          lastVal = image(i,image.cols()-1);
       }
       image = -1/lastVal * image;

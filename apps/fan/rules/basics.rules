@@ -26,7 +26,7 @@ object PolyhedralComplex {
    }
 
 
-   rule HASSE_DIAGRAM.CHOSEN_BASES : VERTICES, HASSE_DIAGRAM.ADJACENCY, HASSE_DIAGRAM.FACES, FAN_DIM, LINEALITY_SPACE {
+   rule HASSE_DIAGRAM.CHOSEN_BASES : VERTICES, HASSE_DIAGRAM.ADJACENCY, HASSE_DIAGRAM.FACES, FAN_DIM, LINEALITY_SPACE, HASSE_DIAGRAM.TOP_NODE {
       my $lin = $this->LINEALITY_SPACE;
       my $d = $this->FAN_DIM - 1;
       my $vertices = $this->VERTICES;
@@ -34,8 +34,8 @@ object PolyhedralComplex {
       my $G = $this->HASSE_DIAGRAM->ADJACENCY;
       my $result = new NodeMap<Directed, Matrix>($G);
       for(my $node = entire(nodes($G)); $node; ++$node){
-         my $honestSigma = $faces->[$$node];
-         if($honestSigma != new Set<Int>([-1])){
+         if($$node != $this->HASSE_DIAGRAM->TOP_NODE){
+            my $honestSigma = $faces->[$$node];
             my $vertSigma = $vertices->minor($honestSigma, All);
             my $p = new Polytope(POINTS=>$vertSigma, INPUT_LINEALITY=>$lin);
             if($p->FEASIBLE){
@@ -64,7 +64,12 @@ object PolyhedralComplex {
       for (my $e=entire(edges($G)); $e; ++$e) {
          my $sigmaBasis = $chosenBases->[$e->to_node];
          my $tauBasis = $chosenBases->[$e->from_node];
-         $result->[$$e] = build_matrix($sigmaBasis, $tauBasis);
+         if($tauBasis->rows != 0 && $sigmaBasis->rows != 0){
+            $result->[$$e] = build_matrix($sigmaBasis, $tauBasis);
+         } else {
+            # If one of the faces is a far face.
+            $result->[$$e] = zero_matrix($tauBasis->rows, $sigmaBasis->rows);
+         }
       }
       $this->HASSE_DIAGRAM->SIMPLE_BLOCKS = $result;
    }
