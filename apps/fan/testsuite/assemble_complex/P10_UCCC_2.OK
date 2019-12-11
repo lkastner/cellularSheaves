@@ -3,14 +3,16 @@
   "_ns": {
     "polymake": ["https://polymake.org", "3.6"]
   },
-  "_type": "common::Array<Matrix<Rational, NonSymmetric>>",
+  "_type": "topaz::ChainComplex<Matrix<Rational, NonSymmetric>>",
   "data": [
     [
-      {"cols": 0}
-    ],
-    [
-      [],
-      []
+      [
+        {"cols": 0}
+      ],
+      [
+        [],
+        []
+      ]
     ]
   ]
 }
