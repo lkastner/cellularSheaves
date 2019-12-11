@@ -1,0 +1,5 @@
+{"app": "fan",
+ "inst": [
+  {"args": ["Rational", "perl::Canned<const Matrix<Rational>&>", "perl::Canned<const Matrix<Rational>&>"], "func": "build_matrix", "include": ["polymake/IncidenceMatrix.h", "polymake/Matrix.h", "polymake/Rational.h", "polymake/fan/linalg_tools.h"], "sig": "build_matrix:T1.X.X", "tp": 1},
+ null ],
+"version": 3}

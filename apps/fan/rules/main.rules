@@ -15,6 +15,7 @@
 #-------------------------------------------------------------------------------
 
 INCLUDE
+   help.rules
    orientation.rules
    basics.rules
    sheaves.rules
@@ -23,54 +24,23 @@ INCLUDE
    functors.rules
    compact_fcosheaf.rules
 
-# Comment that makes pm run
-user_function wedge_matrix_cpp<Element=Rational>(Matrix, $ ) : c++ (include => "polymake/fan/linalg_tools.h");
+# @category Cellular (co-)sheaves
+user_function wedge_matrix<Element=Rational>(Matrix, $ ) : c++ (include => "polymake/fan/linalg_tools.h");
 
-user_function choose_basis_cpp<Element=Rational>(Matrix) : c++ (include => "polymake/fan/linalg_tools.h");
+# @category Cellular (co-)sheaves
+user_function choose_basis<Element=Rational>(Matrix) : c++ (include => "polymake/fan/linalg_tools.h");
 
-user_function build_matrix_cpp<Element=Rational>(Matrix,Matrix) : c++ (include => "polymake/fan/linalg_tools.h");
-
-
-sub choose_basis{
-   my($A) = @_;
-   my $desired = rank($A);
-   if($desired == 0){
-      return zero_matrix(0,$A->cols);
-   }
-   else{
-      return choose_basis_cpp($A);
-   }
-}
-
+# @category Cellular (co-)sheaves
 # Builds a
 # ($smaller->rows, $bigger->rows)-Matrix
 # that shows how to represent the basis elements of the smaller basis in the
 # bigger basis.
-sub build_matrix{
-   my($bigger, $smaller) = @_;
-   if($bigger->rows == 0){
-      return zero_matrix($smaller->rows, $bigger->rows);
-   }
-   my $nrows = $smaller->rows;
-   if ($nrows == 0){
-      return zero_matrix(0,$bigger->rows);
-   } else {
-      return build_matrix_cpp($bigger,$smaller);
-   }
-}
+user_function build_matrix<Element=Rational>(Matrix,Matrix) : c++ (include => "polymake/fan/linalg_tools.h");
 
 
-sub wedge_matrix{
-   my($A, $p) = @_;
-   my $nrows = binomial($A->rows, $p);
-   my $ncols = binomial($A->cols, $p);
-   if(($nrows == 0) || ($ncols == 0)){
-      return zero_matrix($nrows, $ncols);
-   } else {
-      return wedge_matrix_cpp($A, $p);
-   }
-}
-
+# @category Cellular (co-)sheaves
+# Check whether the matrix dimensions of an EdgeMap<Directed,Matrix> agree in
+# the nodes to give a sheaf (or cosheaf).
 user_function verify_sheaf( $ , $ , $ ){
    my($E, $G, $cosheaf) = @_;
    for(my $node = entire(nodes($G)); $node; ++$node){

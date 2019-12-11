@@ -34,7 +34,7 @@ namespace polymake { namespace fan{
 
 template <typename E> inline
 Matrix<E>
-wedge_matrix_cpp(const Matrix<E>& input, int n){
+wedge_matrix(const Matrix<E>& input, int n){
    int nrows, ncols, resultNrows, resultNcols, i, j;
    Matrix<E> result;
    nrows = input.rows();
@@ -60,9 +60,13 @@ wedge_matrix_cpp(const Matrix<E>& input, int n){
 
 template <typename E> inline
 Matrix<E>
-choose_basis_cpp(const Matrix<E>& input){
+choose_basis(const Matrix<E>& input){
 	int desired = rank(input), current = 0, test;
 	Matrix<E> result(0, input.cols());
+   if(desired == 0){
+      // If the matrix is empty
+      return result;
+   }
 	for(const auto& rowit : rows(input)){
 		if(desired == rank(result)){
 			return result;
@@ -79,10 +83,17 @@ choose_basis_cpp(const Matrix<E>& input){
 
 template <typename E> inline
 Matrix<E>
-build_matrix_cpp(const Matrix<E>& bigger, const Matrix<E>& smaller){
-  Matrix<E> result(smaller.rows(), bigger.rows()+1),test,image;
-  E lastVal;
-  int j = 0;
+build_matrix(const Matrix<E>& bigger, const Matrix<E>& smaller){
+   // If one of the matrices is empty.
+   if(bigger.rows() == 0){
+      return zero_matrix<E>(smaller.rows(), 0);
+   }
+   if(smaller.rows() == 0){
+      return zero_matrix<E>(0, bigger.rows());
+   }
+   Matrix<E> result(smaller.rows(), bigger.rows()+1),test,image;
+   E lastVal;
+   int j = 0;
    for(const auto& rowit : rows(smaller)){
       test = bigger / rowit;
       image = null_space(T(test));

@@ -1,0 +1,6 @@
+{"app": "fan",
+ "inst": [
+  {"args": ["Rational", "perl::Canned<const pm::RepeatedRow<pm::SameElementVector<pm::Rational const&> >&>"], "func": "choose_basis", "include": ["polymake/Rational.h", "polymake/fan/linalg_tools.h", "polymake/linalg.h"], "sig": "choose_basis:T1.X", "tp": 1},
+  {"args": ["Rational", "perl::Canned<const Matrix<Rational>&>"], "func": "choose_basis", "include": ["polymake/IncidenceMatrix.h", "polymake/Matrix.h", "polymake/Rational.h", "polymake/fan/linalg_tools.h"], "sig": "choose_basis:T1.X", "tp": 1},
+ null ],
+"version": 3}
