@@ -25,48 +25,48 @@ namespace polymake { namespace fan{
       public:
          TrivialSelector(){}
 
-         bool isValid(const Set<int>& face) const{
+         bool isValid(const Set<Int>& face) const{
             return true;
          }
    };
    
    class NonFarSelector {
       private:
-         Set<int> farFace;
+         Set<Int> farFace;
       public:
-         NonFarSelector(const Set<int>& ff) : farFace(ff) {}
+         NonFarSelector(const Set<Int>& ff) : farFace(ff) {}
 
-         bool isValid(const Set<int>& face) const{
+         bool isValid(const Set<Int>& face) const{
             return !(face - farFace).empty();
          }
    };
    
    class BoundedSelector {
       private:
-         Set<int> farFace;
+         Set<Int> farFace;
       public:
-         BoundedSelector(const Set<int>& ff) : farFace(ff) {}
+         BoundedSelector(const Set<Int>& ff) : farFace(ff) {}
 
-         bool isValid(const Set<int>& face) const{
+         bool isValid(const Set<Int>& face) const{
             return (face * farFace).empty();
          }
    };
 
-   topaz::ChainComplex<Matrix<Rational>> build_nonfar_chain(const HasseDiagramType& hd, const EdgeMap<Directed, int>& orientations, const Set<int>& ff, perl::Object cosheaf, bool cochain){
+   topaz::ChainComplex<Matrix<Rational>> build_nonfar_chain(const HasseDiagramType& hd, const EdgeMap<Directed, Int>& orientations, const Set<Int>& ff, perl::Object cosheaf, bool cochain){
       NonFarSelector bs(ff);
       topaz::ChainComplex<Matrix<Rational>> result(build_chain_complex_from_hasse(hd, orientations, cosheaf, bs, cochain));
       return result;
    }
 
    
-   topaz::ChainComplex<Matrix<Rational>> build_bounded_chain(const HasseDiagramType& hd, const EdgeMap<Directed, int>& orientations, const Set<int>& ff, perl::Object cosheaf, bool cochain){
+   topaz::ChainComplex<Matrix<Rational>> build_bounded_chain(const HasseDiagramType& hd, const EdgeMap<Directed, Int>& orientations, const Set<Int>& ff, perl::Object cosheaf, bool cochain){
       BoundedSelector bs(ff);
       topaz::ChainComplex<Matrix<Rational>> result(build_chain_complex_from_hasse(hd, orientations, cosheaf, bs, cochain));
       return result;
    }
    
    template<typename Decoration, typename SeqType>
-   topaz::ChainComplex<Matrix<Rational>> build_full_chain(const Lattice<Decoration, SeqType>& hd, const EdgeMap<Directed, int>& orientations, perl::Object cosheaf, bool cochain){
+   topaz::ChainComplex<Matrix<Rational>> build_full_chain(const Lattice<Decoration, SeqType>& hd, const EdgeMap<Directed, Int>& orientations, perl::Object cosheaf, bool cochain){
       TrivialSelector ts;
       return build_chain_complex_from_hasse(hd, orientations, cosheaf, ts, cochain);
    }

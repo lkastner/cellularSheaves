@@ -41,7 +41,7 @@ namespace polymake { namespace fan{
          state = groundSet.begin();
       }
 
-      Set<int> operator*(){
+      Set<Int> operator*(){
          return *state;
       }
 
@@ -58,10 +58,10 @@ namespace polymake { namespace fan{
    class CellularClosureOperator {
       private:
          FaceMap<> face_index_map;
-         const Map<int, Set<int>>& int2vertices;
-         const Map<Set<int>, int>& vertices2int;
-         const int& nVertices;
-         const Set<int>& farVertices;
+         const Map<Int, Set<Int>>& int2vertices;
+         const Map<Set<Int>, Int>& vertices2int;
+         const Int& nVertices;
+         const Set<Int>& farVertices;
          ComplexPrimalClosure<> oldClosureOperator;
 
          IncidenceMatrix<> construct_old_closure_operator(perl::Object pc) {
@@ -71,7 +71,7 @@ namespace polymake { namespace fan{
             pc.give("PURE") >> is_pure;
             TopologicalType tt(is_pure, is_complete);
             const IncidenceMatrix<>& maximal_cones = pc.give("MAXIMAL_CONES");
-            const int n_vertices = maximal_cones.cols();
+            const Int n_vertices = maximal_cones.cols();
             FacetList non_redundant_facets(n_vertices);
             for (auto mvf : maximal_vifs) {
                for (auto fct = entire(rows(mvf)); !fct.at_end(); ++fct)
@@ -86,14 +86,14 @@ namespace polymake { namespace fan{
          }
 
       public:
-         typedef Set<int> ClosureData;
+         typedef Set<Int> ClosureData;
 
          CellularClosureOperator(const CompactificationData& cd, perl::Object pc):
             int2vertices(cd.int2vertices), vertices2int(cd.vertices2int), nVertices(cd.nVertices), farVertices(cd.farVertices), oldClosureOperator(construct_old_closure_operator(pc)){
             }
          
-         Set<int> old_closure(const Set<int>& a) const {
-            Set<int> result(range(0,nVertices));
+         Set<Int> old_closure(const Set<Int>& a) const {
+            Set<Int> result(range(0,nVertices));
             bool contained = false;
             for(const auto& pair: vertices2int){
                if(incl(a, pair.first)<=0){
@@ -108,17 +108,17 @@ namespace polymake { namespace fan{
             return result;
          }
 
-         Set<int> closure(const Set<int> a) const {
-            Set<int> originalRealisation;
+         Set<Int> closure(const Set<Int> a) const {
+            Set<Int> originalRealisation;
             for(const auto i:a){
                originalRealisation += int2vertices[i];
             }
-            Set<int> originalClosure = old_closure(originalRealisation);
-            Set<int> commonRays = originalRealisation * farVertices;
+            Set<Int> originalClosure = old_closure(originalRealisation);
+            Set<Int> commonRays = originalRealisation * farVertices;
             for(const auto i : a){
                commonRays = commonRays * int2vertices[i];
             }
-            Set<int> result;
+            Set<Int> result;
             for(const auto& v:vertices2int){
                if(incl(commonRays, v.first)<=0 && incl(v.first, originalClosure)<=0){
                   result += v.second;
@@ -127,24 +127,24 @@ namespace polymake { namespace fan{
             return result;
          }
          
-         Set<int> closure_of_empty_set(){
-            Set<int> empty;
+         Set<Int> closure_of_empty_set(){
+            Set<Int> empty;
             return empty;
          }
 
          FaceIndexingData get_indexing_data(const ClosureData& data)
          {
-            int& fi = face_index_map[data];
+            Int& fi = face_index_map[data];
             return FaceIndexingData(fi, fi == -1, fi == -2);
          }
 
-         Set<int> compute_closure_data(const DecorationType& bd) const {
+         Set<Int> compute_closure_data(const DecorationType& bd) const {
             return bd.face;
          }
 
-         IteratorWrap get_closure_iterator(const Set<int>& face) const {
-            Set<int> all = pm::range(0,int2vertices.size()-1);
-            Set<int> toadd = all-face;
+         IteratorWrap get_closure_iterator(const Set<Int>& face) const {
+            Set<Int> all = pm::range(0,int2vertices.size()-1);
+            Set<Int> toadd = all-face;
             FacetList result;
             for(auto i:toadd){
                result.insertMin(closure(face+i));

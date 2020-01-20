@@ -39,10 +39,10 @@ namespace polymake { namespace fan{
 
    class CompactificationData {
       public:
-         Map<int, Set<int>> int2vertices;
-         Map<Set<int>, int> vertices2int;
-         int nVertices;
-         Set<int> farVertices;
+         Map<Int, Set<Int>> int2vertices;
+         Map<Set<Int>, Int> vertices2int;
+         Int nVertices;
+         Set<Int> farVertices;
          Matrix<Rational> vertices;
 
       public:
@@ -50,15 +50,15 @@ namespace polymake { namespace fan{
             pc.give("FAR_VERTICES") >> farVertices;
             pc.give("VERTICES") >> vertices;
             nVertices = vertices.rows();
-            Set<int> topNode; topNode += -1;
+            Set<Int> topNode; topNode += -1;
             // cout << oldHasseDiagram << endl;
-            int i = 0;
+            Int i = 0;
             // Build new vertices
             const Lattice<BasicDecoration, Nonsequential>& oldHasseDiagram(pc.give("HASSE_DIAGRAM"));
             for(const auto& f : oldHasseDiagram.decoration()){
                if(f.face != topNode) { 
-                  int faceDim = f.rank-1;
-                  int tailDim = rank(vertices.minor(f.face * farVertices, All));
+                  Int faceDim = f.rank-1;
+                  Int tailDim = rank(vertices.minor(f.face * farVertices, All));
                   if(faceDim == tailDim){
                      int2vertices[i] = f.face;
                      vertices2int[f.face] = i;

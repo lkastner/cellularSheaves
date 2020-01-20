@@ -34,13 +34,13 @@ namespace polymake { namespace fan{
 
 template <typename E> inline
 Matrix<E>
-wedge_matrix(const Matrix<E>& input, int n){
-   int nrows, ncols, resultNrows, resultNcols, i, j;
+wedge_matrix(const Matrix<E>& input, Int n){
+   Int nrows, ncols, resultNrows, resultNcols, i, j;
    Matrix<E> result;
    nrows = input.rows();
    ncols = input.cols();
-   resultNrows = (int) Integer::binom(nrows, n);
-   resultNcols = (int) Integer::binom(ncols, n);
+   resultNrows = (Int) Integer::binom(nrows, n);
+   resultNcols = (Int) Integer::binom(ncols, n);
    if((resultNrows == 0) || (resultNcols == 0)){
       return zero_matrix<E>(resultNrows, resultNcols);
    }
@@ -61,7 +61,7 @@ wedge_matrix(const Matrix<E>& input, int n){
 template <typename E> inline
 Matrix<E>
 choose_basis(const Matrix<E>& input){
-	int desired = rank(input), current = 0, test;
+	Int desired = rank(input), current = 0, test;
 	Matrix<E> result(0, input.cols());
    if(desired == 0){
       // If the matrix is empty
@@ -93,11 +93,11 @@ build_matrix(const Matrix<E>& bigger, const Matrix<E>& smaller){
    }
    Matrix<E> result(smaller.rows(), bigger.rows()+1),test,image;
    E lastVal;
-   int j = 0;
+   Int j = 0;
    for(const auto& rowit : rows(smaller)){
       test = bigger / rowit;
       image = null_space(T(test));
-      int i = 0;
+      Int i = 0;
       lastVal = image(i,image.cols()-1);
       while(lastVal == 0){
          i++;

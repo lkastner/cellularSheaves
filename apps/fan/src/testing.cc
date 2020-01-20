@@ -29,26 +29,26 @@ namespace polymake { namespace fan{
       // ChainComplexBuilder<TrivialSelector> SD(pc, cosheaf, ts);
       ChainComplexBuilder<BoundedSelector> SD(pc, cosheaf, bs);
       Lattice<BasicDecoration, lattice::Nonsequential> hd = pc.give("HASSE_DIAGRAM");
-      Map<Set<Set<int>>, Matrix<Rational>> blocks;
-      Map<Set<Set<int>>, int> orientations;
-      Map<Set<int>, Matrix<Rational>> bases;
+      Map<Set<Set<Int>>, Matrix<Rational>> blocks;
+      Map<Set<Set<Int>>, Int> orientations;
+      Map<Set<Int>, Matrix<Rational>> bases;
       cosheaf.give("BLOCKS") >> blocks;
       pc.give("ORIENTATIONS") >> orientations;
       // cout << "Blocks: " << blocks << endl;
       // cout << "Orientations: " << orientations << endl;
       // cout << "Decoration" << endl << hd.decoration() << endl;
       // cout << hd.nodes_of_rank(1) << endl;
-      int dim = pc.give("FAN_DIM");
+      Int dim = pc.give("FAN_DIM");
       const auto& decoration = hd.decoration();
-      for(int i=1; i<dim; i++){
+      for(Int i=1; i<dim; i++){
          // cout << i << ": " << hd.nodes_of_rank(i) << endl;
-         Array<Set<int>> sigmas(hd.nodes_of_rank(i+1).size());
-         int count = 0;
+         Array<Set<Int>> sigmas(hd.nodes_of_rank(i+1).size());
+         Int count = 0;
          for(const auto s:hd.nodes_of_rank(i+1)){
             sigmas[count] = decoration[s].face;
             count++;
          }
-         Array<Set<int>> taus(hd.nodes_of_rank(i).size());
+         Array<Set<Int>> taus(hd.nodes_of_rank(i).size());
          count = 0;
          for(const auto s:hd.nodes_of_rank(i)){
             taus[count] = decoration[s].face;

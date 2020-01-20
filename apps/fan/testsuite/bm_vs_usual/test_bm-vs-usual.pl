@@ -18,8 +18,11 @@ sub compare_bm_usual{
 }
 
 my $files = `ls .`;
+my $c = 0;
 my @tlss = split("\n",$files);
 @tlss = grep($_ =~ m/poly/, @tlss);
 for my $tls (@tlss){
    compare_bm_usual($tls);
+   $c++;
+   if($c == 10){ last; }
 }

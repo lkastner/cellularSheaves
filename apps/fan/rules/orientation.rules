@@ -139,7 +139,9 @@ sub get_all_squares {
             if($other->size() != 2){
                print "Other: $other\n";
                print "Target: $target\n";
+               print "Incoming: ",$graph->in_adjacent_nodes($target),"\n";
                print "Source: $source\n";
+               print "Outgoing: ",$graph->out_adjacent_nodes($source),"\n";
                die "Something went wrong.\n";
             } else {
                my $square = new Array<Int>(4);

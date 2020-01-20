@@ -29,33 +29,33 @@
 namespace polymake { namespace fan{
 
    struct SedentarityDecoration : public GenericStruct<SedentarityDecoration> {
-     DeclSTRUCT( DeclFIELD(face, Set<int>)
-                 DeclFIELD(rank,int)
-                 DeclFIELD(realisation, Set<int>) 
-                 DeclFIELD(sedentarity, Set<int>) );
+     DeclSTRUCT( DeclFIELD(face, Set<Int>)
+                 DeclFIELD(rank,Int)
+                 DeclFIELD(realisation, Set<Int>) 
+                 DeclFIELD(sedentarity, Set<Int>) );
 
      SedentarityDecoration() {}
-     SedentarityDecoration(const Set<int>& f, int r, const Set<int>& re, const Set<int>& se) : face(f), rank(r), realisation(re), sedentarity(se) {}
+     SedentarityDecoration(const Set<Int>& f, Int r, const Set<Int>& re, const Set<Int>& se) : face(f), rank(r), realisation(re), sedentarity(se) {}
    };
    
    class SedentarityDecorator {
       private:
-         const Map<int, Set<int>>& int2vertices;
-         const Set<int>& farVertices;
+         const Map<Int, Set<Int>>& int2vertices;
+         const Set<Int>& farVertices;
 
-         Set<int> realisation(const Set<int> face) const {
-            Set<int> result;
+         Set<Int> realisation(const Set<Int> face) const {
+            Set<Int> result;
             for(const auto& e:face){
                result += int2vertices[e];
             }
             return result;
          }
 
-         Set<int> sedentarity(const Set<int>& face) const {
+         Set<Int> sedentarity(const Set<Int>& face) const {
             if(face.size() == 0){
-               return Set<int>();
+               return Set<Int>();
             }
-            Set<int> result(farVertices);
+            Set<Int> result(farVertices);
             for(const auto& e:face){
                result *= int2vertices[e];
             }
@@ -66,17 +66,17 @@ namespace polymake { namespace fan{
          typedef SedentarityDecoration DecorationType;
          SedentarityDecorator(const CompactificationData& cd): int2vertices(cd.int2vertices), farVertices(cd.farVertices){}
 
-         SedentarityDecoration compute_initial_decoration(const Set<int>& face) const {
+         SedentarityDecoration compute_initial_decoration(const Set<Int>& face) const {
             return SedentarityDecoration(face, 0, realisation(face), sedentarity(face));
          }
 
-         SedentarityDecoration compute_decoration(const Set<int>& face, const SedentarityDecoration& bd) const {
+         SedentarityDecoration compute_decoration(const Set<Int>& face, const SedentarityDecoration& bd) const {
             return SedentarityDecoration(face, bd.rank+1, realisation(face), sedentarity(face));
          }
 
-         SedentarityDecoration compute_artificial_decoration(const NodeMap<Directed, SedentarityDecoration>& decor, const std::list<int>& max_faces) const {
-            Set<int> D;
-            Set<int> empty;
+         SedentarityDecoration compute_artificial_decoration(const NodeMap<Directed, SedentarityDecoration>& decor, const std::list<Int>& max_faces) const {
+            Set<Int> D;
+            Set<Int> empty;
             D += -1;
             return SedentarityDecoration(D, -1, D, empty);
          }

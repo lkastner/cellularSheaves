@@ -29,21 +29,21 @@
 namespace polymake { namespace fan{
 
    struct CellularDecoration : public GenericStruct<CellularDecoration> {
-     DeclSTRUCT( DeclFIELD(face, Set<int>)
-                 DeclFIELD(rank,int)
-                 DeclFIELD(realisation, Set<int>) );
+     DeclSTRUCT( DeclFIELD(face, Set<Int>)
+                 DeclFIELD(rank,Int)
+                 DeclFIELD(realisation, Set<Int>) );
 
      CellularDecoration() {}
-     CellularDecoration(const Set<int>& f, int r, const Set<int>& re) : face(f), rank(r), realisation(re) {}
+     CellularDecoration(const Set<Int>& f, Int r, const Set<Int>& re) : face(f), rank(r), realisation(re) {}
    };
    
    class CellularDecorator {
       private:
          const Matrix<Rational>& vertices;
-         const Map<int, Set<int>>& int2vertices;
+         const Map<Int, Set<Int>>& int2vertices;
 
-         Set<int> realisation(const Set<int> face) const {
-            Set<int> result;
+         Set<Int> realisation(const Set<Int> face) const {
+            Set<Int> result;
             for(const auto& e:face){
                result += int2vertices[e];
             }
@@ -54,17 +54,17 @@ namespace polymake { namespace fan{
          typedef CellularDecoration DecorationType;
          CellularDecorator(const CompactificationData& cd): vertices(cd.vertices), int2vertices(cd.int2vertices){}
 
-         CellularDecoration compute_initial_decoration(const Set<int>& face) const {
+         CellularDecoration compute_initial_decoration(const Set<Int>& face) const {
             vertices.rows();
             return CellularDecoration(face, 0, realisation(face));
          }
 
-         CellularDecoration compute_decoration(const Set<int>& face, const CellularDecoration& bd) const {
+         CellularDecoration compute_decoration(const Set<Int>& face, const CellularDecoration& bd) const {
             return CellularDecoration(face, bd.rank+1, realisation(face));
          }
 
-         CellularDecoration compute_artificial_decoration(const NodeMap<Directed, CellularDecoration>& decor, const std::list<int>& max_faces) const {
-            Set<int> D;
+         CellularDecoration compute_artificial_decoration(const NodeMap<Directed, CellularDecoration>& decor, const std::list<Int>& max_faces) const {
+            Set<Int> D;
             D += -1;
             return CellularDecoration(D, -1, D);
          }
