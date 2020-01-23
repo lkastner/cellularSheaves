@@ -46,7 +46,7 @@ namespace polymake { namespace fan{
          Matrix<Rational> vertices;
 
       public:
-         CompactificationData(perl::Object pc){
+         CompactificationData(BigObject pc){
             pc.give("FAR_VERTICES") >> farVertices;
             pc.give("VERTICES") >> vertices;
             nVertices = vertices.rows();

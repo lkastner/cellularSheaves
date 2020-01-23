@@ -21,7 +21,7 @@
 
 namespace polymake { namespace fan{
 
-   void check_complex(perl::Object pc, perl::Object cosheaf, bool cochain){
+   void check_complex(BigObject pc, BigObject cosheaf, bool cochain){
       /*
       if(!cochain){ return; }
       TrivialSelector ts;

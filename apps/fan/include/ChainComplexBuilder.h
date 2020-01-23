@@ -92,7 +92,7 @@ namespace polymake { namespace fan{
    };
    
    template<typename SelectorType, typename HasseDiagramType>
-   topaz::ChainComplex<Matrix<Rational>> build_chain_complex_from_hasse(const HasseDiagramType& hd, const EdgeMap<Directed, Int> orientations, perl::Object cosheaf, const SelectorType& selector, bool cochain){
+   topaz::ChainComplex<Matrix<Rational>> build_chain_complex_from_hasse(const HasseDiagramType& hd, const EdgeMap<Directed, Int> orientations, BigObject cosheaf, const SelectorType& selector, bool cochain){
       const Graph<Directed>& G(hd.graph());
       EdgeMap<Directed, Matrix<Rational>> blocks;
       NodeMap<Directed, Int> nodeDimsNM(G);

@@ -64,7 +64,7 @@ namespace polymake { namespace fan{
          const Set<Int>& farVertices;
          ComplexPrimalClosure<> oldClosureOperator;
 
-         IncidenceMatrix<> construct_old_closure_operator(perl::Object pc) {
+         IncidenceMatrix<> construct_old_closure_operator(BigObject pc) {
             RestrictedIncidenceMatrix<> building_matrix;
             const Array<IncidenceMatrix<> >& maximal_vifs = pc.give("MAXIMAL_CONES_INCIDENCES");
             bool is_pure, is_complete = false;
@@ -88,7 +88,7 @@ namespace polymake { namespace fan{
       public:
          typedef Set<Int> ClosureData;
 
-         CellularClosureOperator(const CompactificationData& cd, perl::Object pc):
+         CellularClosureOperator(const CompactificationData& cd, BigObject pc):
             int2vertices(cd.int2vertices), vertices2int(cd.vertices2int), nVertices(cd.nVertices), farVertices(cd.farVertices), oldClosureOperator(construct_old_closure_operator(pc)){
             }
          

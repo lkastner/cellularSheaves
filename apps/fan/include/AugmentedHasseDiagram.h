@@ -46,7 +46,7 @@ namespace polymake { namespace fan{
          }
 
       public:
-         AugmentedHasseDiagram(const CompactificationData& cd_in, DecoratorType& decorator_in, perl::Object pc) : cd(cd_in), decorator(decorator_in), tco(cd, pc) {
+         AugmentedHasseDiagram(const CompactificationData& cd_in, DecoratorType& decorator_in, BigObject pc) : cd(cd_in), decorator(decorator_in), tco(cd, pc) {
             compute_hasse_diagram();
          }
 
