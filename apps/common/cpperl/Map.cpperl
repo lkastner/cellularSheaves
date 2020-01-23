@@ -1,0 +1,5 @@
+{"app": "common",
+ "inst": [
+  {"class": "Map<Set<Int>, std::pair<Matrix<Rational>, Matrix<Rational>>>", "include": ["polymake/IncidenceMatrix.h", "polymake/Map.h", "polymake/Matrix.h", "polymake/Rational.h", "polymake/Set.h", "polymake/client.h"], "pkg": "Polymake::common::Map_A_Set__Int_I_Pair_A_Matrix_A_Rational_I_NonSymmetric_Z_I_Matrix_A_Rational_I_NonSymmetric_Z_Z_Z"},
+ null ],
+"version": 3}
