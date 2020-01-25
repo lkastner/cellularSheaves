@@ -35,18 +35,18 @@
 
 namespace polymake { namespace fan{
    
-   template<typename HasseDiagram, typename NodeSelector>
+   template<typename HasseDiagram, typename NodeSelector, typename MatrixType>
    class ChainComplexBuilder {
       private: 
          const HasseDiagram& hd;
          const Graph<Directed>& G;
-         const EdgeMap<Directed, Matrix<Rational>>& orientedBlocks;
+         const EdgeMap<Directed, MatrixType>& orientedBlocks;
          const NodeMap<Directed, Int>& nodeDimsNM;
          const NodeSelector& nodeSelector;
       public:
          ChainComplexBuilder(const HasseDiagram& hd_in,
             const Graph<Directed>& G_in,
-            const EdgeMap<Directed, Matrix<Rational>>& ob_in,
+            const EdgeMap<Directed, MatrixType>& ob_in,
             const NodeMap<Directed, Int>& nd_in,
             const NodeSelector& nose):
             hd(hd_in), G(G_in), orientedBlocks(ob_in), nodeDimsNM(nd_in), nodeSelector(nose)
@@ -56,7 +56,7 @@ namespace polymake { namespace fan{
             return nodeSelector.isValid(hd.decoration()[node].face);
          }
 
-         Matrix<Rational> assemble_ith_matrix(Int i) const {
+         MatrixType assemble_ith_matrix(Int i) const {
             Int nrows=0, ncols=0;
             NodeMap<Directed, Set<Int>> colRanges(G), rowRanges(G);
             for(const auto& node:hd.nodes_of_rank(i)){
@@ -71,7 +71,7 @@ namespace polymake { namespace fan{
                   nrows += nodeDimsNM[node];
                }
             }
-            Matrix<Rational> result(nrows,ncols);
+            MatrixType result(nrows,ncols);
             Int target;
             for(const auto& source: hd.nodes_of_rank(i+1)){
                for(auto edge = entire(G.in_edges(source)); !edge.at_end(); ++edge){
@@ -79,7 +79,7 @@ namespace polymake { namespace fan{
                   if(node_is_valid(source) && node_is_valid(target)){
                      result.minor(rowRanges[source], colRanges[target]) = orientedBlocks[*edge];
 #if POLYMAKE_DEBUG
-                     Matrix<Rational> insert(orientedBlocks[*edge]);
+                     MatrixType insert(orientedBlocks[*edge]);
                      if(rowRanges[source].size() != insert.rows() || colRanges[target].size() != insert.cols()){
                         throw std::runtime_error("Matrix dimension does not agree with minor dimension.");
                      }
@@ -105,7 +105,7 @@ namespace polymake { namespace fan{
          blocks[*edge] *= orientations[*edge];
       }
 
-      ChainComplexBuilder<HasseDiagramType, SelectorType> SD(hd, G, blocks, nodeDimsNM, selector);
+      ChainComplexBuilder<HasseDiagramType, SelectorType, Matrix<Rational>> SD(hd, G, blocks, nodeDimsNM, selector);
       Int dim = hd.rank() - 1;
       Array<Matrix<Rational>> result(dim-1);
       for(Int i=1; i<dim; i++){
