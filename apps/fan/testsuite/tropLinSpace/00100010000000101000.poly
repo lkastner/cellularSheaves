@@ -50,7 +50,7 @@
   "_canonical": true,
   "_id": "00100010000000101000",
   "_ns": {
-    "polymake": ["https://polymake.org", "3.6"]
+    "polymake": ["https://polymake.org", "4.0"]
   },
   "_type": "tropical::Cycle<Min>"
 }

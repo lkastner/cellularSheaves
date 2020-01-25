@@ -1,7 +1,7 @@
 {
   "_canonical": true,
   "_ns": {
-    "polymake": ["https://polymake.org", "3.6"]
+    "polymake": ["https://polymake.org", "4.0"]
   },
   "_type": "topaz::ChainComplex<Matrix<Rational, NonSymmetric>>",
   "data": [

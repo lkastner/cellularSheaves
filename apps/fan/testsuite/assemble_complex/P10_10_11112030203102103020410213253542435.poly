@@ -18043,7 +18043,7 @@
   "_canonical": true,
   "_id": "P10_10_11112030203102103020410213253542435",
   "_ns": {
-    "polymake": ["https://polymake.org", "3.6", ["cellularSheaves", null]]
+    "polymake": ["https://polymake.org", "4.0", ["cellularSheaves", null]]
   },
   "_type": "tropical::Cycle<Min>"
 }

@@ -2512,7 +2512,7 @@
     }
   },
   "_ns": {
-    "polymake": ["https://polymake.org", "3.6", ["bundled:atint", null]]
+    "polymake": ["https://polymake.org", "4.0", ["bundled:atint", null]]
   },
   "_type": "tropical::Cycle<Max>"
 }
