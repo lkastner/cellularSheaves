@@ -44,7 +44,7 @@ user_function hodge_numbers(PolyhedralComplex){
    my @rows;
    for(my $i=0; $i<=$pc->DIM; $i++){
       my $f = $pc->compact_fcosheaf($i);
-      my $d = build_full_chain($pc->COMPACTIFICATION, $pc->COMPACTIFICATION->ORIENTATIONS, $f, false);
+      my $d = build_full_chain($pc->COMPACTIFICATION, $pc->COMPACTIFICATION->ORIENTATIONS, $f->BLOCKS, false);
       push @rows, new Vector<Int>(topaz::betti_numbers($d));
    }
    return new Matrix(\@rows);

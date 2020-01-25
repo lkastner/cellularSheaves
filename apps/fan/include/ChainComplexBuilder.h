@@ -91,12 +91,11 @@ namespace polymake { namespace fan{
          }
    };
    
-   template<typename SelectorType, typename HasseDiagramType>
-   topaz::ChainComplex<Matrix<Rational>> build_chain_complex_from_hasse(const HasseDiagramType& hd, const EdgeMap<Directed, Int> orientations, BigObject cosheaf, const SelectorType& selector, bool cochain){
+   template<typename SelectorType, typename HasseDiagramType, typename MatrixType>
+   topaz::ChainComplex<MatrixType> build_chain_complex_from_hasse(const HasseDiagramType& hd, const EdgeMap<Directed, Int> orientations, const EdgeMap<Directed, MatrixType>& blocks_in, const SelectorType& selector, bool cochain){
       const Graph<Directed>& G(hd.graph());
-      EdgeMap<Directed, Matrix<Rational>> blocks;
       NodeMap<Directed, Int> nodeDimsNM(G);
-      cosheaf.give("BLOCKS") >> blocks;
+      EdgeMap<Directed, MatrixType> blocks(blocks_in);
       for(auto edge=entire(edges(G)); !edge.at_end(); ++edge){
          if(cochain){
             blocks[*edge] = T(blocks[*edge]);
@@ -105,16 +104,16 @@ namespace polymake { namespace fan{
          blocks[*edge] *= orientations[*edge];
       }
 
-      ChainComplexBuilder<HasseDiagramType, SelectorType, Matrix<Rational>> SD(hd, G, blocks, nodeDimsNM, selector);
+      ChainComplexBuilder<HasseDiagramType, SelectorType, MatrixType> SD(hd, G, blocks, nodeDimsNM, selector);
       Int dim = hd.rank() - 1;
-      Array<Matrix<Rational>> result(dim-1);
+      Array<MatrixType> result(dim-1);
       for(Int i=1; i<dim; i++){
          result[i-1] = SD.assemble_ith_matrix(i);
       }
 #if POLYMAKE_DEBUG
-      return topaz::ChainComplex<Matrix<Rational>>(result, true);
+      return topaz::ChainComplex<MatrixType>(result, true);
 #else
-      return topaz::ChainComplex<Matrix<Rational>>(result);
+      return topaz::ChainComplex<MatrixType>(result);
 #endif
    }
 

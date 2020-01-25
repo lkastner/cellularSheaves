@@ -54,26 +54,30 @@ namespace polymake { namespace fan{
 
    topaz::ChainComplex<Matrix<Rational>> build_nonfar_chain(const HasseDiagramType& hd, const EdgeMap<Directed, Int>& orientations, const Set<Int>& ff, BigObject cosheaf, bool cochain){
       NonFarSelector bs(ff);
-      topaz::ChainComplex<Matrix<Rational>> result(build_chain_complex_from_hasse(hd, orientations, cosheaf, bs, cochain));
+      EdgeMap<Directed, Matrix<Rational>> blocks;
+      cosheaf.give("BLOCKS") >> blocks;
+      topaz::ChainComplex<Matrix<Rational>> result(build_chain_complex_from_hasse(hd, orientations, blocks, bs, cochain));
       return result;
    }
 
    
    topaz::ChainComplex<Matrix<Rational>> build_bounded_chain(const HasseDiagramType& hd, const EdgeMap<Directed, Int>& orientations, const Set<Int>& ff, BigObject cosheaf, bool cochain){
       BoundedSelector bs(ff);
-      topaz::ChainComplex<Matrix<Rational>> result(build_chain_complex_from_hasse(hd, orientations, cosheaf, bs, cochain));
+      EdgeMap<Directed, Matrix<Rational>> blocks;
+      cosheaf.give("BLOCKS") >> blocks;
+      topaz::ChainComplex<Matrix<Rational>> result(build_chain_complex_from_hasse(hd, orientations, blocks, bs, cochain));
       return result;
    }
    
-   template<typename Decoration, typename SeqType>
-   topaz::ChainComplex<Matrix<Rational>> build_full_chain(const Lattice<Decoration, SeqType>& hd, const EdgeMap<Directed, Int>& orientations, BigObject cosheaf, bool cochain){
+   template<typename Decoration, typename SeqType, typename Scalar>
+   topaz::ChainComplex<Matrix<Scalar>> build_full_chain(const Lattice<Decoration, SeqType>& hd, const EdgeMap<Directed, Int>& orientations, const EdgeMap<Directed, Matrix<Scalar>>& blocks, bool cochain){
       TrivialSelector ts;
-      return build_chain_complex_from_hasse(hd, orientations, cosheaf, ts, cochain);
+      return build_chain_complex_from_hasse(hd, orientations, blocks, ts, cochain);
    }
    
    Function4perl(&build_bounded_chain, "build_bounded_chain( $ , $ , $ , $ , $ )");
    
-   FunctionTemplate4perl("build_full_chain<Decoration, SeqType>( Lattice<Decoration, SeqType> , $ , $ , $ )");
+   FunctionTemplate4perl("build_full_chain<Decoration, SeqType, Scalar>( Lattice<Decoration, SeqType> , EdgeMap<Directed,Int> , EdgeMap<Directed, Matrix<Scalar>> , $ )");
 
    Function4perl(&build_nonfar_chain, "build_nonfar_chain( $ , $ , $ , $ , $ )");
 
