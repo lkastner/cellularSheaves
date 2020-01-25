@@ -1,5 +1,5 @@
 {"app": "fan", "embed": "build_complex.cc",
  "inst": [
-  {"args": ["fan::compactification::SedentarityDecoration", "graph::lattice::Nonsequential", "void", "void", "void", "void"], "func": "build_full_chain", "include": ["polymake/fan/compactification.h", "polymake/graph/Decoration.h"], "sig": "build_full_chain:T2.B.x.x.x", "tp": "2"},
+  {"args": ["fan::compactification::SedentarityDecoration", "graph::lattice::Nonsequential", "Rational", "void", "perl::Canned<const EdgeMap<Directed, Int>&>", "perl::Canned<const EdgeMap<Directed, Matrix<Rational>>&>", "void"], "func": "build_full_chain", "include": ["polymake/Graph.h", "polymake/IncidenceMatrix.h", "polymake/Matrix.h", "polymake/Rational.h", "polymake/fan/compactification.h", "polymake/graph/Decoration.h"], "sig": "build_full_chain:T3.B.X.X.x", "tp": 3},
  null ],
 "version": 3}

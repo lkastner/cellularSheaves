@@ -4,6 +4,10 @@
 #define POLYMAKE_CPPERL_FILE "wrap-build_complex"
 #include "polymake/perl/macros.h"
 #include FindDefinitionSource4perl(build_complex.cc)
+#include "polymake/Graph.h"
+#include "polymake/IncidenceMatrix.h"
+#include "polymake/Matrix.h"
+#include "polymake/Rational.h"
 #include "polymake/fan/compactification.h"
 #include "polymake/graph/Decoration.h"
 
@@ -12,5 +16,5 @@ FunctionCallerStart4perl {
 enum class build_full_chain;
 };
 FunctionCaller4perl(build_full_chain, free_t);
-FunctionTemplateInstance4perl(0, build_full_chain, free_t, build_full_chain:T2.B.x.x.x, perl::Returns::normal, 2, (fan::compactification::SedentarityDecoration, graph::lattice::Nonsequential, void, void, void, void));
+FunctionTemplateInstance4perl(0, build_full_chain, free_t, build_full_chain:T3.B.X.X.x, perl::Returns::normal, 3, (fan::compactification::SedentarityDecoration, graph::lattice::Nonsequential, Rational, void, perl::Canned<const EdgeMap<Directed, Int>&>, perl::Canned<const EdgeMap<Directed, Matrix<Rational>>&>, void));
 } } }
