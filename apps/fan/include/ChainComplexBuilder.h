@@ -101,7 +101,9 @@ namespace polymake { namespace fan{
             blocks[*edge] = T(blocks[*edge]);
          }
          nodeDimsNM[edge.from_node()] = blocks[*edge].cols();
-         blocks[*edge] *= orientations[*edge];
+         if(orientations[*edge] == -1){
+            blocks[*edge] = -blocks[*edge];
+         }
       }
 
       ChainComplexBuilder<HasseDiagramType, SelectorType, MatrixType> SD(hd, G, blocks, nodeDimsNM, selector);
