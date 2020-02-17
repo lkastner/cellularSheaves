@@ -1,5 +1,7 @@
 # Cellular sheaf cohomology and cosheaf homology - an Extension for polymake
 
+Note: This extension will only work with [polymake] (https://www.polymake.org) 4.0.
+
 ## Purpose
 This extension for [polymake] (https://www.polymake.org) was developed to compute cohomology of cellular sheaves
 and homology of cellular cosheaves. There is a special emphasis on computing tropical (co)homology. 
