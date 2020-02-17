@@ -41,6 +41,7 @@ object Hypersurface {
 
 }
 
+
 sub make_matrix {
     my($edge, $comp, $bases, $projlift) = @_;
     my $source = $edge->to_node;
@@ -71,6 +72,7 @@ sub make_matrix {
     
     return $result;
 }
+
 
 sub build_node_generators {
    my($comp, $facets, $real_facets, $dim, $projlift) = @_;
@@ -146,6 +148,7 @@ sub relabel {
     return $result;
 }
 
+
 sub get_gf2_projections {
     my($h) = @_;
     my $relabel = relabel($h->VERTICES);
@@ -197,6 +200,7 @@ sub get_gf2_projections {
     }
     return $result;
 }
+
 
 sub number_to_gf2vector {
     my($length, $n) = @_;
