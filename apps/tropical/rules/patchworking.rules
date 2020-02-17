@@ -1,0 +1,195 @@
+object Hypersurface {
+
+   property PATCHWORK {
+      
+      user_method sign_cosheaf {
+         my $this = shift;
+         my $trop = $this->parent;
+         my $comp = $trop->COMPACTIFICATION;
+         my $facets = $trop->MAXIMAL_POLYTOPES;
+         my $real_facets = $trop->PATCHWORK->REAL_FACETS;
+         my $projlift = get_gf2_projections($trop);
+         my $nm = build_node_generators($comp, $facets, $real_facets, $trop->DIM, $projlift);
+         my $em = new EdgeMap<Directed, Matrix<GF2>>($comp->ADJACENCY);
+         for (my $e=entire(edges($comp->ADJACENCY)); $e; ++$e) {
+            $em->[$$e] = make_matrix($e, $comp, $nm, $projlift);
+         }
+         my $top = $comp->TOP_NODE;
+         foreach my $node (@{$comp->ADJACENCY->in_adjacent_nodes($top)}){
+            $em->edge($node, $top) = zero_matrix<GF2>($nm->[$node]->size(),0);
+         }
+         return $em;
+      }
+
+   }
+
+}
+
+sub make_matrix {
+    my($edge, $comp, $bases, $projlift) = @_;
+    my $source = $edge->to_node;
+    my $target = $edge->from_node;
+    my $decor = $comp->DECORATION;
+    my $sed = $decor->[$target]->sedentarity;
+    my $psed = $decor->[$source]->sedentarity;
+    # print "$sed - $psed\n";
+    my $lift = $projlift->{$psed}->second;
+    my $proj = $projlift->{$sed}->first;
+    my $transport = $proj * $lift;
+    # print "Transport:\n",$transport;
+    # print "S: ",$source,"T: ",$target,"\n";
+    my $result = new Matrix<GF2>($bases->[$target]->size, $bases->[$source]->size);
+    my $i = 0;
+    foreach my $sv (@{$bases->[$source]}) {
+        # print $tv,"\n";
+        my $tsv = $transport * $sv;
+        my $j = 0;
+        foreach my $tv (@{$bases->[$target]}) {
+            if($tsv == $tv){
+                $result->elem($j, $i) = 1
+            }
+            $j++;
+        }
+        $i++;
+    }
+    
+    return $result;
+}
+
+sub build_node_generators {
+   my($comp, $facets, $real_facets, $dim, $projlift) = @_;
+   # $comp = $trop->COMPACTIFICATION;
+   my $decor = $comp->DECORATION;
+   # $facets = $trop->MAXIMAL_POLYTOPES;
+   # $real_facets = $trop->PATCHWORK->REAL_FACETS;
+   my $nm = new NodeMap<Directed, HashSet<Vector<GF2>>>($comp->ADJACENCY);
+   foreach my $node (@{$comp->nodes_of_rank($dim + 1)}){
+      my $real = $decor->[$node]->realisation;
+# Only works since the thing is pure
+      my $facetno = -1;
+      for(my $i=0; $i<$facets->rows; $i++){
+         if($facets->[$i] == $real){
+            $facetno = $i;
+            last;
+         }
+      }
+      # print $node," ",$real," ",$facetno,": ";
+
+      for(my $i = 0; $i<$real_facets->rows; $i++){
+         if($real_facets->[$i]->contains($facetno)){
+            # print $i,",";
+            $nm->[$node] += number_to_gf2vector($dim+1, $i);
+         }
+      }
+      # print "\n";
+
+   }
+   for(my $i = $dim; $i>0; $i--){
+      foreach my $node (@{$comp->nodes_of_rank($i)}){
+         my $sed = $decor->[$node]->sedentarity;
+         foreach my $parent (@{$comp->ADJACENCY->out_adjacent_nodes($node)}){
+            my $psed = $decor->[$parent]->sedentarity;
+            my $lift = $projlift->{$psed}->second;
+            my $proj = $projlift->{$sed}->first;
+            my $transport = $proj * $lift;
+            foreach my $v (@{$nm->[$parent]}){
+               # if($transport->cols != $v->dim){
+               #    print $transport,"\n",$v,"\n";
+               #    print "Node: $node, parent: $parent\n";
+               #    die "Wrong num of cols.";
+               # }
+               $nm->[$node] += $transport * $v;
+            }
+# $nm->[$node] += new HashSet<Vector<GF2>>(map($transport * $_, @{$nm->[$parent]}));
+         }
+      }
+   }
+   return $nm;
+}
+
+
+sub relabel {
+    my($vert) = @_;
+    my $d = $vert->cols();
+    my $result = new Array<Int>($vert->rows());
+    for(my $i=0; $i<$vert->rows(); $i++){
+        if($vert->row($i)->[0] == 0){
+            my $v = $vert->row($i)->slice(sequence(2,$d-2));
+            for(my $j=0; $j<$d-2; $j++){
+                if($v == -unit_vector($d-2,$j) || $v == unit_vector($d-2,$j)){
+                    # print "Found: $i $j\n";
+                    $result->[$i] = $j;
+                    last;
+                }
+            }
+            if($v == ones_vector($d-2) || $v == -ones_vector($d-2)){
+                $result->[$i] = -1;
+            }
+        }
+    }
+    return $result;
+}
+
+sub get_gf2_projections {
+    my($h) = @_;
+    my $relabel = relabel($h->VERTICES);
+    my $d = $h->VERTICES->cols() - 2;
+    my $result = new Map<Set<Int>, Pair<Matrix<GF2>, Matrix<GF2>>>();
+    my $comp = $h->COMPACTIFICATION;
+    my $decor = $comp->DECORATION;
+    for(my $node = entire(nodes($comp->ADJACENCY)); $node; ++$node){
+        my $psed = $decor->[$$node]->sedentarity;
+        if(! defined $result->{$psed}){
+           # print $$node,": $psed ";
+           my $sed = new Set<Int>();
+           foreach my $entry (@$psed){
+              $sed += $relabel->[$entry];
+           }
+           my ($projection, $lifting);
+           if($sed->contains(-1)){
+              my $first = 0;
+              while($sed->contains($first)){
+                 $first++;
+              }
+              $first < $h->N_RAYS or die "Could not find non-contained element";
+              $projection = new Matrix<GF2>(unit_matrix<GF2>($d));
+              $projection->col($first) = ones_vector<GF2>($d);
+              $lifting = inv($projection);
+              $sed -= -1;
+              $sed += $first;
+              $projection = $projection->minor(~$sed, All);
+              $lifting = $lifting->minor(All, ~$sed);
+           } else {
+              $projection = unit_matrix<GF2>($d);
+              $lifting = unit_matrix<GF2>($d);
+              $projection = $projection->minor(~$sed, All);
+              $lifting = $lifting->minor(All, ~$sed);
+           }
+           # my $prod = $projection * $lifting;
+           # my $check = $prod == unit_matrix<GF2>($projection->rows);
+           # my $vert = $h->VERTICES->minor($psed, sequence(2,$d));
+           # $prod = $projection * transpose(new Matrix<GF2>(convert_to<Integer>($vert)));
+           # $check &= $prod == zero_matrix<GF2>($prod->rows, $prod->cols);
+           # print "Check: $check\n";
+           # if($check == 0){
+           #    print "Proj:\n",$projection,"\n";
+           #    print "Vert:\n",$vert,"\n";
+           #    print "Prod:\n",$prod,"\n";
+           # }
+           $result->{$psed} = new Pair<Matrix<GF2>, Matrix<GF2>>($projection, $lifting);
+        }
+    }
+    return $result;
+}
+
+sub number_to_gf2vector {
+    my($length, $n) = @_;
+    my $result = new Vector<GF2>($length);
+    for(my $i=0; $i<$length; $i++){
+        $result->[$i] = $n % 2;
+        $n -= $n%2;
+        $n /= 2;
+    }
+    $n == 0 or die "Incomplete conversion";
+    return $result;
+}
