@@ -1,9 +1,9 @@
 # Cellular sheaf cohomology and cosheaf homology - an Extension for polymake
 
-Note: This extension will only work with [polymake] (https://www.polymake.org) 4.0.
+Note: This extension will only work with [polymake](https://www.polymake.org) 4.0.
 
 ## Purpose
-This extension for [polymake] (https://www.polymake.org) was developed to compute cohomology of cellular sheaves
+This extension for [polymake](https://www.polymake.org) was developed to compute cohomology of cellular sheaves
 and homology of cellular cosheaves. There is a special emphasis on computing tropical (co)homology. 
 
 On a polyhedral complex one can define several sheaves and cosheaves, which are 
@@ -37,15 +37,15 @@ For examples how to compute things with this extension, please have a look at th
 
 
 ## References
-[Tropical Homology - Ilia Itenberg, Ludmil Katzarkov, Grigory Mikhalkin, Ilia Zharkov] (http://arxiv.org/abs/1604.01838)
+[Tropical Homology - Ilia Itenberg, Ludmil Katzarkov, Grigory Mikhalkin, Ilia Zharkov](http://arxiv.org/abs/1604.01838)
 
-[Superforms, Tropical Cohomology and Poincaré Duality - Philipp Jell, Kristin Shaw, Jascha Smacka] (http://arxiv.org/abs/1512.07409)
+[Superforms, Tropical Cohomology and Poincaré Duality - Philipp Jell, Kristin Shaw, Jascha Smacka](http://arxiv.org/abs/1512.07409)
 
-[Sheaves, Cosheaves and Applications - Justin Curry] (http://arxiv.org/abs/1303.3255)
+[Sheaves, Cosheaves and Applications - Justin Curry](http://arxiv.org/abs/1303.3255)
 
 ## Authors
-[Kristin Shaw] (https://www.mn.uio.no/math/english/people/aca/krisshaw/index.html)
+[Kristin Shaw](https://www.mn.uio.no/math/english/people/aca/krisshaw/index.html)
 
-[Anna-Lena Winz] (http://www.mi.fu-berlin.de/math/groups/ag-algebra/members/mitarbeiter/Winz.html)
+[Anna-Lena Winz](http://www.mi.fu-berlin.de/math/groups/ag-algebra/members/mitarbeiter/Winz.html)
 
-[Lars Kastner] (http://page.math.tu-berlin.de/~kastner/)
+[Lars Kastner](http://page.math.tu-berlin.de/~kastner/)
