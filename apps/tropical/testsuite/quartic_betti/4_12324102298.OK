@@ -1,0 +1,8 @@
+{
+  "_canonical": true,
+  "_ns": {
+    "polymake": ["https://polymake.org", "4.0.3"]
+  },
+  "_type": "common::Array<Int>",
+  "data": [1, 18, 1]
+}
