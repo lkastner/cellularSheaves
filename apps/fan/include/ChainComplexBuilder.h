@@ -101,9 +101,10 @@ namespace polymake { namespace fan{
             blocks[*edge] = T(blocks[*edge]);
          }
          nodeDimsNM[edge.from_node()] = blocks[*edge].cols();
-         if(orientations[*edge] == -1){
-            blocks[*edge] = -blocks[*edge];
-         }
+         blocks[*edge] *= orientations[*edge];
+         // if(orientations[*edge] == -1){
+         //    blocks[*edge] = -blocks[*edge];
+         // }
       }
 
       ChainComplexBuilder<HasseDiagramType, SelectorType, MatrixType> SD(hd, G, blocks, nodeDimsNM, selector);
@@ -115,7 +116,7 @@ namespace polymake { namespace fan{
 #if POLYMAKE_DEBUG
       return topaz::ChainComplex<MatrixType>(result, true);
 #else
-      return topaz::ChainComplex<MatrixType>(result);
+      return topaz::ChainComplex<MatrixType>(result, true);
 #endif
    }
 
